@@ -10,14 +10,14 @@ namespace backtesting_engine
         public static void Main(string[] args)
         {
 
-            System.Console.WriteLine("Local feeder starting... ");
+            Console.WriteLine("Starting... ");
 
             foreach(var csvFolderPath in csvFolderPaths){
                 DirectoryInfo di = new DirectoryInfo(csvFolderPath);
                 var files = di.GetFiles("*.csv").OrderBy(x => x.Name);
 
                 foreach (var file in files) {
-                    System.Console.WriteLine(file.Name);
+                    Console.WriteLine(file.Name);
                 }
             }
 
