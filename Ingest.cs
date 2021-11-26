@@ -63,7 +63,7 @@ namespace backtesting_engine
                     string? line = await file.Value.ReadLineAsync();
                     
                     if(IsValidLine(line)){
-                        var output = ReadLine(file.Key, line);
+                        var output = ReadLine(file.Key, line ?? "");
                         if(output!=null)
                             lineBuffer.Add(file.Key, output); 
                     } 
@@ -116,10 +116,10 @@ namespace backtesting_engine
             return (parsedDt, dtHolder);
         }
 
-        PriceObj? ReadLine(string fileName, string? line){
+        PriceObj? ReadLine(string fileName, string line){
           
             string[] values = line.Split(sep);
-            
+
             var bid = decimal.Parse(values[1]);
             var dateTime = extractDt(values[0]).datetime;
             var ask = decimal.Parse(values[2]);
