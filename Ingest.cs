@@ -51,7 +51,6 @@ namespace backtesting_engine
                 foreach(var file in streamDictionary){ 
 
                     if(file.Value.EndOfStream){ // if any of the files ever finish early
-                        System.Console.WriteLine("Finishe with " + file.Key);
                         streamDictionary.Remove(file.Key);
                         continue;
                     }
@@ -60,10 +59,10 @@ namespace backtesting_engine
                         continue;
                     }
 
-                    string? line = await file.Value.ReadLineAsync();
+                    string line = await file.Value.ReadLineAsync() ?? "";
                     
                     if(IsValidLine(line)){
-                        var output = ReadLine(file.Key, line ?? "");
+                        var output = ReadLine(file.Key, line);
                         if(output!=null)
                             lineBuffer.Add(file.Key, output); 
                     } 
@@ -95,15 +94,11 @@ namespace backtesting_engine
             // if we reach hear buffer has been marked Complete()
         }
 
-        bool IsValidLine(string? line){
+        bool IsValidLine(string line){
             
-            if(line == null)
-                return false;
-
             string[] values = line.Split(sep);
 
-            if (values[0].Length==0 || values[1].Length==0 || 
-                    values[1].Length==0 || values[0] == "UTC")  // Missing values
+            if (values.Count() == 0 || values.Count() < 3 || values.Any(x=>x.Length==0) || values[0] == "UTC" )
                 return false;
 
             return extractDt(values[0]).parsed; // Finaly check, so pass back true if datetime parsed safely, false if not
@@ -120,16 +115,19 @@ namespace backtesting_engine
           
             string[] values = line.Split(sep);
 
+            if(values.Count()==0 || values.Count() < 3) // To protect ingest, if for some reason we have the wrong amount of values
+                return null;
+
             var bid = decimal.Parse(values[1]);
             var dateTime = extractDt(values[0]).datetime;
             var ask = decimal.Parse(values[2]);
             var epic = epicsArary.Where(x=>fileName.Contains(x)).First(); //TOOD Dangerous
 
             return new PriceObj(){
-                        epic = epic,
-                        bid = bid,
-                        ask = ask,
-                        date = dateTime
+                epic = epic,
+                bid = bid,
+                ask = ask,
+                date = dateTime
             };
         }
     }
