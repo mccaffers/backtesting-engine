@@ -1,5 +1,5 @@
-export csvFolderPaths=/Users/ryan/dev/tickdata/
-export epics=USDJPY,EURUSD,GBPUSD
+export path=/Users/ryan/dev/tickdata/
+export symbols=USDJPY,EURUSD,GBPUSD
 
 dotnet build
 dotnet run

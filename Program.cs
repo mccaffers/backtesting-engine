@@ -9,8 +9,6 @@ namespace backtesting_engine
     public class Program
     {
 
-        private static readonly string CSVFolderPaths = EnvironmentVariable.Get("csvFolderPaths");
-        private static readonly string[] epicArray = EnvironmentVariable.Get("epics").Split(",");
 
         public static async Task Main(string[] args)
         {
@@ -20,8 +18,8 @@ namespace backtesting_engine
             var arrayHolder = new List<string>();
 
             // Loop around every epic to check what files are present
-            foreach(var epic in epicArray){
-                DirectoryInfo di = new DirectoryInfo(CSVFolderPaths + "/" + epic);
+            foreach(var epic in EnvVariables.symbols){
+                DirectoryInfo di = new DirectoryInfo(EnvVariables.path + "/" + epic);
                 var files = di.GetFiles("*.csv").OrderBy(x => x.Name);
 
                 foreach (var file in files) {
