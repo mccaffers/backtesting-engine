@@ -37,6 +37,11 @@ jobs:
         # Learn more about CodeQL language support at https://git.io/codeql-language-support
 
     steps:
+    
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+      
     - name: Checkout repository
       uses: actions/checkout@v2
 
@@ -64,6 +69,7 @@ jobs:
 
     - name: build
       run: dotnet build
+  
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
