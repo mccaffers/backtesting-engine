@@ -16,8 +16,8 @@ This is just a **hobby project** to experiment with backtesting and algorithm tr
     ```
 
 ### Setup
-1. Update ```path``` in ```deploy.sh``` to reference your tick folders
-    * Your csv files should be contained within a symbol folder eg. ```./tickdata/{symbol}/2020.csv```
+1. Update ```path``` in ```deploy.sh``` to reference your symbol folders
+    * Your csv files containing tick data should be contained within a symbol folder eg. ```./tickdata/{symbol}/2020.csv```
 2. Update ```symbols``` in ```deploy.sh``` to reference all the symbols you wish to backtest in parallel
 3. Run ```deploy.sh```
 
