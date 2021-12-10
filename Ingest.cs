@@ -10,8 +10,8 @@ namespace backtesting_engine
         private readonly string dtFormat = "yyyy-MM-ddTHH:mm:ss.fff";
         private readonly char[] sep = ",".ToCharArray();
 
-        private BufferBlock<PriceObj> buffer = new BufferBlock<PriceObj>();
-        private Dictionary<string, PriceObj> lineBuffer = new Dictionary<string, PriceObj>();
+        private readonly BufferBlock<PriceObj> buffer = new BufferBlock<PriceObj>();
+        private readonly Dictionary<string, PriceObj> lineBuffer = new Dictionary<string, PriceObj>();
         
         public async Task ProcessFiles(IEnumerable<string> fileNames)
         {
@@ -45,6 +45,7 @@ namespace backtesting_engine
 
         async Task PopulateDictionary(Dictionary<string, StreamReader> streamDictionary){
           
+            // Loop statements if files still have contents to parse
             while(streamDictionary.Any(x=>!x.Value.EndOfStream)){       
                 foreach(var file in streamDictionary){ 
 
@@ -58,13 +59,8 @@ namespace backtesting_engine
                     }
 
                     string line = await file.Value.ReadLineAsync() ?? "";
-                    
-                    if(IsValidLine(line)){
-                        var output = ReadLine(file.Key, line);
-                        if(output!=null)
-                            lineBuffer.Add(file.Key, output); 
-                    } 
-                    
+                    IngestLine(file.Key, line);
+                                  
                 }
                 await OrderDictionaryAndSendOldestToBuffer();
             }
@@ -86,47 +82,48 @@ namespace backtesting_engine
             while (await buffer.OutputAvailableAsync())
             {
                 var line = await buffer.ReceiveAsync();
-                //System.Console.WriteLine(JsonConvert.SerializeObject(line));
+                System.Console.WriteLine(JsonConvert.SerializeObject(line));
             }
 
             // if we reach hear buffer has been marked Complete()
         }
 
-        bool IsValidLine(string line){
+        bool ChecLineHasRightValues(string line){
             
             string[] values = line.Split(sep);
 
-            if (values.Count() == 0 || values.Count() < 3 || values.Any(x=>x.Length==0) || values[0] == "UTC" )
+            if (values.Length < 3 || values.Any(x=>x.Length==0) || values[0] == "UTC" )
                 return false;
 
             return extractDt(values[0]).parsed; // Finaly check, so pass back true if datetime parsed safely, false if not
         }
 
         (bool parsed, DateTime datetime) extractDt(string dtString){
-            DateTime dtHolder = new DateTime();
+            DateTime localDt;
             dtString = dtString.Substring(0, dtString.LastIndexOf("+")); // Stripping everything off before the + sign
-            var parsedDt = DateTime.TryParseExact(dtString, dtFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dtHolder);
-            return (parsedDt, dtHolder);
+            var parsedDt = DateTime.TryParseExact(dtString, dtFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out localDt);
+            return (parsedDt, localDt);
         }
 
-        PriceObj? ReadLine(string fileName, string line){
+        void IngestLine(string fileName, string line){
           
-            string[] values = line.Split(sep);
+            if(!ChecLineHasRightValues(line)){
+                return;
+            }
 
-            if(values.Count()==0 || values.Count() < 3) // To protect ingest, if for some reason we have the wrong amount of values
-                return null;
+            string[] values = line.Split(sep);
 
             var bid = decimal.Parse(values[1]);
             var dateTime = extractDt(values[0]).datetime;
             var ask = decimal.Parse(values[2]);
             var epic = EnvVariables.symbols.Where(x=>fileName.Contains(x)).First(); //TOOD Dangerous
 
-            return new PriceObj(){
+            lineBuffer.Add(fileName, new PriceObj(){
                 epic = epic,
                 bid = bid,
                 ask = ask,
                 date = dateTime
-            };
+            });
         }
     }
 }
