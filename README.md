@@ -3,12 +3,12 @@
 This is a **hobby project** to experiment with backtesting and algorithm trading. 
 
 ### Features
-* This engine can ingest multiple symbols in parallel. It uses BufferBlocks with async methods to synchronise them.
+* This engine can ingest multiple symbols in parallel. It uses BufferBlocks with async methods to synchronise the symbols
 
 ### Requirements
 
 - dotnet v6
-- Tick data in CSV format, specifically:
+- tick data in CSV format, specifically:
     ```bash
     # ./tickdata/{symbol}/2020.csv:
     UTC,AskPrice,BidPrice,AskVolume,BidVolume
@@ -16,8 +16,8 @@ This is a **hobby project** to experiment with backtesting and algorithm trading
     ```
 
 ### Setup
-1. Update ```path``` in ```deploy.sh``` to reference your tick folders
-    * Your csv files should be contained within a symbol folder eg. ```./tickdata/{symbol}/2020.csv```
+1. Update ```path``` in ```deploy.sh``` to reference your symbol folders
+    * Your csv files containing tick data should be contained within a symbol folder eg. ```./tickdata/{symbol}/2020.csv```
 2. Update ```symbols``` in ```deploy.sh``` to reference all the symbols you wish to backtest in parallel
 3. Run ```deploy.sh```
 
