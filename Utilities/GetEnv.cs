@@ -10,7 +10,7 @@ namespace Utilities
 
             if(output == null){
                 System.Console.WriteLine("Doesn't contain env " + envName);
-                throw new Exception("Missing env variable " + envName);
+                throw new ArgumentException("Missing environment variable " + envName);
             }
 
             return output;

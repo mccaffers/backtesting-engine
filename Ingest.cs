@@ -68,7 +68,7 @@ namespace backtesting_engine
         }
 
         async Task OrderDictionaryAndSendOldestToBuffer() {
-            if(lineBuffer.Count()==0)
+            if(!lineBuffer.Any())
                 return;
 
             var orderedDictionary = lineBuffer.OrderBy(x=>x.Value.date);

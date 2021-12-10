@@ -1,25 +1,52 @@
-## C# Backtesting Engine
+<div align="center">
 
-This is a **hobby project** to experiment with backtesting and algorithm trading. 
+<h3 align="center">C# Backtesting Engine</h3>
+
+  <p align="center">
+    By McCaffers
+
+  </p>
+</div>
+
+<!-- ABOUT THE PROJECT -->
+## About The Project
+
+This backtesting engine is a personal project of mine, built in C# to explore and experiment with various trading strategies at scale.
 
 ### Features
-* This engine can ingest multiple symbols in parallel. It uses BufferBlocks with async methods to synchronise the symbols
+* Multiple symbol ingest and time synchronisation
+* Sonar analysis -> [link](https://sonarcloud.io/project/overview?id=mccaffers_backtesting-engine)
 
-### Requirements
+### Roadmap
+* xUnit testing
+* Trade Environment
+    * Trade Excution
+    * Equity Monitoring
+* Reporting
 
-- dotnet v6
-- tick data in CSV format, specifically:
+### Built With
+
+* [dotnet](https://nextjs.org/)
+
+<!-- GETTING STARTED -->
+## Getting Started
+
+### Prerequisites
+
+* You need dotnet v6
+* You need tick data in CSV format, specifically:
     ```bash
     # ./tickdata/{symbol}/2020.csv:
     UTC,AskPrice,BidPrice,AskVolume,BidVolume
     2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75
     ```
 
-### Setup
-1. Update ```path``` in ```deploy.sh``` to reference your symbol folders
-    * Your csv files containing tick data should be contained within a symbol folder eg. ```./tickdata/{symbol}/2020.csv```
-2. Update ```symbols``` in ```deploy.sh``` to reference all the symbols you wish to backtest in parallel
-3. Run ```deploy.sh```
+### Deploy
+
+1. Review variables in ```./config```, updating the path and symbols you wish to backtest
+2. Run ```deploy.sh``` which builds and runs the dotnet application locally
 
 ### License
 [MIT](https://choosealicense.com/licenses/mit/)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
