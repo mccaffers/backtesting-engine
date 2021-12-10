@@ -1,6 +1,6 @@
 ## C# Backtesting Engine
 
-This is just a **hobby project** to experiment with backtesting and algorithm trading. 
+This is a **hobby project** to experiment with backtesting and algorithm trading. 
 
 ### Features
 * This engine can ingest multiple symbols in parallel. It uses BufferBlocks with async methods to synchronise them.

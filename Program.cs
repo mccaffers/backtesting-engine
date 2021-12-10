@@ -5,11 +5,8 @@ using Utilities;
 
 namespace backtesting_engine
 {
-    
     public class Program
     {
-
-
         public static async Task Main(string[] args)
         {
             Console.WriteLine("Starting... ");
@@ -19,7 +16,7 @@ namespace backtesting_engine
 
             // Loop around every epic to check what files are present
             foreach(var epic in EnvVariables.symbols){
-                DirectoryInfo di = new DirectoryInfo(EnvVariables.path + "/" + epic);
+                DirectoryInfo di = new DirectoryInfo(EnvVariables.folderPath + "/" + epic);
                 var files = di.GetFiles("*.csv").OrderBy(x => x.Name);
 
                 foreach (var file in files) {

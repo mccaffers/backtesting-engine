@@ -12,7 +12,6 @@ namespace backtesting_engine
 
         private BufferBlock<PriceObj> buffer = new BufferBlock<PriceObj>();
         private Dictionary<string, PriceObj> lineBuffer = new Dictionary<string, PriceObj>();
-        private DateTime currentTime = new DateTime();
         
         public async Task ProcessFiles(IEnumerable<string> fileNames)
         {
@@ -87,7 +86,7 @@ namespace backtesting_engine
             while (await buffer.OutputAvailableAsync())
             {
                 var line = await buffer.ReceiveAsync();
-                System.Console.WriteLine(JsonConvert.SerializeObject(line));
+                //System.Console.WriteLine(JsonConvert.SerializeObject(line));
             }
 
             // if we reach hear buffer has been marked Complete()
