@@ -49,11 +49,12 @@ jobs:
           dotnet build ./src
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
       - name: Test with the dotnet CLI
-        run: dotnet test --settings coverlet.runsettings --logger:trx ./tests
+        run: dotnet test --logger:trx ./tests
         env:
           ASPNETCORE_ENVIRONMENT: Development
       - name: Sonarqube end
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        shell: powershell
+        run: ".\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
