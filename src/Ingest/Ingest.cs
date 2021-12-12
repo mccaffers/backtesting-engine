@@ -116,7 +116,7 @@ namespace backtesting_engine
             var bid = decimal.Parse(values[1]);
             var dateTime = extractDt(values[0]).datetime;
             var ask = decimal.Parse(values[2]);
-            var epic = EnvVariables.symbols.Where(x=>fileName.Contains(x)).First(); //TOOD Dangerous
+            var epic = EnvironmentVariables.symbols.Where(x=>fileName.Contains(x)).First(); //TOOD Dangerous
 
             lineBuffer.Add(fileName, new PriceObj(){
                 epic = epic,

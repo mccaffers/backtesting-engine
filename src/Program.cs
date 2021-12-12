@@ -15,8 +15,8 @@ namespace backtesting_engine
             var arrayHolder = new List<string>();
 
             // Loop around every epic to check what files are present
-            foreach(var epic in EnvVariables.symbols){
-                DirectoryInfo di = new DirectoryInfo(Path.Combine(EnvVariables.folderPath, epic));
+            foreach(var epic in EnvironmentVariables.symbols){
+                DirectoryInfo di = new DirectoryInfo(Path.Combine(EnvironmentVariables.folderPath, epic));
                 var files = di.GetFiles("*.csv").OrderBy(x => x.Name);
 
                 foreach (var file in files) {
