@@ -33,8 +33,8 @@ This backtesting engine is a personal project of mine, built in C# to explore an
 
 ### Prerequisites
 
-* You need dotnet v6
-* You need tick data in CSV format, specifically:
+* dotnet v6
+* financial tick data in CSV format, specifically:
     ```bash
     # ./tickdata/{symbol}/2020.csv:
     UTC,AskPrice,BidPrice,AskVolume,BidVolume
