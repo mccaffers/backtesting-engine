@@ -43,7 +43,7 @@ This backtesting engine is a personal project of mine, built in C# to explore an
 
 ### Deploy
 
-1. Review variables in ```./config```, updating the path and symbols you wish to backtest
+1. Review variables in ```./scripts/config```, updating the path and symbols you wish to backtest
 2. Run ```deploy.sh``` which builds and runs the dotnet application locally
 
 ### License

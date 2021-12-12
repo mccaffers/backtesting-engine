@@ -1,3 +1,4 @@
+using System;
 using backtesting_engine;
 using Xunit;
 
