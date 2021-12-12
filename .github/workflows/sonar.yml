@@ -44,11 +44,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
-        run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"mccaffers_backtesting-engine" /o:"mccaffers" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.tests="./tests"
+        run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"mccaffers_backtesting-engine" /o:"mccaffers" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="./tests/TestResults/*"
       - name: Build
         run: dotnet build    
       - name: Test
-        run: dotnet test --no-build --no-restore --verbosity normal --collect:"XPlat Code Coverage"
+        run: dotnet test --no-build --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
       - name: Sonar End
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
