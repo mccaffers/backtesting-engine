@@ -48,7 +48,7 @@ jobs:
       - name: Build
         run: dotnet build    
       - name: Test
-        run: dotnet test --no-build --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
+        run: dotnet test --no-build --no-restore --verbosity normal --collect:"XPlat Code Coverage"
       - name: Sonar End
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
