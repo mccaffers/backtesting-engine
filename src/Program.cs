@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Threading.Tasks.Dataflow;
+using backtesting_engine_ingest;
 using Newtonsoft.Json;
 using Utilities;
 
@@ -25,8 +26,7 @@ namespace backtesting_engine
             }
 
             // pass all the file names CLEANUP
-            var p = new Ingest();
-            await p.ProcessFiles(arrayHolder.OrderBy(x=>x)); //get oldest date first
+            await new Ingest().ProcessFiles(arrayHolder.OrderBy(x=>x)); //get oldest date first
 
         }
 
