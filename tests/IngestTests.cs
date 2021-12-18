@@ -18,25 +18,32 @@ public static class ReflectionExtensions {
         // Set the flags so that private and public fields from instances will be found
         var bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
         var field = obj.GetType().GetField(name, bindingFlags);
-        return (T)field?.GetValue(obj);
+        if (field?.GetValue(obj) is T myValue)
+            return myValue;
+       
+        return default!;
     }
 }
 
 public class IngestTests
 {
 
-    [Fact]
-    public void CheckEnvironmentVariables()
+    [Theory]
+    [InlineData("FileName1")]
+    [InlineData("FileName1", "FileName2")]
+    [InlineData("FileName1", "FileName2", "FileName3")]
+    public void CheckStreamDictionaryContainsAllFiles(params string[] fileNames)
     {
-        // // Arrange
+        // Arrange
         var mockRepo = new Mock<Input>();
 
+        // stub out the CoordinatedFileRead so the method doesn't try to read from file
         mockRepo.Protected()
         .Setup<Task>("CoordinateFileRead", ItExpr.IsAny<Dictionary<string, StreamReader>>(), ItExpr.IsAny<BufferBlock<PriceObj>>())
         .Returns(Task.FromResult(true));
 
         mockRepo.Protected()
-        .Setup<StreamReader>("NewMethod", ItExpr.IsAny<string>())
+        .Setup<StreamReader>("ReadFile", ItExpr.IsAny<string>())
         .Returns(StreamReader.Null);
 
          mockRepo.Protected()
@@ -44,18 +51,13 @@ public class IngestTests
 
         var obj = mockRepo.Object;
 
-        var test = obj.ReadLines(new string[]{"test"}, new BufferBlock<PriceObj>());
-
+        // Act
+        var test = obj.ReadLines(fileNames, new BufferBlock<PriceObj>());
+        
+        // Assert
         Dictionary<string, StreamReader> streamDic = obj.GetFieldValue<Dictionary<string, StreamReader>>("streamDictionary");
-        
-        Assert.Equal(streamDic.Count(), 1);
+        Assert.Equal(fileNames.Count(), streamDic.Count());
 
-        // //  var result = MethodToTest(mockRepo.Object);
-        
-        // // Act
-
-        // // Assert
-        // Assert.Equal(input, output);
     }
 
 }

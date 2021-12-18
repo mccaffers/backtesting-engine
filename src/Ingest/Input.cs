@@ -15,7 +15,7 @@ namespace backtesting_engine_ingest
         private static readonly string dtFormat = "yyyy-MM-ddTHH:mm:ss.fff";
         private static readonly char[] sep = ",".ToCharArray();
 
-        public Dictionary<string, StreamReader>? streamDictionary;
+        protected Dictionary<string, StreamReader> streamDictionary = new Dictionary<string, StreamReader>();
         private readonly Dictionary<string, PriceObj> localInputBuffer = new Dictionary<string, PriceObj>();
 
         // 1. Builds a dictionary of filenames (.csv's) to read
@@ -23,10 +23,9 @@ namespace backtesting_engine_ingest
         // 3. Closes all streamreader files at the end
         public async Task ReadLines(IEnumerable<string> fileNames, BufferBlock<PriceObj> buffer)
         {
-            streamDictionary = new Dictionary<string, StreamReader>();
             foreach (var file in fileNames)
             {
-                streamDictionary.Add(file, NewMethod(file));
+                streamDictionary.Add(file, ReadFile(file));
             }
 
             await CoordinateFileRead(streamDictionary, buffer);
@@ -43,7 +42,7 @@ namespace backtesting_engine_ingest
             }
         }
 
-        protected virtual StreamReader NewMethod(string file)
+        protected virtual StreamReader ReadFile(string file)
         {
             return new StreamReader(file);
         }
@@ -127,7 +126,7 @@ namespace backtesting_engine_ingest
         }
 
         // Simple value and length check on the line
-        bool ArrayHasRightValues(string[] values)
+        static bool ArrayHasRightValues(string[] values)
         {
             if (values.Length < 3 || values.Any(x => x.Length == 0) || values[0] == "UTC")
                 return false;
@@ -136,7 +135,7 @@ namespace backtesting_engine_ingest
         }
 
         // Extract the datetime from the string
-        (bool parsed, DateTime datetime) extractDt(string dtString)
+        static (bool parsed, DateTime datetime) extractDt(string dtString)
         {
             DateTime localDt;
             dtString = dtString.Substring(0, dtString.LastIndexOf("+")); // Stripping everything off before the + sign
