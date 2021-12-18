@@ -8,7 +8,7 @@ namespace backtesting_engine_ingest
 {
     public class Consumer
     {
-        public async Task ConsumeAsync(BufferBlock<PriceObj> buffer)
+        public static async Task ConsumeAsync(BufferBlock<PriceObj> buffer)
         {
             while (await buffer.OutputAvailableAsync())
             {

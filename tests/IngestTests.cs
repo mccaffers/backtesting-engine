@@ -32,7 +32,7 @@ public class IngestTests
     [InlineData("FileName1")]
     [InlineData("FileName1", "FileName2")]
     [InlineData("FileName1", "FileName2", "FileName3")]
-    public void CheckStreamDictionaryContainsAllFiles(params string[] fileNames)
+    public async void CheckStreamDictionaryContainsAllFiles(params string[] fileNames)
     {
         // Arrange
         var mockRepo = new Mock<Input>();
@@ -42,21 +42,23 @@ public class IngestTests
         .Setup<Task>("CoordinateFileRead", ItExpr.IsAny<Dictionary<string, StreamReader>>(), ItExpr.IsAny<BufferBlock<PriceObj>>())
         .Returns(Task.FromResult(true));
 
+        // stub out the StreamReader method so the method doesn't try to read from file
         mockRepo.Protected()
         .Setup<StreamReader>("ReadFile", ItExpr.IsAny<string>())
         .Returns(StreamReader.Null);
 
+        // stub out the StreamReader Cleanup method so the method doesn't try to dipose of the streamreader
          mockRepo.Protected()
-        .Setup("Cleanup");
-
-        var obj = mockRepo.Object;
+        .Setup("StreamReaderCleanup");
 
         // Act
-        var test = obj.ReadLines(fileNames, new BufferBlock<PriceObj>());
+        var inputObj = mockRepo.Object;
+        await inputObj.ReadLines(fileNames, new BufferBlock<PriceObj>());
         
         // Assert
-        Dictionary<string, StreamReader> streamDic = obj.GetFieldValue<Dictionary<string, StreamReader>>("streamDictionary");
-        Assert.Equal(fileNames.Count(), streamDic.Count());
+        // Using reflection to access protected member, only to check contents
+        Dictionary<string, StreamReader> streamDic = inputObj.GetFieldValue<Dictionary<string, StreamReader>>("streamDictionary");
+        Assert.Equal(fileNames.Length, streamDic.Count);
 
     }
 

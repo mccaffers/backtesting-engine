@@ -13,7 +13,7 @@ namespace backtesting_engine_ingest
         public async Task ProcessFiles(IEnumerable<string> fileNames)
         {
             Task taskProduce = new Input().ReadLines(fileNames, buffer);
-            Task consume = new Consumer().ConsumeAsync(buffer);
+            Task consume = Consumer.ConsumeAsync(buffer);
 
             // await until both the producer and the consumer are finished:
             await Task.WhenAll(taskProduce, consume);

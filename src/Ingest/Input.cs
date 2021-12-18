@@ -29,10 +29,10 @@ namespace backtesting_engine_ingest
             }
 
             await CoordinateFileRead(streamDictionary, buffer);
-            Cleanup();
+            StreamReaderCleanup();
         }
 
-        protected virtual void Cleanup()
+        protected virtual void StreamReaderCleanup()
         {
             foreach (var file in streamDictionary)
             {
