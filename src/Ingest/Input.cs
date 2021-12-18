@@ -5,12 +5,7 @@ using Utilities;
 
 namespace backtesting_engine_ingest
 {
-    public interface IInput
-    {
-        Task ReadLines(IEnumerable<string> fileNames, BufferBlock<PriceObj> buffer);
-    }
-
-    public class Input : IInput
+    public class Ingest
     {
         private static readonly string dtFormat = "yyyy-MM-ddTHH:mm:ss.fff";
         private static readonly char[] sep = ",".ToCharArray();

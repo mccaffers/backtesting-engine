@@ -9,6 +9,7 @@ using backtesting_engine;
 using backtesting_engine_ingest;
 using Moq;
 using Moq.Protected;
+using Utilities;
 using Xunit;
 
 namespace Tests;
@@ -39,7 +40,7 @@ public class IngestTests
     public void CheckValidation(bool expectedResult, string[] strings)
     {
         // Act
-        var outputResult = Input.ArrayHasRightValues(strings);
+        var outputResult = Ingest.ArrayHasRightValues(strings);
         Assert.Equal(expectedResult, outputResult);
     }
         
@@ -52,10 +53,59 @@ public class IngestTests
     public void CheckDateExtract(bool expectedResult, string dateTimeString)
     {
         // Act
-        var outputResult = Input.extractDt(dateTimeString).parsed;
+        var outputResult = Ingest.extractDt(dateTimeString).parsed;
         Assert.Equal(expectedResult, outputResult);
     }
 
+    public static string GetTestPath(string relativePath)
+    {
+        var codeBaseUrl = new Uri(Assembly.GetExecutingAssembly().Location);
+        var codeBasePath = Uri.UnescapeDataString(codeBaseUrl.AbsolutePath);
+        var dirPath = Path.GetDirectoryName(codeBasePath);
+        return Path.Combine(dirPath, "resources", relativePath);
+    }
+    
+    [Fact]
+    public async void TestFile()
+    {
+
+        // Arrange
+        var key = "symbols";
+        var input = "testSymbol";
+        Environment.SetEnvironmentVariable(key, input);
+
+              // Arrange
+        key = "folderPath";
+        input = "_";
+        Environment.SetEnvironmentVariable(key, input);
+
+         // Arrange
+        var programMock = new Mock<Setup>(); // can't mock program
+        var consumerMock = new Mock<IConsumer>();
+
+        consumerMock.Setup<Task>(x=>x.ConsumeAsync(It.IsAny<BufferBlock<PriceObj>>())).Returns(Task.FromResult(0));
+        programMock.Setup(x=>x.EnvironmentSetup());
+
+        var programObj = programMock.Object;
+        programObj.fileNames.Add(GetTestPath("testSymbol.csv"));
+
+        await programObj.IngestAndConsume(consumerMock.Object, new Ingest());
+
+        BufferBlock<PriceObj> buffer = programObj.GetFieldValue<BufferBlock<PriceObj>>("buffer");
+        IList<PriceObj>? items;
+        var output = buffer.TryReceiveAll(out items);
+
+        Assert.True(output);
+        Assert.Equal(items.Count, 1);
+       
+        // need to set environment in Program ./resources/testSymbol.csv
+        // can I consume here?
+        // while (await buffer.OutputAvailableAsync())
+        // {
+        //     var line = await buffer.ReceiveAsync();
+        //     System.Console.WriteLine(JsonConvert.SerializeObject(line));
+        // }
+    }
 
     [Theory]
     [InlineData("FileName1")]
@@ -64,7 +114,7 @@ public class IngestTests
     public async void CheckStreamDictionaryContainsAllFiles(params string[] fileNames)
     {
         // Arrange
-        var inputMock = new Mock<Input>();
+        var inputMock = new Mock<Ingest>();
 
         // stub out the CoordinatedFileRead so the method doesn't try to read from file
         inputMock.Protected()

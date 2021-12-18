@@ -4,6 +4,7 @@ namespace Utilities
 {
     public static class EnvironmentVariables
     {
+
         public static readonly ImmutableArray<string> symbols = ImmutableArray.Create(EnvironmentVariables.Get("symbols").Split(","));
         public static readonly string folderPath = EnvironmentVariables.Get("folderPath");
 

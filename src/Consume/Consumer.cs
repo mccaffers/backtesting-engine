@@ -6,9 +6,14 @@ using Utilities;
 
 namespace backtesting_engine_ingest
 {
-    public static class Consumer
+    public interface IConsumer
     {
-        public static async Task ConsumeAsync(BufferBlock<PriceObj> buffer)
+        Task ConsumeAsync(BufferBlock<PriceObj> buffer);
+    }
+
+    public class Consumer : IConsumer
+    {
+        public async Task ConsumeAsync(BufferBlock<PriceObj> buffer)
         {
             while (await buffer.OutputAvailableAsync())
             {

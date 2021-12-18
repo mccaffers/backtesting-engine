@@ -6,12 +6,23 @@ using Utilities;
 
 namespace backtesting_engine
 {
-    public static class Program
+    public class Program
     {
         public static async Task Main(string[] args)
         {
-            Console.WriteLine("Starting... ");
+            var p = new Setup();
+            p.EnvironmentSetup();
+            await p.IngestAndConsume(new Consumer(), new Ingest());
+        }
+    }
 
+    public class Setup
+    {
+
+        protected BufferBlock<PriceObj> buffer = new BufferBlock<PriceObj>();
+        public List<string> fileNames { get; set; } = new List<string> ();
+
+        public virtual void EnvironmentSetup() {
             // Create a temporary list
             var arrayHolder = new List<string>();
 
@@ -24,15 +35,19 @@ namespace backtesting_engine
                     arrayHolder.Add(file.FullName);
                 }
             }
+            
+            fileNames = arrayHolder.OrderBy(x=>x).ToList();
+        }
 
-            // pass all the file names CLEANUP
-            await new Ingest().ProcessFiles(arrayHolder.OrderBy(x=>x)); //get oldest date first
+        public async Task IngestAndConsume(IConsumer c, Ingest i){
 
+            Task taskProduce = i.ReadLines(fileNames, buffer);
+            Task consumer = c.ConsumeAsync(buffer);
+
+            // await until both the producer and the consumer are finished:
+            await Task.WhenAll(taskProduce, consumer);
         }
 
     }
 
-    
-
-    
 }

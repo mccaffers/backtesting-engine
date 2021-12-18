@@ -23,6 +23,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <ProjectReference Include="..\src\backtesting-engine.csproj" />
+
+  <None 
+     Include="resources\**" 
+     CopyToOutputDirectory="PreserveNewest" 
+     LinkBase="resources\" />
   </ItemGroup>
 
 </Project>
