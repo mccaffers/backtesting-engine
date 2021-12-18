@@ -28,7 +28,7 @@ namespace backtesting_engine_ingest
                 streamDictionary.Add(file, ReadFile(file));
             }
 
-            await CoordinateFileRead(streamDictionary, buffer);
+            await LoopStreamDictionaryAndReadLine(streamDictionary, buffer);
             StreamReaderCleanup();
         }
 
@@ -51,7 +51,7 @@ namespace backtesting_engine_ingest
         // 2. Check each file individually and remove filename from the dictionary if so
         // 3. Check if the local buffer already has this filename (symbol), if not populate and add to local buffer
         // 4. Review all the symbols on the buffer, and select the oldest, loop and repeat
-        protected virtual async Task CoordinateFileRead(Dictionary<string, StreamReader> streamDictionary, BufferBlock<PriceObj> buffer)
+        protected virtual async Task LoopStreamDictionaryAndReadLine(Dictionary<string, StreamReader> streamDictionary, BufferBlock<PriceObj> buffer)
         {
 
             // Loop statements if files still have contents to parse
@@ -126,24 +126,22 @@ namespace backtesting_engine_ingest
         }
 
         // Simple value and length check on the line
-        static bool ArrayHasRightValues(string[] values)
+        public static bool ArrayHasRightValues(string[] values)
         {
-            if (values.Length < 3 || values.Any(x => x.Length == 0) || values[0] == "UTC")
-                return false;
-
-            return true; // Finaly check, so pass back true if datetime parsed safely, false if not
+           return values.Length > 4 &&
+                values.Any(x => x.Length >= 0) &&
+                values.Skip(1).All(x=> decimal.TryParse(x, NumberStyles.Any, CultureInfo.InvariantCulture, out _));
         }
 
         // Extract the datetime from the string
-        static (bool parsed, DateTime datetime) extractDt(string dtString)
+        public static (bool parsed, DateTime datetime) extractDt(string dtString)
         {
             DateTime localDt;
-            dtString = dtString.Substring(0, dtString.LastIndexOf("+")); // Stripping everything off before the + sign
+            if(dtString.Contains("+")){
+                dtString = dtString.Substring(0, dtString.LastIndexOf("+")); // Stripping everything off before the + sign
+            }
             var parsedDt = DateTime.TryParseExact(dtString, dtFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out localDt);
             return (parsedDt, localDt);
         }
-
-
-
     }
 }

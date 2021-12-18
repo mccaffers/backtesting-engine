@@ -8,7 +8,7 @@ namespace backtesting_engine_ingest
 {
     public class Ingest
     {
-        public readonly BufferBlock<PriceObj> buffer = new BufferBlock<PriceObj>();
+        protected readonly BufferBlock<PriceObj> buffer = new BufferBlock<PriceObj>();
         
         public async Task ProcessFiles(IEnumerable<string> fileNames)
         {

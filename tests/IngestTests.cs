@@ -28,6 +28,35 @@ public static class ReflectionExtensions {
 public class IngestTests
 {
 
+    
+    [Theory]
+    [InlineData(true, new string[] { "2018-01-01T22:52:26.862+00:00", "1.20146", "1.20138","1.2","1.3"})]
+    [InlineData(false, new string[] {})]
+    [InlineData(false, new string[] { "" })]
+    [InlineData(false, new string[] { "","","","","" })]
+    [InlineData(false, new string[] { "a","a","a","a","a" })]
+    [InlineData(false, new string[] { "a","1.2","a","a","a" })]
+    public void CheckValidation(bool expectedResult, string[] strings)
+    {
+        // Act
+        var outputResult = Input.ArrayHasRightValues(strings);
+        Assert.Equal(expectedResult, outputResult);
+    }
+        
+    [Theory]
+    [InlineData(true, "2018-01-01T22:52:26.862+00:00")]
+    [InlineData(true, "2018-01-01T22:52:26.862")]
+    [InlineData(false, "2018-01-01 22:52:26.862")]
+    [InlineData(false, "2018-01-01")]
+    [InlineData(false, "a")]
+    public void CheckDateExtract(bool expectedResult, string dateTimeString)
+    {
+        // Act
+        var outputResult = Input.extractDt(dateTimeString).parsed;
+        Assert.Equal(expectedResult, outputResult);
+    }
+
+
     [Theory]
     [InlineData("FileName1")]
     [InlineData("FileName1", "FileName2")]
@@ -35,24 +64,24 @@ public class IngestTests
     public async void CheckStreamDictionaryContainsAllFiles(params string[] fileNames)
     {
         // Arrange
-        var mockRepo = new Mock<Input>();
+        var inputMock = new Mock<Input>();
 
         // stub out the CoordinatedFileRead so the method doesn't try to read from file
-        mockRepo.Protected()
-        .Setup<Task>("CoordinateFileRead", ItExpr.IsAny<Dictionary<string, StreamReader>>(), ItExpr.IsAny<BufferBlock<PriceObj>>())
+        inputMock.Protected()
+        .Setup<Task>("LoopStreamDictionaryAndReadLine", ItExpr.IsAny<Dictionary<string, StreamReader>>(), ItExpr.IsAny<BufferBlock<PriceObj>>())
         .Returns(Task.FromResult(true));
 
         // stub out the StreamReader method so the method doesn't try to read from file
-        mockRepo.Protected()
+        inputMock.Protected()
         .Setup<StreamReader>("ReadFile", ItExpr.IsAny<string>())
         .Returns(StreamReader.Null);
 
         // stub out the StreamReader Cleanup method so the method doesn't try to dipose of the streamreader
-         mockRepo.Protected()
+        inputMock.Protected()
         .Setup("StreamReaderCleanup");
 
         // Act
-        var inputObj = mockRepo.Object;
+        var inputObj = inputMock.Object;
         await inputObj.ReadLines(fileNames, new BufferBlock<PriceObj>());
         
         // Assert
