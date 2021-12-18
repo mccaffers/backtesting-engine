@@ -6,7 +6,7 @@ using Utilities;
 
 namespace backtesting_engine_ingest
 {
-    public class Consumer
+    public static class Consumer
     {
         public static async Task ConsumeAsync(BufferBlock<PriceObj> buffer)
         {

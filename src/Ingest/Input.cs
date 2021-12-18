@@ -129,7 +129,7 @@ namespace backtesting_engine_ingest
         public static bool ArrayHasRightValues(string[] values)
         {
            return values.Length > 4 &&
-                values.Any(x => x.Length >= 0) &&
+                values.Any(x => x.Length > 0) &&
                 values.Skip(1).All(x=> decimal.TryParse(x, NumberStyles.Any, CultureInfo.InvariantCulture, out _));
         }
 
@@ -137,7 +137,7 @@ namespace backtesting_engine_ingest
         public static (bool parsed, DateTime datetime) extractDt(string dtString)
         {
             DateTime localDt;
-            if(dtString.Contains("+")){
+            if(dtString.Contains('+')){
                 dtString = dtString.Substring(0, dtString.LastIndexOf("+")); // Stripping everything off before the + sign
             }
             var parsedDt = DateTime.TryParseExact(dtString, dtFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out localDt);
