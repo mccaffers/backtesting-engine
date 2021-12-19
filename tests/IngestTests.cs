@@ -181,10 +181,7 @@ public class IngestTests
         IList<PriceObj>? items;
         var output = buffer.TryReceiveAll(out items);
 
-        Assert.True(output);
-        Assert.True(items!=null);
-        Assert.Equal(1, items.Count);
-       
+        Assert.True(items!=null && items.Count == 1);
     }
 
     [Theory]

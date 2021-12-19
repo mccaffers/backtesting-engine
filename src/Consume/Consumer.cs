@@ -21,7 +21,7 @@ namespace backtesting_engine_ingest
                 System.Console.WriteLine(JsonConvert.SerializeObject(line));
             }
 
-            // if we reach hear buffer has been marked Complete()
+            // if we reach here the buffer has been marked Complete()
         }
 
 
