@@ -9,9 +9,9 @@ namespace backtesting_engine_ingest
     public class Ingest
     {
         private IEnumerable<string>  symbols { get; set; }
-        private List<string> fileNames { get; set; }
         private EnvironmentVariables env { get; }
 
+        public List<string> fileNames { get; }
         public string folderPath { get; }
         public Dictionary<string, StreamReader> streamDictionary { get; }
         public Dictionary<string, PriceObj> localInputBuffer { get; }

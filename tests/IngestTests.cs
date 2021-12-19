@@ -76,11 +76,11 @@ public class IngestTests
             CallBase = true
         };
 
-        Assert.Equal(inputMock.Object.folderPath, folderPath);
+        Assert.Equal(folderPath, inputMock.Object.folderPath);
     }
 
     [Fact]
-    public void TestEnvironmentSetup(){
+    public void TestIngestConstructor(){
 
         var folderPath = "testFilePath";
 
@@ -101,7 +101,35 @@ public class IngestTests
             CallBase = true
         };
 
-        Assert.Equal(inputMock.Object.folderPath, folderPath);
+        Assert.Equal(folderPath, inputMock.Object.folderPath);
+    }
+
+    [Fact]
+    public void TestEnvironmentSetup(){
+
+        // var mySymbols = new List<string>();
+        // mySymbols.Add("TestEnvironmentSetup");
+
+        var key = "symbols";
+        var input = "TestEnvironmentSetup";
+        Environment.SetEnvironmentVariable(key, input);
+
+        key = "folderPath";
+        input = GetTestPath("");
+        Environment.SetEnvironmentVariable(key, input);
+
+        var programMock = new Mock<Main>(); // can't mock program
+        var consumerMock = new Mock<IConsumer>();
+        var inputMock = new Mock<Ingest>(null, null){
+            CallBase = true
+        };
+        
+        inputMock.Object.EnvironmentSetup();
+
+        var myFiles = new List<string>();
+        myFiles.Add(Path.Combine(GetTestPath("TestEnvironmentSetup"), "testSymbol.csv"));
+
+        Assert.True(myFiles.SequenceEqual(inputMock.Object.fileNames));
     }
 
 
@@ -110,7 +138,12 @@ public class IngestTests
         var codeBaseUrl = new Uri(Assembly.GetExecutingAssembly().Location);
         var codeBasePath = Uri.UnescapeDataString(codeBaseUrl.AbsolutePath);
         var dirPath = Path.GetDirectoryName(codeBasePath) ?? "";
-        return Path.Combine(dirPath, "resources", relativePath);
+
+        if(relativePath.Length > 0){
+            return Path.Combine(dirPath, "resources", relativePath);
+        } else {
+            return Path.Combine(dirPath, "resources");
+        }
     }
     
     [Fact]
@@ -149,7 +182,8 @@ public class IngestTests
         var output = buffer.TryReceiveAll(out items);
 
         Assert.True(output);
-        Assert.Equal(items.Count, 1);
+        Assert.True(items!=null);
+        Assert.Equal(1, items.Count);
        
     }
 

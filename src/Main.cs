@@ -12,11 +12,7 @@ public class Main
     public async Task IngestAndConsume(IConsumer c, Ingest i)
     {
         i.EnvironmentSetup();
-        await SetupTasks(c, i);
-    }
-
-    private async Task SetupTasks(IConsumer c, Ingest i)
-    {
+        
         Task taskProduce = i.ReadLines(buffer);
         Task consumer = c.ConsumeAsync(buffer);
 
