@@ -8,19 +8,41 @@ namespace backtesting_engine_ingest
 {
     public class Ingest
     {
-        private static readonly string dtFormat = "yyyy-MM-ddTHH:mm:ss.fff";
-        private static readonly char[] sep = ",".ToCharArray();
-
-        protected Dictionary<string, StreamReader> streamDictionary = new Dictionary<string, StreamReader>();
-        private readonly Dictionary<string, PriceObj> localInputBuffer = new Dictionary<string, PriceObj>();
-
         private IEnumerable<string>  symbols { get; set; }
-        private IEnumerable<string> fileNames { get; set; }
+        private List<string> fileNames { get; set; }
+        private EnvironmentVariables env { get; }
+        private string folderPath { get; }
 
-        public Ingest(IEnumerable<string>  symbols, IEnumerable<string> fileNames)
+        public Dictionary<string, StreamReader> streamDictionary { get; }
+        public Dictionary<string, PriceObj> localInputBuffer { get; }
+
+        public Ingest(EnvironmentVariables? env = null, List<string>? fileNames = null)
         {
-            this.symbols = symbols;
-            this.fileNames = fileNames;
+            this.env = env ?? new EnvironmentVariables(); // Allow injectable env variables
+            this.symbols = symbols ?? ImmutableArray.Create(this.env.Get("symbols").Split(","));
+            this.fileNames = fileNames ?? new List<string> ();
+            this.folderPath = this.env.Get("folderPath");
+            this.streamDictionary = new Dictionary<string, StreamReader>();
+            this.localInputBuffer = new Dictionary<string, PriceObj>();
+        }
+
+        public virtual void EnvironmentSetup() {
+
+            // Create a temporary list
+            var arrayHolder = new List<string>();
+
+            // Loop around every epic to check what files are present
+            foreach(var epic in this.symbols){
+                DirectoryInfo di = new DirectoryInfo(Path.Combine(this.folderPath, epic));
+                var files = di.GetFiles("*.csv").OrderBy(x => x.Name);
+
+                foreach (var file in files) {
+                    arrayHolder.Add(file.FullName);
+                }
+            }
+            
+            this.fileNames.AddRange(arrayHolder.OrderBy(x=>x).ToList());
+            
         }
 
         // 1. Builds a dictionary of filenames (.csv's) to read
@@ -90,7 +112,7 @@ namespace backtesting_engine_ingest
         void PopulateLocalBuffer(string fileName, string line)
         {
 
-            string[] values = line.Split(sep);
+            string[] values = line.Split(StringFormats.sep);
 
             // Initial scan to confirm the line has the right values
             if (!ArrayHasRightValues(values)) {
@@ -145,7 +167,7 @@ namespace backtesting_engine_ingest
             if(dtString.Contains('+')){
                 dtString = dtString.Substring(0, dtString.LastIndexOf("+")); // Stripping everything off before the + sign
             }
-            var parsedDt = DateTime.TryParseExact(dtString, dtFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out localDt);
+            var parsedDt = DateTime.TryParseExact(dtString, StringFormats.dtFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out localDt);
             return (parsedDt, localDt);
         }
     }

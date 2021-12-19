@@ -15,7 +15,7 @@ public class EnvironmentVariableTests
         Environment.SetEnvironmentVariable(key, input);
 
         // Act
-        var output = Utilities.EnvironmentVariables.Get(key);
+        var output = new Utilities.EnvironmentVariables().Get(key);
 
         // Assert
         Assert.Equal(input, output);
@@ -23,7 +23,7 @@ public class EnvironmentVariableTests
 
     [Fact]
     public void CheckMissingEnvVariable(){
-        Assert.Throws<ArgumentException>(() => Utilities.EnvironmentVariables.Get("Missing"));
+        Assert.Throws<ArgumentException>(() => new Utilities.EnvironmentVariables().Get("Missing"));
     }
 
 

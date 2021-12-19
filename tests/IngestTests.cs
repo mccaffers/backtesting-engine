@@ -76,11 +76,16 @@ public class IngestTests
         myFiles.Add(GetTestPath("testSymbol.csv"));
 
          // Arrange
-        var programMock = new Mock<Run>(); // can't mock program
+        var envMock = new Mock<EnvironmentVariables>();
+        envMock.Setup(x=>x.Get("symbols")).Returns(String.Join(", ", mySymbols.ToArray()));
+
+        var programMock = new Mock<Main>(); // can't mock program
         var consumerMock = new Mock<IConsumer>();
-        var inputMock = new Mock<Ingest>(mySymbols, myFiles){
+        var inputMock = new Mock<Ingest>(envMock.Object, myFiles){
             CallBase = true
         };
+
+        inputMock.Setup(x=>x.EnvironmentSetup());
 
         consumerMock.Setup<Task>(x=>x.ConsumeAsync(It.IsAny<BufferBlock<PriceObj>>())).Returns(Task.FromResult(0));
         // programMock.Setup(x=>x.EnvironmentSetup());
@@ -107,7 +112,14 @@ public class IngestTests
     public async void CheckStreamDictionaryContainsAllFiles(params string[] fileNames)
     {
         // Arrange
-        var inputMock = new Mock<Ingest>(It.IsAny<List<string>>(), fileNames);
+
+         var envMock = new Mock<EnvironmentVariables>();
+        envMock.Setup(x=>x.Get("symbols")).Returns("");
+        envMock.Setup(x=>x.Get("folderPath")).Returns("");
+
+        
+        var inputMock = new Mock<Ingest>(envMock.Object, fileNames.ToList());
+        
 
         // stub out the CoordinatedFileRead so the method doesn't try to read from file
         inputMock.Protected()
@@ -130,8 +142,7 @@ public class IngestTests
         await inputObj.ReadLines(new BufferBlock<PriceObj>());
         
         // Assert
-        // Using reflection to access protected member, only to check contents
-        Dictionary<string, StreamReader> streamDic = inputObj.GetFieldValue<Dictionary<string, StreamReader>>("streamDictionary");
+        Dictionary<string, StreamReader> streamDic = inputObj.streamDictionary;
         Assert.Equal(fileNames.Length, streamDic.Count);
 
     }
