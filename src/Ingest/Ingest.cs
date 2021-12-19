@@ -129,7 +129,7 @@ namespace backtesting_engine_ingest
 
             var dateTime = dtExtract.datetime;
             var ask = decimal.Parse(values[2]);
-            var epic = this.symbols.Where(x => fileName.Contains(x)).First();
+            var epic = this.symbols.First(x => fileName.Contains(x));
 
             localInputBuffer.Add(fileName, new PriceObj()
             {

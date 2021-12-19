@@ -7,11 +7,11 @@ using Utilities;
 
 namespace backtesting_engine
 {
-    public class Program
+    public static class Program
     {
         public static async Task Main(string[] args)
         {
-            await new Main().Deploy();
+            await new Main().IngestAndConsume(new Consumer(), new Ingest());
         }
     }
 
