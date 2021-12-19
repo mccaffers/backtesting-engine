@@ -69,27 +69,27 @@ public class IngestTests
     public async void TestFile()
     {
 
-        // Arrange
-        var key = "symbols";
-        var input = "testSymbol";
-        Environment.SetEnvironmentVariable(key, input);
+        var mySymbols = new List<string>();
+        mySymbols.Add("testSymbol");
 
-              // Arrange
-        key = "folderPath";
-        input = "_";
-        Environment.SetEnvironmentVariable(key, input);
+        var myFiles = new List<string>();
+        myFiles.Add(GetTestPath("testSymbol.csv"));
 
          // Arrange
-        var programMock = new Mock<Setup>(); // can't mock program
+        var programMock = new Mock<Run>(); // can't mock program
         var consumerMock = new Mock<IConsumer>();
+        var inputMock = new Mock<Ingest>(mySymbols, myFiles){
+            CallBase = true
+        };
 
         consumerMock.Setup<Task>(x=>x.ConsumeAsync(It.IsAny<BufferBlock<PriceObj>>())).Returns(Task.FromResult(0));
-        programMock.Setup(x=>x.EnvironmentSetup());
+        // programMock.Setup(x=>x.EnvironmentSetup());
+        // inputMock.Setup(x=>x.ReadLines(It.IsAny<BufferBlock<PriceObj>>())).Returns(Task.CompletedTask);
 
         var programObj = programMock.Object;
-        programObj.fileNames.Add(GetTestPath("testSymbol.csv"));
+        // programObj.fileNames.Add(GetTestPath("testSymbol.csv"));
 
-        await programObj.IngestAndConsume(consumerMock.Object, new Ingest());
+        await programObj.IngestAndConsume(consumerMock.Object, inputMock.Object);
 
         BufferBlock<PriceObj> buffer = programObj.GetFieldValue<BufferBlock<PriceObj>>("buffer");
         IList<PriceObj>? items;
@@ -98,13 +98,6 @@ public class IngestTests
         Assert.True(output);
         Assert.Equal(items.Count, 1);
        
-        // need to set environment in Program ./resources/testSymbol.csv
-        // can I consume here?
-        // while (await buffer.OutputAvailableAsync())
-        // {
-        //     var line = await buffer.ReceiveAsync();
-        //     System.Console.WriteLine(JsonConvert.SerializeObject(line));
-        // }
     }
 
     [Theory]
@@ -114,7 +107,7 @@ public class IngestTests
     public async void CheckStreamDictionaryContainsAllFiles(params string[] fileNames)
     {
         // Arrange
-        var inputMock = new Mock<Ingest>();
+        var inputMock = new Mock<Ingest>(It.IsAny<List<string>>(), fileNames);
 
         // stub out the CoordinatedFileRead so the method doesn't try to read from file
         inputMock.Protected()
@@ -130,9 +123,11 @@ public class IngestTests
         inputMock.Protected()
         .Setup("StreamReaderCleanup");
 
+        // inputMock.Protected().SetupGet<IEnumerable<string>>("fileNames").Returns(fileNames);
+
         // Act
         var inputObj = inputMock.Object;
-        await inputObj.ReadLines(fileNames, new BufferBlock<PriceObj>());
+        await inputObj.ReadLines(new BufferBlock<PriceObj>());
         
         // Assert
         // Using reflection to access protected member, only to check contents

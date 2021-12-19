@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
@@ -13,10 +14,19 @@ namespace backtesting_engine_ingest
         protected Dictionary<string, StreamReader> streamDictionary = new Dictionary<string, StreamReader>();
         private readonly Dictionary<string, PriceObj> localInputBuffer = new Dictionary<string, PriceObj>();
 
+        private IEnumerable<string>  symbols { get; set; }
+        private IEnumerable<string> fileNames { get; set; }
+
+        public Ingest(IEnumerable<string>  symbols, IEnumerable<string> fileNames)
+        {
+            this.symbols = symbols;
+            this.fileNames = fileNames;
+        }
+
         // 1. Builds a dictionary of filenames (.csv's) to read
         // 2. Populates a local buffer with the read line and compare timestamps
         // 3. Closes all streamreader files at the end
-        public async Task ReadLines(IEnumerable<string> fileNames, BufferBlock<PriceObj> buffer)
+        public async Task ReadLines(BufferBlock<PriceObj> buffer)
         {
             foreach (var file in fileNames)
             {
@@ -39,14 +49,15 @@ namespace backtesting_engine_ingest
 
         protected virtual StreamReader ReadFile(string file)
         {
-            return new StreamReader(file);
+            var streamOutput = new StreamReader(file);
+            return streamOutput;
         }
 
         // 1. Ensure every file isn't at the end of it's stream
         // 2. Check each file individually and remove filename from the dictionary if so
         // 3. Check if the local buffer already has this filename (symbol), if not populate and add to local buffer
         // 4. Review all the symbols on the buffer, and select the oldest, loop and repeat
-        protected virtual async Task LoopStreamDictionaryAndReadLine(Dictionary<string, StreamReader> streamDictionary, BufferBlock<PriceObj> buffer)
+        protected async virtual Task LoopStreamDictionaryAndReadLine(Dictionary<string, StreamReader> streamDictionary, BufferBlock<PriceObj> buffer)
         {
 
             // Loop statements if files still have contents to parse
@@ -82,8 +93,7 @@ namespace backtesting_engine_ingest
             string[] values = line.Split(sep);
 
             // Initial scan to confirm the line has the right values
-            if (!ArrayHasRightValues(values))
-            {
+            if (!ArrayHasRightValues(values)) {
                 return;
             }
 
@@ -97,7 +107,7 @@ namespace backtesting_engine_ingest
 
             var dateTime = dtExtract.datetime;
             var ask = decimal.Parse(values[2]);
-            var epic = EnvironmentVariables.symbols.Where(x => fileName.Contains(x)).First();
+            var epic = this.symbols.Where(x => fileName.Contains(x)).First();
 
             localInputBuffer.Add(fileName, new PriceObj()
             {
