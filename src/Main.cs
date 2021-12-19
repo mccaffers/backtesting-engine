@@ -9,22 +9,24 @@ public class Main
 {
     protected readonly BufferBlock<PriceObj> buffer = new BufferBlock<PriceObj>();
 
-    public async Task IngestAndConsume(IConsumer c, Ingest i){
-
+    public async Task IngestAndConsume(IConsumer c, Ingest i)
+    {
         i.EnvironmentSetup();
+        await SetupTasks(c, i);
+    }
+
+    private async Task SetupTasks(IConsumer c, Ingest i)
+    {
         Task taskProduce = i.ReadLines(buffer);
         Task consumer = c.ConsumeAsync(buffer);
 
-        if(taskProduce.Exception !=null ){
-            throw new ArgumentException("Ingest failed", taskProduce.Exception);
-        }
+        if (taskProduce.Exception != null)
+            throw new ArgumentException("Ingest Exception", taskProduce.Exception);
 
-        if(consumer.Exception !=null ){
-            throw new ArgumentException("Consumer failed", consumer.Exception);
-        }
+        if (consumer.Exception != null)
+            throw new ArgumentException("Consumer Exception", consumer.Exception);
 
         // await until both the producer and the consumer are finished:
         await Task.WhenAll(taskProduce, consumer);
     }
-
 }

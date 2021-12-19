@@ -11,8 +11,8 @@ namespace backtesting_engine_ingest
         private IEnumerable<string>  symbols { get; set; }
         private List<string> fileNames { get; set; }
         private EnvironmentVariables env { get; }
-        private string folderPath { get; }
 
+        public string folderPath { get; }
         public Dictionary<string, StreamReader> streamDictionary { get; }
         public Dictionary<string, PriceObj> localInputBuffer { get; }
 

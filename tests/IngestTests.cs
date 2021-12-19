@@ -57,11 +57,59 @@ public class IngestTests
         Assert.Equal(expectedResult, outputResult);
     }
 
+    [Fact]
+    public void TestFilePath(){
+
+        var folderPath = "testFilePath";
+
+        var mySymbols = new List<string>();
+        mySymbols.Add("testSymbol");
+
+         // Arrange
+        var envMock = new Mock<EnvironmentVariables>();
+        envMock.Setup(x=>x.Get("folderPath")).Returns("testFilePath");
+        envMock.Setup(x=>x.Get("symbols")).Returns(String.Join(", ", mySymbols.ToArray()));
+
+        var programMock = new Mock<Main>(); // can't mock program
+        var consumerMock = new Mock<IConsumer>();
+        var inputMock = new Mock<Ingest>(envMock.Object, null){
+            CallBase = true
+        };
+
+        Assert.Equal(inputMock.Object.folderPath, folderPath);
+    }
+
+    [Fact]
+    public void TestEnvironmentSetup(){
+
+        var folderPath = "testFilePath";
+
+        var mySymbols = new List<string>();
+        mySymbols.Add("testSymbol");
+
+        var key = "symbols";
+        var input = "Test";
+        Environment.SetEnvironmentVariable(key, input);
+
+        key = "folderPath";
+        input = folderPath;
+        Environment.SetEnvironmentVariable(key, input);
+
+        var programMock = new Mock<Main>(); // can't mock program
+        var consumerMock = new Mock<IConsumer>();
+        var inputMock = new Mock<Ingest>(null, null){
+            CallBase = true
+        };
+
+        Assert.Equal(inputMock.Object.folderPath, folderPath);
+    }
+
+
     public static string GetTestPath(string relativePath)
     {
         var codeBaseUrl = new Uri(Assembly.GetExecutingAssembly().Location);
         var codeBasePath = Uri.UnescapeDataString(codeBaseUrl.AbsolutePath);
-        var dirPath = Path.GetDirectoryName(codeBasePath);
+        var dirPath = Path.GetDirectoryName(codeBasePath) ?? "";
         return Path.Combine(dirPath, "resources", relativePath);
     }
     
