@@ -13,16 +13,17 @@
 
 This backtesting engine is a personal project of mine, built in C# to explore and experiment with various trading strategies at scale.
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mccaffers_backtesting-engine&metric=alert_status)](https://sonarcloud.io/summary/overall?id=mccaffers_backtesting-engine)
+
 ### Features
-* Multiple symbol ingest and time synchronisation
-* Sonar analysis -> [link](https://sonarcloud.io/project/overview?id=mccaffers_backtesting-engine)
+* Multiple symbol ingest with time synchronisation
+* xUnit testing 
 
 ### Roadmap
-* xUnit testing
 * Trade Environment
     * Trade Excution
     * Equity Monitoring
-* Reporting
+* Reporting (ElasticSearch)
 
 ### Built With
 
