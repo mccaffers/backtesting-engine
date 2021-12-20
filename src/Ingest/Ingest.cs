@@ -109,23 +109,19 @@ namespace backtesting_engine_ingest
         // Expecting data in the following format
         //  UTC,AskPrice,BidPrice,AskVolume,BidVolume
         //  2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75
-        void PopulateLocalBuffer(string fileName, string line)
+        protected virtual void PopulateLocalBuffer(string fileName, string line)
         {
-
             string[] values = line.Split(StringFormats.sep);
 
             // Initial scan to confirm the line has the right values
-            if (!ArrayHasRightValues(values)) {
+            if (!ArrayHasRightValues(values))
                 return;
-            }
 
             var bid = decimal.Parse(values[1]);
             var dtExtract = extractDt(values[0]);
 
             if (!dtExtract.parsed)
-            {
                 return;
-            }
 
             var dateTime = dtExtract.datetime;
             var ask = decimal.Parse(values[2]);
