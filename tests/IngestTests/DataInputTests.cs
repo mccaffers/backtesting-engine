@@ -35,10 +35,10 @@ public class DataInputTests
             CallBase = true
         };
 
-        MethodInfo dynMethod = inputMock?.Object.GetType().GetMethod("PopulateLocalBuffer", BindingFlags.NonPublic | BindingFlags.Instance);
+        MethodInfo populateLocalBuffer = inputMock?.Object.GetType().GetMethod("PopulateLocalBuffer", BindingFlags.NonPublic | BindingFlags.Instance);
         var fileName = "TestEnvironmentSetup";
 
-        dynMethod.Invoke(inputMock.Object, new object[]{fileName, line});
+        populateLocalBuffer.Invoke(inputMock.Object, new object[]{fileName, line});
 
         Assert.Equal(expectedResult, inputMock.Object.localInputBuffer.Count);
     }
