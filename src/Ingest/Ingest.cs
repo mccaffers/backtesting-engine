@@ -124,11 +124,11 @@ public class Ingest
 
         var dateTime = dtExtract.datetime;
         var ask = decimal.Parse(values[2]);
-        var epic = this.symbols.First(x => fileName.Contains(x));
+        var symbol = this.symbols.First(x => fileName.Contains(x));
 
         localInputBuffer.Add(fileName, new PriceObj()
         {
-            epic = epic,
+            symbol = symbol,
             bid = bid,
             ask = ask,
             date = dateTime

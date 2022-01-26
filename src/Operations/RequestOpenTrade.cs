@@ -1,9 +1,15 @@
-namespace backtesting_engine_ingest;
+using backtesting_engine;
+using backtesting_engine_models;
 
-public class RequestOpenTrade
+namespace backtesting_engine_operations;
+
+public static class RequestOpenTrade
 {
     // TradeRequestObj (Symbol, Direction)
-    public RequestOpenTrade()
-    {
+    public static OpenTradeObject Request(RequestObject requestObj){   
+        return new OpenTradeObject(){
+            openValue = requestObj.value
+        };
     }
+
 }
