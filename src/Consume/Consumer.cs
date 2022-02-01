@@ -119,7 +119,8 @@ public class Consumer : IConsumer
         openTrades.TryAdd(priceObj.symbol, RequestOpenTrade.Request(new RequestObject(){
             level = priceObj.ask,
             direction = "BUY",
-            scalingFactor = priceObj.scalingFactor
+            scalingFactor = priceObj.scalingFactor,
+            size = 1
         }));
     }
 

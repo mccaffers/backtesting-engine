@@ -46,7 +46,9 @@ public static class RequestOpenTrade
             level = requestObj.level,
             limitLevel = stopLevel,
             stopLevel = limitLevel,
-            direction = requestObj.direction
+            direction = requestObj.direction,
+            scalingFactor = requestObj.scalingFactor,
+            size = requestObj.size
         };
     }
 
