@@ -1,6 +1,6 @@
-namespace backtesting_engine;
+namespace backtesting_engine_models;
 
-public class OpenTradeObject {
+public class TradeHistoryObject {
     public string? symbol {get;set;}
     public string? direction { get;set;}
     public decimal openValue {get;set;}
@@ -15,4 +15,3 @@ public class OpenTradeObject {
     public decimal stopLevel {get;set;}
     public decimal limitLevel {get;set;}
 }
-

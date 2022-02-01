@@ -131,7 +131,8 @@ public class Ingest
             symbol = symbol,
             bid = bid,
             ask = ask,
-            date = dateTime
+            date = dateTime,
+            scalingFactor = 10000
         });
     }
 
