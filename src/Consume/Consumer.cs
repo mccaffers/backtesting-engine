@@ -26,7 +26,7 @@ public class Consumer : IConsumer
         {
             var priceObj = await buffer.ReceiveAsync();
             RandomStrategy.Invoke();
-
+            OpenTrade.Request(priceObj, openTrades);
             CheckOpenTrades(priceObj);
 
             // Testing
@@ -107,23 +107,7 @@ public class Consumer : IConsumer
         return openTrades.Where(x => x.Key.Contains(symbol)).Select(x=>x.Value);
     }
 
-    public void OpenTrade(PriceObj priceObj){
-
-        // TODO
-        // One trade open at the moment
-        var openTradesCount = openTrades.Select(x => x.Key.Contains(priceObj.symbol)).Count();
-        if(openTradesCount!=0){
-            return;
-        }
-        
-        System.Console.WriteLine("Opened trade for " + priceObj.symbol);
-        openTrades.TryAdd(priceObj.symbol, RequestOpenTrade.Request(new RequestObject(){
-            level = priceObj.ask,
-            direction = "BUY",
-            scalingFactor = priceObj.scalingFactor,
-            size = 1
-        }));
-    }
+   
 
 }
 
