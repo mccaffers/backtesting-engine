@@ -25,7 +25,8 @@ public class Consumer : IConsumer
         while (await buffer.OutputAvailableAsync())
         {
             var priceObj = await buffer.ReceiveAsync();
-            OpenTrade(priceObj);
+            RandomStrategy.Invoke();
+
             CheckOpenTrades(priceObj);
 
             // Testing
