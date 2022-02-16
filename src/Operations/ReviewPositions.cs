@@ -13,7 +13,7 @@ public class Positions {
 
             var myTradeObj = obj.Value;
 
-            System.Console.WriteLine(priceObj.symbol + " " + CalculateProfit(priceObj, myTradeObj));
+            System.Console.WriteLine(priceObj.symbol + " " + CalculateProfit(priceObj, myTradeObj) + " " + priceObj.date + " bid:"+ priceObj.bid + " ask:" + priceObj.ask +" open:" + myTradeObj.level);
                 
             if (myTradeObj.direction == TradeDirection.BUY)
             {
@@ -55,12 +55,12 @@ public class Positions {
     }
 
     public static decimal CalculateProfit(PriceObj priceObj, OpenTradeObject openTradeObj){
-        var PL = openTradeObj.direction == TradeDirection.BUY ?  priceObj.bid - openTradeObj.level : openTradeObj.level - priceObj.ask;
+        var PL = openTradeObj.direction == TradeDirection.BUY ?  priceObj.ask - openTradeObj.level : openTradeObj.level - priceObj.bid;
         return PL * openTradeObj.scalingFactor * openTradeObj.size;
     }
     
     public static decimal UpdateCloseLevel(PriceObj priceObj, OpenTradeObject openTradeObj){
-        return openTradeObj.direction == TradeDirection.BUY ? priceObj.bid : priceObj.ask;
+        return openTradeObj.direction == TradeDirection.BUY ? priceObj.ask : priceObj.bid;
     }
 
 }

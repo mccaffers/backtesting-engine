@@ -6,7 +6,7 @@ using Utilities;
 
 public static class OpenTrade
 {
-    public static void Request(PriceObj priceObj, ConcurrentDictionary<string, OpenTradeObject> openTrades){   
+    public static void Request(PriceObj priceObj, ConcurrentDictionary<string, OpenTradeObject> openTrades, RequestObject openOrderRequest){   
 
         // TODO
         // One trade open at the moment
@@ -16,11 +16,7 @@ public static class OpenTrade
         }
         
         System.Console.WriteLine("Opened trade for " + priceObj.symbol);
-        openTrades.TryAdd(DictoinaryKeyStrings.OpenTrade(priceObj), RequestOpenTrade.Request(new RequestObject(){
-            level = priceObj.bid,
-            direction = TradeDirection.BUY,
-            scalingFactor = priceObj.scalingFactor,
-            size = 1
-        }));
+      
+        openTrades.TryAdd(DictoinaryKeyStrings.OpenTrade(priceObj), RequestOpenTrade.Request(openOrderRequest));
     }
 }

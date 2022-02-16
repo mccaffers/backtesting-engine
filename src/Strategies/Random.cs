@@ -13,7 +13,14 @@ public class RandomStrategy
 {
     public static void Invoke(PriceObj priceObj){
 
-        OpenTrade.Request(priceObj, Program.openTrades);
+        var openOrderRequest = new RequestObject(){
+            level = priceObj.bid,
+            direction = TradeDirection.BUY,
+            scalingFactor = priceObj.scalingFactor,
+            size = 1
+        };
+
+        OpenTrade.Request(priceObj, Program.openTrades, openOrderRequest);
             
     }
 }
