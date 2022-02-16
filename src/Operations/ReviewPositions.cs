@@ -55,12 +55,12 @@ public class Positions {
     }
 
     public static decimal CalculateProfit(PriceObj priceObj, OpenTradeObject openTradeObj){
-        var PL = openTradeObj.direction == TradeDirection.BUY ?  priceObj.ask - openTradeObj.level : openTradeObj.level - priceObj.bid;
+        var PL = openTradeObj.direction == TradeDirection.BUY ?  priceObj.bid - openTradeObj.level : openTradeObj.level - priceObj.ask;
         return PL * openTradeObj.scalingFactor * openTradeObj.size;
     }
     
     public static decimal UpdateCloseLevel(PriceObj priceObj, OpenTradeObject openTradeObj){
-        return openTradeObj.direction == TradeDirection.BUY ? priceObj.ask : priceObj.bid;
+        return openTradeObj.direction == TradeDirection.BUY ? priceObj.bid : priceObj.ask;
     }
 
 }

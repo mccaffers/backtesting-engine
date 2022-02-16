@@ -14,7 +14,7 @@ public class RandomStrategy
     public static void Invoke(PriceObj priceObj){
 
         var openOrderRequest = new RequestObject(){
-            level = priceObj.bid,
+            level = priceObj.ask,
             direction = TradeDirection.BUY,
             scalingFactor = priceObj.scalingFactor,
             size = 1

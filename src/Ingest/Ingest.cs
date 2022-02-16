@@ -116,14 +116,14 @@ public class Ingest
         if (!ArrayHasRightValues(values))
             return;
 
-        var bid = decimal.Parse(values[1]);
         var dtExtract = extractDt(values[0]);
 
         if (!dtExtract.parsed)
             return;
 
         var dateTime = dtExtract.datetime;
-        var ask = decimal.Parse(values[2]);
+        var ask = decimal.Parse(values[1]);
+        var bid = decimal.Parse(values[2]);
         var symbol = this.symbols.First(x => fileName.Contains(x));
 
         var scalingFactor=0m;
