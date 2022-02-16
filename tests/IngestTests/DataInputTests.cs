@@ -27,6 +27,10 @@ public class DataInputTests
         var input = "TestEnvironmentSetup";
         Environment.SetEnvironmentVariable(key, input);
 
+        key = input + "_SF";
+        input = "1000";
+        Environment.SetEnvironmentVariable(key, input);
+
         key = "folderPath";
         input = PathUtil.GetTestPath("");
         Environment.SetEnvironmentVariable(key, input);

@@ -3,7 +3,6 @@ namespace backtesting_engine_models;
 public class TradeHistoryObject {
     public string? symbol {get;set;}
     public string? direction { get;set;}
-    public decimal openValue {get;set;}
     public decimal size {get;set;}
     public decimal profit {get;set;}
     public decimal level {get;set;}

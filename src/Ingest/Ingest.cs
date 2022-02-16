@@ -126,13 +126,16 @@ public class Ingest
         var ask = decimal.Parse(values[2]);
         var symbol = this.symbols.First(x => fileName.Contains(x));
 
+        var scalingFactor=0m;
+        decimal.TryParse(this.env.Get(symbol+"_SF"), out scalingFactor);
+
         localInputBuffer.Add(fileName, new PriceObj()
         {
             symbol = symbol,
             bid = bid,
             ask = ask,
             date = dateTime,
-            scalingFactor = 10000
+            scalingFactor = scalingFactor
         });
     }
 

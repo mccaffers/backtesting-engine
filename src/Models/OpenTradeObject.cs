@@ -1,9 +1,10 @@
+using backtesting_engine_models;
+
 namespace backtesting_engine;
 
 public class OpenTradeObject {
     public string? symbol {get;set;}
-    public string? direction { get;set;}
-    public decimal openValue {get;set;}
+    public TradeDirection direction { get;set;}
     public decimal size {get;set;}
     public decimal profit {get;set;}
     public decimal level {get;set;}

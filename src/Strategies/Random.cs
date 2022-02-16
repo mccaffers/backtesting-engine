@@ -11,7 +11,9 @@ namespace backtesting_engine_ingest;
 
 public class RandomStrategy
 {
-    public static void Invoke(){
+    public static void Invoke(PriceObj priceObj){
 
+        OpenTrade.Request(priceObj, Program.openTrades);
+            
     }
 }

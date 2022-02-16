@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using backtesting_engine;
 using backtesting_engine_models;
 using backtesting_engine_operations;
+using Utilities;
 
 public static class OpenTrade
 {
@@ -9,15 +10,15 @@ public static class OpenTrade
 
         // TODO
         // One trade open at the moment
-        var openTradesCount = openTrades.Select(x => x.Key.Contains(priceObj.symbol)).Count();
+        var openTradesCount = openTrades.Where(x => x.Key.Contains(priceObj.symbol)).Count();
         if(openTradesCount!=0){
             return;
         }
         
         System.Console.WriteLine("Opened trade for " + priceObj.symbol);
-        openTrades.TryAdd(priceObj.symbol, RequestOpenTrade.Request(new RequestObject(){
-            level = priceObj.ask,
-            direction = "BUY",
+        openTrades.TryAdd(DictoinaryKeyStrings.OpenTrade(priceObj), RequestOpenTrade.Request(new RequestObject(){
+            level = priceObj.bid,
+            direction = TradeDirection.BUY,
             scalingFactor = priceObj.scalingFactor,
             size = 1
         }));

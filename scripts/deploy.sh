@@ -2,7 +2,11 @@
 set -e
 
 export folderPath=/Users/ryan/dev/tickdata/
-export symbols=USDJPY,EURUSD,GBPUSD
+export symbols=GBPUSD #,EURUSD,USDJPY
+
+export GBPUSD_SF=10000
+export EURUSD_SF=10000
+export USDJPY_SF=100
 
 dotnet build ./src
 dotnet test
