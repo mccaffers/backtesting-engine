@@ -13,7 +13,6 @@ public static class RequestOpenTrade
 
         decimal slippage = 1m/requestObj.scalingFactor;
         decimal level = requestObj.level;
-        var pips = 0m;
         decimal stopLevel = 0m;
         decimal limitLevel = 0m;
 
@@ -23,6 +22,7 @@ public static class RequestOpenTrade
 
             stopLevel = level + stopDistance;
             limitLevel = level - limitDistance;
+            
         } else if (requestObj.direction == TradeDirection.BUY){
             
             level+=slippage;
