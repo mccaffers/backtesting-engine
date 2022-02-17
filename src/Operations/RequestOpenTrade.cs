@@ -5,40 +5,31 @@ namespace backtesting_engine_operations;
 
 public static class RequestOpenTrade
 {
-    // TradeRequestObj (Symbol, Direction)
-    public static OpenTradeObject Request(RequestObject requestObj){   
+    // Validation on opening a trade
+    public static void Request(RequestObject reqObj){   
 
-        decimal stopDistance = 50/requestObj.scalingFactor;
-        decimal limitDistance = 50/requestObj.scalingFactor;
-
-        decimal slippage = 1m/requestObj.scalingFactor;
-        decimal level = requestObj.level;
         decimal stopLevel = 0m;
         decimal limitLevel = 0m;
 
-        if(requestObj.direction == TradeDirection.SELL){
+        decimal slippage = 1m/reqObj.priceObj.scalingFactor;
+        reqObj.UpdateLevelWithSlippage(slippage);
 
-            level-=slippage;
+        if(reqObj.stopDistancePips != 0 && reqObj.limitDistancePips!=0){
 
-            stopLevel = level + stopDistance;
-            limitLevel = level - limitDistance;
-            
-        } else if (requestObj.direction == TradeDirection.BUY){
-            
-            level+=slippage;
-            
-            stopLevel = level - stopDistance;
-            limitLevel = level + limitDistance;
+             if(reqObj.direction == TradeDirection.SELL) {
+                stopLevel = reqObj.level +  (reqObj.stopDistancePips / reqObj.priceObj.scalingFactor);
+                limitLevel = reqObj.level - (reqObj.limitDistancePips / reqObj.priceObj.scalingFactor);
+                
+            } else if (reqObj.direction == TradeDirection.BUY) {
+                stopLevel = reqObj.level - (reqObj.stopDistancePips / reqObj.priceObj.scalingFactor);
+                limitLevel = reqObj.level + (reqObj.limitDistancePips / reqObj.priceObj.scalingFactor);
+            }
         }
 
-        return new OpenTradeObject(){
-            level = level,
-            limitLevel = limitLevel,
-            stopLevel = stopLevel,
-            direction = requestObj.direction,
-            scalingFactor = requestObj.scalingFactor,
-            size = requestObj.size
-        };
+        reqObj.stopLevel = stopLevel;
+        reqObj.limitLevel = limitLevel;
+
+        OpenTrade.Request(reqObj);
     }
 
 }

@@ -1,4 +1,5 @@
 using backtesting_engine;
+using backtesting_engine_models;
 
 namespace Utilities;
 
@@ -8,7 +9,7 @@ public class DictoinaryKeyStrings
         return priceObj.symbol + "-" + priceObj.date;
     }
 
-    public static string CloseTradeKey(OpenTradeObject openTradeObj){
+    public static string CloseTradeKey(TradeHistoryObject openTradeObj){
         return  ""+openTradeObj.symbol+"-"+openTradeObj.openDate+"-"+openTradeObj.level;
     }
 }

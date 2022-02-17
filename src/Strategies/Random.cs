@@ -14,23 +14,20 @@ public class RandomStrategy
     public static void Invoke(PriceObj priceObj){
 
 
-        int rnd = new Random().Next(2);
-        TradeDirection direction;
-        if(rnd == 0){
-            direction = TradeDirection.BUY;
-        } else {
+        TradeDirection direction = TradeDirection.BUY;
+        if(new Random().Next(2) == 0){ // 0 or 1
             direction = TradeDirection.SELL;
         }
 
         var openOrderRequest = new RequestObject(priceObj){
-            direction = direction,
-            scalingFactor = priceObj.scalingFactor,
-            size = 1,
-            stopLevel = 50/priceObj.scalingFactor,
-            limitLevel= 50/priceObj.scalingFactor
+            direction= direction,
+            size=1,
+            stopDistancePips=50,
+            limitDistancePips=50,
         };
 
-        OpenTrade.Request(priceObj, Program.openTrades, openOrderRequest);
+        RequestOpenTrade.Request(openOrderRequest);
+
             
     }
 }
