@@ -33,8 +33,11 @@ public class RequestObject {
     public DateTime openDate {get;}
     public string? symbol {get;}
 
-    // Private propertises
+    // Private set propertises
     public decimal level {get; private set;}
+    public decimal close {get; private set;}
+    public decimal profit {get; private set;}
+    public DateTime closeDate {get; private set;}
 
     // Can only be set in the initialisation of the object
     public decimal size {get;init;}
@@ -42,6 +45,15 @@ public class RequestObject {
     // Public propertises, for adjustments
     public decimal stopLevel {get; set;}
     public decimal limitLevel {get; set;}
+
+
+    public void UpdateClose(PriceObj priceObj){
+        this.close = this.direction == TradeDirection.BUY? priceObj.bid : priceObj.ask;
+        this.closeDate = priceObj.date;
+        this.profit = ((this.direction == TradeDirection.BUY ? this.close - this.level : this.level - this.close) 
+                        * priceObj.scalingFactor)
+                            * this.size;
+    }
 
     public void UpdateLevelWithSlippage(decimal slippage){
         this.level = this.direction == TradeDirection.SELL? this.level-slippage : this.level+slippage;

@@ -18,7 +18,7 @@ public static class OpenTrade
             return;
         }
         
-        System.Console.WriteLine("Opened trade for " + reqObj.priceObj.symbol + " " + reqObj.direction);
+        // System.Console.WriteLine("Opened trade for " + reqObj.priceObj.symbol + " " + reqObj.direction);
       
         Program.openTrades.TryAdd(reqObj.key, reqObj);
     }

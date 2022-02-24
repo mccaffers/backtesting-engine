@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
@@ -49,7 +50,7 @@ public class ObjectsPopulateTest
 
         // Act
         var inputObj = inputMock.Object;
-        await inputObj.ReadLines(new BufferBlock<PriceObj>());
+        await inputObj.ReadLines(new BufferBlock<PriceObj>(), It.IsAny<CancellationToken>());
         
         // Assert
         Dictionary<string, StreamReader> streamDic = inputObj.streamDictionary;

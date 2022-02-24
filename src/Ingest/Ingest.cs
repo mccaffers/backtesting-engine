@@ -8,7 +8,7 @@ namespace backtesting_engine_ingest;
 
 public class Ingest
 {
-    private IEnumerable<string>  symbols { get; set; }
+    private IEnumerable<string>  symbols;
     private EnvironmentVariables env { get; }
 
     public List<string> fileNames { get; }
@@ -47,8 +47,10 @@ public class Ingest
     // 1. Builds a dictionary of filenames (.csv's) to read
     // 2. Populates a local buffer with the read line and compare timestamps
     // 3. Closes all streamreader files at the end
-    public async Task ReadLines(BufferBlock<PriceObj> buffer)
+    CancellationToken _cts;
+    public async Task ReadLines(BufferBlock<PriceObj> buffer, CancellationToken cts)
     {
+        _cts=cts;
         foreach (var file in fileNames)
         {
             streamDictionary.Add(file, ReadFile(file));
@@ -84,6 +86,9 @@ public class Ingest
         // Loop statements if files still have contents to parse
         while (streamDictionary.Any(x => !x.Value.EndOfStream))
         {
+        
+            _cts.ThrowIfCancellationRequested();
+
             foreach (var file in streamDictionary)
             {
 

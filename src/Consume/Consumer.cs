@@ -11,16 +11,31 @@ namespace backtesting_engine_ingest;
 
 public interface IConsumer
 {
-    Task ConsumeAsync(BufferBlock<PriceObj> buffer);
+    Task ConsumeAsync(BufferBlock<PriceObj> buffer, CancellationToken cts);
+    void ReviewEquity();
 }
 
 public class Consumer : IConsumer
 {
 
-    public async Task ConsumeAsync(BufferBlock<PriceObj> buffer)
+    private EnvironmentVariables env { get; }
+    private decimal maximumDrawndownPercentage { get;} 
+    private decimal accountEquity { get; }
+
+    public Consumer(EnvironmentVariables? env = null)
     {
+        this.env = env ?? new EnvironmentVariables(); // Allow injectable env variables
+        this.accountEquity = decimal.Parse(this.env.Get("accountEquity"));
+        this.maximumDrawndownPercentage = decimal.Parse(this.env.Get("maximumDrawndownPercentage"));
+    }
+
+    public async Task ConsumeAsync(BufferBlock<PriceObj> buffer, CancellationToken cts)
+    {
+
         while (await buffer.OutputAvailableAsync())
         {
+            cts.ThrowIfCancellationRequested();
+
             var priceObj = await buffer.ReceiveAsync();
             RandomStrategy.Invoke(priceObj);
             Positions.Review(priceObj);
@@ -28,10 +43,31 @@ public class Consumer : IConsumer
         }
     }
 
-    public void ReviewEquity(){
+    public void ReviewEquity()
+    {
+        
+        if (ExceededDrawdownThreshold())
+        {
+            // close all trades
+            Positions.CloseAll();
+            
+            // trigger final report
 
+            // stop any more trades
+            throw new Exception("Exceeded threshold PL:"+ UpdatePL());
+        }
     }
-    
+
+    public decimal UpdatePL(){
+        var pl = Program.tradeHistory.Sum(x => x.Value.profit);
+        return accountEquity + pl + Positions.GetOpenPL();
+    }
+
+    // need to rename, it's not drawndown but percent change?
+    public bool ExceededDrawdownThreshold(){
+        return (UpdatePL() < accountEquity*(1-(maximumDrawndownPercentage/100)));
+    }
+
 }
 
 public class PropertyCopier<TParent, TChild> where TParent : class
