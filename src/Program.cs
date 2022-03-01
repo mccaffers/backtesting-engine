@@ -15,6 +15,8 @@ public static class Program
     public readonly static ConcurrentDictionary<string, RequestObject> openTrades = new ConcurrentDictionary<string, RequestObject>();
     public readonly static ConcurrentDictionary<string, TradeHistoryObject> tradeHistory = new ConcurrentDictionary<string, TradeHistoryObject >();
 
+    public readonly static AccountObj accountObj = new AccountObj();
+
     public static async Task Main(string[] args)
     {
         await new Main().IngestAndConsume(new Consumer(), new Ingest());

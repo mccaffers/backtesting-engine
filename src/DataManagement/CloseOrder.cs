@@ -19,7 +19,7 @@ public static class CloseOrder
         System.Console.WriteLine("Closed trade for " + tradeHistoryObj.symbol + " " + tradeHistoryObj.profit + " " + tradeHistoryObj.direction + " " + tradeHistoryObj.level + " " + tradeHistoryObj.closeLevel);
         // System.Console.WriteLine("Closed trade for " + priceObj.symbol + " " + tradeHistoryObj.profit + ", Account PL:" + Program.tradeHistory.Sum(x=>x.Value.profit));
 
-        // Elastic.Post(tradeHistoryObj, Consumer.accountObj);
+        System.Console.WriteLine(Program.accountObj.pnl);
         
     }
 }

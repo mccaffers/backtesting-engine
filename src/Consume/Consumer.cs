@@ -18,21 +18,14 @@ public interface IConsumer
 
 public class Consumer : IConsumer
 {
-
     private EnvironmentVariables env { get; }
-    private decimal maximumDrawndownPercentage { get;} 
-
-    public AccountObj accountObj { get; }
 
     public Consumer(EnvironmentVariables? env = null, AccountObj? accountObj = null)
     {
         this.env = env ?? new EnvironmentVariables(); // Allow injectable env variables
 
-        this.accountObj = new AccountObj(){
-            openingEquity = decimal.Parse(this.env.Get("accountEquity"))
-        };
-
-        this.maximumDrawndownPercentage = decimal.Parse(this.env.Get("maximumDrawndownPercentage"));
+        Program.accountObj.openingEquity = decimal.Parse(this.env.Get("accountEquity"));
+        Program.accountObj.maximumDrawndownPercentage = decimal.Parse(this.env.Get("maximumDrawndownPercentage"));
     }
 
     public async Task ConsumeAsync(BufferBlock<PriceObj> buffer, CancellationToken cts)
@@ -52,23 +45,21 @@ public class Consumer : IConsumer
     public void ReviewEquity()
     {
         
-        if (ExceededDrawdownThreshold())
+        if (Program.accountObj.hasAccountExceededDrawdownThreshold())
         {
             // close all trades
             Positions.CloseAll();
             
             // trigger final report
-            Reporting.EndOfRunReport(accountObj);
+            Reporting.EndOfRunReport(Program.accountObj);
 
             // stop any more trades
-            throw new Exception("Exceeded threshold PL:"+ accountObj.pnl);
+            throw new Exception("Exceeded threshold PL:"+ Program.accountObj.pnl);
         }
     }
 
     // need to rename, it's not drawndown but percent change?
-    public bool ExceededDrawdownThreshold(){
-        return (accountObj.pnl < accountObj.openingEquity*(1-(maximumDrawndownPercentage/100)));
-    }
+    
 
 }
 
