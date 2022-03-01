@@ -6,7 +6,7 @@ using Utilities;
 
 namespace backtesting_engine;
 
-public static class OpenTrade
+public static class OpenOrder
 {
     // Data Update
     public static void Request(RequestObject reqObj){   

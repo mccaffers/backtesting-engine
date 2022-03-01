@@ -29,7 +29,7 @@ public static class RequestOpenTrade
         reqObj.stopLevel = stopLevel;
         reqObj.limitLevel = limitLevel;
 
-        OpenTrade.Request(reqObj);
+        OpenOrder.Request(reqObj);
     }
 
 }

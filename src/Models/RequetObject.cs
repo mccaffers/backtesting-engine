@@ -8,7 +8,7 @@ public class RequestObject {
     {
         this.priceObj = priceObj;
         this.openDate = priceObj.date;
-        this.key = DictoinaryKeyStrings.OpenTrade(priceObj);
+        this.key = DictionaryKeyStrings.OpenTrade(priceObj);
         this.symbol = priceObj.symbol;
     }
 
@@ -45,7 +45,6 @@ public class RequestObject {
     // Public propertises, for adjustments
     public decimal stopLevel {get; set;}
     public decimal limitLevel {get; set;}
-
 
     public void UpdateClose(PriceObj priceObj){
         this.close = this.direction == TradeDirection.BUY? priceObj.bid : priceObj.ask;

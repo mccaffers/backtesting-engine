@@ -3,7 +3,7 @@ using backtesting_engine_models;
 
 namespace Utilities;
 
-public class DictoinaryKeyStrings
+public class DictionaryKeyStrings
 {
     public static string OpenTrade(PriceObj priceObj){
         return priceObj.symbol + "-" + priceObj.date;

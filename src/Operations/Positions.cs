@@ -7,17 +7,12 @@ namespace backtesting_engine_operations;
 
 public class Positions {
 
-
     public static void CloseAll(){
         foreach(var item in Program.openTrades){
             UpdateTradeHistory(item.Value);
         }
     }
-
-    public static decimal GetOpenPL(){
-        return Program.openTrades.Sum(x=>CalculateProfit(x.Value.close, x.Value));
-    }
-
+    
     public static void Review(PriceObj priceObj){
 
         foreach(var myTradeObj in GetOrderBook(priceObj.symbol)){
@@ -54,7 +49,7 @@ public class Positions {
         tradeHistoryObj.runningTime = reqObj.closeDate.Subtract(reqObj.openDate).TotalMinutes;
 
         PropertyCopier<RequestObject, TradeHistoryObject>.Copy(reqObj, tradeHistoryObj);
-        CloseTrade.Request(tradeHistoryObj);
+        CloseOrder.Request(tradeHistoryObj);
   }
 
     public static decimal CalculateProfit(decimal level, RequestObject openTradeObj){

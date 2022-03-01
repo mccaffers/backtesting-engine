@@ -5,6 +5,7 @@ using backtesting_engine;
 using backtesting_engine_models;
 using backtesting_engine_operations;
 using Newtonsoft.Json;
+using Report;
 using Utilities;
 
 namespace backtesting_engine_ingest;
@@ -20,12 +21,17 @@ public class Consumer : IConsumer
 
     private EnvironmentVariables env { get; }
     private decimal maximumDrawndownPercentage { get;} 
-    private decimal accountEquity { get; }
 
-    public Consumer(EnvironmentVariables? env = null)
+    public AccountObj accountObj { get; }
+
+    public Consumer(EnvironmentVariables? env = null, AccountObj? accountObj = null)
     {
         this.env = env ?? new EnvironmentVariables(); // Allow injectable env variables
-        this.accountEquity = decimal.Parse(this.env.Get("accountEquity"));
+
+        this.accountObj = new AccountObj(){
+            openingEquity = decimal.Parse(this.env.Get("accountEquity"))
+        };
+
         this.maximumDrawndownPercentage = decimal.Parse(this.env.Get("maximumDrawndownPercentage"));
     }
 
@@ -52,20 +58,16 @@ public class Consumer : IConsumer
             Positions.CloseAll();
             
             // trigger final report
+            Reporting.EndOfRunReport(accountObj);
 
             // stop any more trades
-            throw new Exception("Exceeded threshold PL:"+ UpdatePL());
+            throw new Exception("Exceeded threshold PL:"+ accountObj.pnl);
         }
-    }
-
-    public decimal UpdatePL(){
-        var pl = Program.tradeHistory.Sum(x => x.Value.profit);
-        return accountEquity + pl + Positions.GetOpenPL();
     }
 
     // need to rename, it's not drawndown but percent change?
     public bool ExceededDrawdownThreshold(){
-        return (UpdatePL() < accountEquity*(1-(maximumDrawndownPercentage/100)));
+        return (accountObj.pnl < accountObj.openingEquity*(1-(maximumDrawndownPercentage/100)));
     }
 
 }

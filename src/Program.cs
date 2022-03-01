@@ -12,8 +12,8 @@ namespace backtesting_engine;
 public static class Program
 {
 
-    public static ConcurrentDictionary<string, RequestObject> openTrades = new ConcurrentDictionary<string, RequestObject>();
-    public static ConcurrentDictionary<string, TradeHistoryObject> tradeHistory = new ConcurrentDictionary<string, TradeHistoryObject >();
+    public readonly static ConcurrentDictionary<string, RequestObject> openTrades = new ConcurrentDictionary<string, RequestObject>();
+    public readonly static ConcurrentDictionary<string, TradeHistoryObject> tradeHistory = new ConcurrentDictionary<string, TradeHistoryObject >();
 
     public static async Task Main(string[] args)
     {
