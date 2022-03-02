@@ -25,10 +25,10 @@ public class Consumer : IConsumer
     {
         while (await buffer.OutputAvailableAsync())
         {
-
             // Cancel this task if a cancellation token is received
             cts.ThrowIfCancellationRequested();
 
+            // Get the symbol data off the buffer
             var priceObj = await buffer.ReceiveAsync();
 
             // Invoke all the strategies defined in configuration
@@ -37,7 +37,9 @@ public class Consumer : IConsumer
                 i.Invoke(priceObj);
             }
 
+            // Review open positions, check if the new symbol data meets the threshold for LIMI/STOP levels
             Positions.Review(priceObj);
+            
             ReviewEquity();
         }
     }
@@ -57,10 +59,6 @@ public class Consumer : IConsumer
             throw new Exception("Exceeded threshold PL:"+ Program.accountObj.pnl);
         }
     }
-
-    // need to rename, it's not drawndown but percent change?
-    
-
 }
 
 public class PropertyCopier<TParent, TChild> where TParent : class
