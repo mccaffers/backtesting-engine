@@ -4,6 +4,8 @@ using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
 using backtesting_engine_models;
 using backtesting_engine_operations;
+using backtesting_engine_strategies;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Report;
 using Utilities;
@@ -23,10 +25,18 @@ public class Consumer : IConsumer
     {
         while (await buffer.OutputAvailableAsync())
         {
+
+            // Cancel this task if a cancellation token is received
             cts.ThrowIfCancellationRequested();
 
             var priceObj = await buffer.ReceiveAsync();
-            RandomStrategy.Invoke(priceObj);
+
+            // Invoke all the strategies defined in configuration
+            var strategies = Program.scope.ServiceProvider.GetServices<IStrategy>();
+            foreach(var i in strategies){
+                i.Invoke(priceObj);
+            }
+
             Positions.Review(priceObj);
             ReviewEquity();
         }

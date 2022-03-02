@@ -11,7 +11,7 @@ export USDJPY_SF=100
 export accountEquity=500
 export maximumDrawndownPercentage=20
 
-export strategy=random
+export strategy=RandomStrategy
 
 . ./scripts/shared/variables.sh
 
