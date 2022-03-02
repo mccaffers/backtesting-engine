@@ -18,19 +18,9 @@ public interface IConsumer
 
 public class Consumer : IConsumer
 {
-    private EnvironmentVariables env { get; }
-
-    public Consumer(EnvironmentVariables? env = null, AccountObj? accountObj = null)
-    {
-        this.env = env ?? new EnvironmentVariables(); // Allow injectable env variables
-
-        Program.accountObj.openingEquity = decimal.Parse(this.env.Get("accountEquity"));
-        Program.accountObj.maximumDrawndownPercentage = decimal.Parse(this.env.Get("maximumDrawndownPercentage"));
-    }
 
     public async Task ConsumeAsync(BufferBlock<PriceObj> buffer, CancellationToken cts)
     {
-
         while (await buffer.OutputAvailableAsync())
         {
             cts.ThrowIfCancellationRequested();

@@ -11,6 +11,8 @@ export USDJPY_SF=100
 export accountEquity=500
 export maximumDrawndownPercentage=20
 
+export strategy=random
+
 . ./scripts/shared/variables.sh
 
 dotnet build ./src
