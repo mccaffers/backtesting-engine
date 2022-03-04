@@ -21,5 +21,6 @@ public static class CloseOrder
 
         System.Console.WriteLine(Program.accountObj.pnl);
         
+        Reporting.TradeUpdate(tradeHistoryObj.symbol, tradeHistoryObj.profit);
     }
 }

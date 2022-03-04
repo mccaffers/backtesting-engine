@@ -1,8 +1,8 @@
 namespace backtesting_engine_models;
 
 public class TradeHistoryObject {
-    public string key {get;set;}
-    public string? symbol {get;set;}
+    public string key {get;set;} = "";
+    public string symbol {get;set;} = "";
     public TradeDirection direction { get;set;}
     public decimal size {get;set;}
     public decimal profit {get;set;}
