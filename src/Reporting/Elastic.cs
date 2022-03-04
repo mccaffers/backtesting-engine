@@ -17,8 +17,18 @@ public static class Reporting
 
     static ElasticClient esClient = new ElasticClient(settings);
 
-    public static void EndOfRunReport(AccountObj account){
-        esClient.Index(account,b=>b.Index("report"));
+    public static void EndOfRunReport(string reason){
+        var report = new ReportObj(){
+            symbols= env.Get("symbols").Split(","),
+            pnl=Program.accountObj.pnl,
+            runID=env.Get("runID"),
+            openingEquity=Program.accountObj.openingEquity,
+            maximumDrawndownPercentage=Program.accountObj.maximumDrawndownPercentage,
+            strategy=env.Get("strategy"),
+            status="complete",
+            reason=reason
+        };
+        esClient.Index(report,b=>b.Index("report"));
     }
 
     public static void Post<T>(T input){

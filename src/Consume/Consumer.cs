@@ -42,6 +42,8 @@ public class Consumer : IConsumer
             
             ReviewEquity();
         }
+
+        Reporting.EndOfRunReport("EndOfBuffer");
     }
 
     public void ReviewEquity()
@@ -53,7 +55,7 @@ public class Consumer : IConsumer
             Positions.CloseAll();
             
             // trigger final report
-            Reporting.EndOfRunReport(Program.accountObj);
+            Reporting.EndOfRunReport("accountExceededDrawdownThreshold");
 
             // stop any more trades
             throw new Exception("Exceeded threshold PL:"+ Program.accountObj.pnl);

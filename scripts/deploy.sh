@@ -15,6 +15,8 @@ export strategy=RandomStrategy
 
 . ./scripts/shared/variables.sh
 
+export runID=$(uuidgen|sed -e 's/-//g')
+
 dotnet build ./src
 dotnet test
 dotnet run --project ./src
