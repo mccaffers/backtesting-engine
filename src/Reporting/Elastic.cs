@@ -27,6 +27,7 @@ public class Reporting
 
     public static void EndOfRunReport(string reason){
         var report = new ReportObj(){
+            date = DateTime.Now,
             symbols= env.Get("symbols").Split(","),
             pnl=Program.accountObj.pnl,
             runID=env.Get("runID"),
