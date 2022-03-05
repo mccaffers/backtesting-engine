@@ -20,7 +20,11 @@ public class RandomStrategy : IStrategy
     {
 
         TradeDirection direction = TradeDirection.BUY;
-        if (new Random().Next(2) == 0)
+        #pragma warning disable S2245 // Weak Cryptography Warning
+        var randomInt = new Random().Next(2); // No need for slow crypto function, output is used to determine BUY OR SELL only
+        #pragma warning restore S2245
+
+        if (randomInt== 0)
         { // 0 or 1
             direction = TradeDirection.SELL;
         }

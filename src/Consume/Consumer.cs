@@ -58,12 +58,12 @@ public class Consumer : IConsumer
             Reporting.EndOfRunReport("accountExceededDrawdownThreshold");
 
             // stop any more trades
-            throw new Exception("Exceeded threshold PL:"+ Program.accountObj.pnl);
+            throw new ArgumentException("Exceeded threshold PL:"+ Program.accountObj.pnl);
         }
     }
 }
 
-public class PropertyCopier<TParent, TChild> where TParent : class
+public static class PropertyCopier<TParent, TChild> where TParent : class
                                             where TChild : class
 {
     public static void Copy(TParent parent, TChild child)

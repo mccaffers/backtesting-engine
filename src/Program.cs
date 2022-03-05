@@ -14,8 +14,8 @@ namespace backtesting_engine;
 public static class Program
 {
 
-    public readonly static ConcurrentDictionary<string, RequestObject> openTrades = new ConcurrentDictionary<string, RequestObject>();
-    public readonly static ConcurrentDictionary<string, TradeHistoryObject> tradeHistory = new ConcurrentDictionary<string, TradeHistoryObject >();
+    public static ConcurrentDictionary<string, RequestObject> openTrades { get; } = new ConcurrentDictionary<string, RequestObject>();
+    public static ConcurrentDictionary<string, TradeHistoryObject> tradeHistory { get; } = new ConcurrentDictionary<string, TradeHistoryObject >();
 
     public readonly static AccountObj accountObj = new AccountObj();
     public readonly static EnvironmentVariables env = new EnvironmentVariables();

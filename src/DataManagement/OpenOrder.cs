@@ -11,15 +11,12 @@ public static class OpenOrder
     // Data Update
     public static void Request(RequestObject reqObj){   
 
-        // TODO
         // One trade open at the moment
-        var openTradesCount = Program.openTrades.Where(x => x.Key.Contains(reqObj.priceObj.symbol)).Count();
+        var openTradesCount = Program.openTrades.Count(x => x.Key.Contains(reqObj.priceObj.symbol));
         if(openTradesCount!=0){
             return;
         }
         
-        // System.Console.WriteLine("Opened trade for " + reqObj.priceObj.symbol + " " + reqObj.direction);
-      
         Program.openTrades.TryAdd(reqObj.key, reqObj);
     }
 }

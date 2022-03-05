@@ -8,7 +8,7 @@ namespace backtesting_engine_ingest;
 
 public class Ingest
 {
-    private IEnumerable<string>  symbols;
+    private readonly IEnumerable<string>  symbols;
     private EnvironmentVariables env { get; }
 
     public List<string> fileNames { get; }

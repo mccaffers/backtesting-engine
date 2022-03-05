@@ -17,7 +17,6 @@ public static class CloseOrder
         Program.openTrades.TryRemove(tradeHistoryObj.key, out _);
 
         System.Console.WriteLine("Closed trade for " + tradeHistoryObj.symbol + " " + tradeHistoryObj.profit + " " + tradeHistoryObj.direction + " " + tradeHistoryObj.level + " " + tradeHistoryObj.closeLevel);
-        // System.Console.WriteLine("Closed trade for " + priceObj.symbol + " " + tradeHistoryObj.profit + ", Account PL:" + Program.tradeHistory.Sum(x=>x.Value.profit));
 
         System.Console.WriteLine(Program.accountObj.pnl);
         
