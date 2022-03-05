@@ -132,7 +132,9 @@ public class Ingest
         var symbol = this.symbols.First(x => fileName.Contains(x));
 
         var scalingFactor=0m;
-        decimal.TryParse(this.env.Get(symbol+"_SF"), out scalingFactor);
+        if(!decimal.TryParse(this.env.Get(symbol+"_SF"), out scalingFactor)){
+            throw new ArgumentException("Cannot read scaling factor of symbol");
+        }
 
         localInputBuffer.Add(fileName, new PriceObj()
         {
