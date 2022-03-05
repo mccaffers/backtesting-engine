@@ -39,8 +39,9 @@ public class Reporting
         esClient.Index(report,b=>b.Index("report"));
     }
 
-    public static void TradeUpdate(string symbol, decimal profit){
+    public static void TradeUpdate(DateTime date, string symbol, decimal profit){
          tradeUpdateArray.Add(new ReportObj(){
+            date=date,
             symbols= env.Get("symbols").Split(","),
             pnl=Program.accountObj.pnl,
             runID=env.Get("runID"),

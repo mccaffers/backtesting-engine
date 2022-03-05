@@ -1,6 +1,7 @@
 namespace backtesting_engine;
 
 public class ReportObj {
+    public DateTime date {get;set;}
     public string[]? symbols { get;set; }
     public decimal pnl {get;set;}
     public string? runID {get;set;}
