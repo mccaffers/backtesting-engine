@@ -61,6 +61,7 @@ public class DataInputTests
          // Arrange
         var envMock = new Mock<EnvironmentVariables>();
         envMock.Setup(x=>x.Get("symbols")).Returns(String.Join(", ", mySymbols.ToArray()));
+        envMock.Setup(x=>x.Get("testSymbol_SF")).Returns("1000");
 
         var programMock = new Mock<Main>(); // can't mock program
         var consumerMock = new Mock<IConsumer>();

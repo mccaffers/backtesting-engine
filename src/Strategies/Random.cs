@@ -16,13 +16,12 @@ public interface IStrategy
 
 public class RandomStrategy : IStrategy
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
     public void Invoke(PriceObj priceObj)
     {
 
         TradeDirection direction = TradeDirection.BUY;
-        #pragma warning disable S2245 // Weak Cryptography Warning
-        var randomInt = new Random().Next(2); // No need for slow crypto function, output is used to determine BUY OR SELL only
-        #pragma warning restore S2245
+        var randomInt = new Random().Next(2); 
 
         if (randomInt== 0)
         { // 0 or 1
