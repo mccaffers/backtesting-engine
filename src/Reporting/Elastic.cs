@@ -51,8 +51,6 @@ public class Reporting
         BatchTradeUpdate();
     }
 
-    static int id = 0;
-
     private static void BatchTradeUpdate(){
 
         if(DateTime.Now.Subtract(lastPostTime).TotalSeconds <= 5 ){
@@ -62,8 +60,8 @@ public class Reporting
         lastPostTime=DateTime.Now;
         
         // Upload the trade results
-        esClient.Bulk(bd => bd.IndexMany(tradeUpdateArray.ToArray(), (descriptor, s) => descriptor.Index("trades").Id(++id)));
-
+        var indexManyResponse = esClient.Bulk(bd => bd.IndexMany(tradeUpdateArray, (descriptor, s) => descriptor.Index("trades")));
+                
         // Clear the history
         tradeUpdateArray.RemoveRange(0, tradeUpdateArray.Count());
     }
