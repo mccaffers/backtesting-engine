@@ -55,17 +55,16 @@ public class Reporting
 
     private static void BatchTradeUpdate(){
 
-        TimeSpan diff = DateTime.Now.Subtract(lastPostTime);
-        if(diff.TotalSeconds <= 5 ){
+        if(DateTime.Now.Subtract(lastPostTime).TotalSeconds <= 5 ){
             return;
         }
+
         lastPostTime=DateTime.Now;
         
-        // var response = esClient.IndexMany(tradeUpdateArray,"trade");
+        // Upload the trade results
         esClient.Bulk(bd => bd.IndexMany(tradeUpdateArray.ToArray(), (descriptor, s) => descriptor.Index("trades").Id(++id)));
 
-        // System.Console.WriteLine(JsonConvert.SerializeObject(tradeUpdateArray));
-        System.Console.WriteLine(tradeUpdateArray.Count());
+        // Clear the history
         tradeUpdateArray.RemoveRange(0, tradeUpdateArray.Count());
     }
 
