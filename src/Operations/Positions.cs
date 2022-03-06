@@ -5,7 +5,7 @@ using Utilities;
 
 namespace backtesting_engine_operations;
 
-public class Positions {
+public static class Positions {
 
     public static void CloseAll(){
         foreach(var item in Program.openTrades){
@@ -19,19 +19,12 @@ public class Positions {
 
             myTradeObj.UpdateClose(priceObj);
 
-            if (myTradeObj.direction == TradeDirection.BUY)
-            {
-                if (priceObj.bid <= myTradeObj.stopLevel || priceObj.bid >= myTradeObj.limitLevel)
-                {
-                    UpdateTradeHistory(myTradeObj);
-                }
-            }
-            else if (myTradeObj.direction == TradeDirection.SELL)
-            {
-                if (priceObj.ask >= myTradeObj.stopLevel || priceObj.ask <= myTradeObj.limitLevel)
-                {
-                    UpdateTradeHistory(myTradeObj);
-                }
+            if (myTradeObj.direction == TradeDirection.BUY &&
+                    priceObj.bid <= myTradeObj.stopLevel || priceObj.bid >= myTradeObj.limitLevel) {
+                UpdateTradeHistory(myTradeObj);
+            } else if (myTradeObj.direction == TradeDirection.SELL &&
+                     (priceObj.ask >= myTradeObj.stopLevel || priceObj.ask <= myTradeObj.limitLevel)){ 
+                UpdateTradeHistory(myTradeObj);
             }
         }
     }

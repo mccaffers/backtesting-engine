@@ -21,7 +21,7 @@ public static class Program
     public readonly static EnvironmentVariables env = new EnvironmentVariables();
 
     // Dependency Injection Scope
-    public static IServiceScope scope = RegisterServices().CreateScope();
+    public readonly static IServiceScope scope = RegisterServices().CreateScope();
 
     public static async Task Main(string[] args)
     {

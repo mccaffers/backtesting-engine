@@ -8,13 +8,10 @@ using Utilities;
 
 namespace Report;
 
-public class Reporting
+public static class Reporting
 {
 
     static EnvironmentVariables env { get; } = new EnvironmentVariables();
-
-    // static ConnectionSettings settings = new ConnectionSettings(env.Get("elasticCloudID"), 
-    //                                         new BasicAuthenticationCredentials(env.Get("elasticUser"),env.Get("elasticPassword")));
 
     static CloudConnectionPool pool = new CloudConnectionPool(env.Get("elasticCloudID"), new BasicAuthenticationCredentials(env.Get("elasticUser"),env.Get("elasticPassword")));
     
@@ -62,14 +59,10 @@ public class Reporting
         lastPostTime=DateTime.Now;
         
         // Upload the trade results
-        var indexManyResponse = esClient.Bulk(bd => bd.IndexMany(tradeUpdateArray, (descriptor, s) => descriptor.Index("trades")));
+        esClient.Bulk(bd => bd.IndexMany(tradeUpdateArray, (descriptor, s) => descriptor.Index("trades")));
                 
         // Clear the history
-        tradeUpdateArray.RemoveRange(0, tradeUpdateArray.Count());
-    }
-
-    public static void Send(){
-
+        tradeUpdateArray.RemoveRange(0, tradeUpdateArray.Count);
     }
 
 }
