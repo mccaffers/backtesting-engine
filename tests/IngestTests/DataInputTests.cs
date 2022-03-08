@@ -16,6 +16,20 @@ namespace Tests;
 public class DataInputTests
 {
 
+    private void SetEnvironmentVariables(){
+
+        Environment.SetEnvironmentVariable("symbols", "TestEnvironmentSetup");
+        Environment.SetEnvironmentVariable("TestEnvironmentSetup" + "_SF", "1000");
+        Environment.SetEnvironmentVariable("folderPath", PathUtil.GetTestPath(""));
+        Environment.SetEnvironmentVariable("strategy", "random");
+        Environment.SetEnvironmentVariable("runID", "debug");
+        Environment.SetEnvironmentVariable("elasticUser", "debug");
+        Environment.SetEnvironmentVariable("elasticPassword", "debug");
+        Environment.SetEnvironmentVariable("elasticCloudID", "debug");
+        Environment.SetEnvironmentVariable("accountEquity", "debug");
+        Environment.SetEnvironmentVariable("maximumDrawndownPercentage", "debug");
+    }
+
     [Theory]
     [InlineData(1, "2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75")]
     [InlineData(0, "UTC,AskPrice,BidPrice,AskVolume,BidVolume")]
@@ -24,28 +38,18 @@ public class DataInputTests
     [InlineData(0, "")]
     public void TestPopulateLocalBuffer(int expectedResult, string line){
 
-        var key = "symbols";
-        var input = "TestEnvironmentSetup";
-        Environment.SetEnvironmentVariable(key, input);
+        SetEnvironmentVariables(); 
 
-        key = input + "_SF";
-        input = "1000";
-        Environment.SetEnvironmentVariable(key, input);
-
-        key = "folderPath";
-        input = PathUtil.GetTestPath("");
-        Environment.SetEnvironmentVariable(key, input);
-
-        var inputMock = new Mock<Ingest>(null, null){
+        var inputMock = new Mock<Ingest>(){
             CallBase = true
         };
 
-        MethodInfo populateLocalBuffer = inputMock?.Object.GetType().GetMethod("PopulateLocalBuffer", BindingFlags.NonPublic | BindingFlags.Instance);
+        MethodInfo? populateLocalBuffer = inputMock?.Object.GetType().GetMethod("PopulateLocalBuffer", BindingFlags.NonPublic | BindingFlags.Instance);
         var fileName = "TestEnvironmentSetup";
 
-        populateLocalBuffer.Invoke(inputMock.Object, new object[]{fileName, line});
+        populateLocalBuffer?.Invoke(inputMock?.Object, new object[]{fileName, line});
 
-        Assert.Equal(expectedResult, inputMock.Object.localInputBuffer.Count);
+        Assert.Equal(expectedResult, inputMock?.Object.localInputBuffer.Count);
     }
     
     [Fact]
@@ -58,14 +62,23 @@ public class DataInputTests
         var myFiles = new List<string>();
         myFiles.Add(PathUtil.GetTestPath("testSymbol.csv"));
 
-         // Arrange
-        var envMock = new Mock<EnvironmentVariables>();
-        envMock.Setup(x=>x.Get("symbols")).Returns(String.Join(", ", mySymbols.ToArray()));
-        envMock.Setup(x=>x.Get("testSymbol_SF")).Returns("1000");
+        // Arrange
+        var key = "symbols";
+        var input = "TestEnvironmentSetup";
+        Environment.SetEnvironmentVariable(key, input);
+
+        key = input + "_SF";
+        input = "1000";
+        Environment.SetEnvironmentVariable(key, input);
+
+        key = "folderPath";
+        input = PathUtil.GetTestPath("");
+        Environment.SetEnvironmentVariable(key, input);
+
 
         var programMock = new Mock<Main>(); // can't mock program
         var consumerMock = new Mock<IConsumer>();
-        var inputMock = new Mock<Ingest>(envMock.Object, myFiles){
+        var inputMock = new Mock<Ingest>(){
             CallBase = true
         };
 

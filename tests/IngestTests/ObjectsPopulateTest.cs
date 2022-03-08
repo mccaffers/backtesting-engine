@@ -25,12 +25,19 @@ public class ObjectsPopulateTest
     public async void CheckStreamDictionaryContainsAllFiles(params string[] fileNames)
     {
         // Arrange
+        var key = "symbols";
+        var input = "TestEnvironmentSetup";
+        Environment.SetEnvironmentVariable(key, input);
 
-         var envMock = new Mock<EnvironmentVariables>();
-        envMock.Setup(x=>x.Get("symbols")).Returns("");
-        envMock.Setup(x=>x.Get("folderPath")).Returns("");
+        key = input + "_SF";
+        input = "1000";
+        Environment.SetEnvironmentVariable(key, input);
 
-        var inputMock = new Mock<Ingest>(envMock.Object, fileNames.ToList());
+        key = "folderPath";
+        input = PathUtil.GetTestPath("");
+        Environment.SetEnvironmentVariable(key, input);
+
+        var inputMock = new Mock<Ingest>();
 
         // stub out the CoordinatedFileRead so the method doesn't try to read from file
         inputMock.Protected()

@@ -21,14 +21,21 @@ public class IngestEnvironmentTests
         var mySymbols = new List<string>();
         mySymbols.Add("testSymbol");
 
-         // Arrange
-        var envMock = new Mock<EnvironmentVariables>();
-        envMock.Setup(x=>x.Get("folderPath")).Returns("testFilePath");
-        envMock.Setup(x=>x.Get("symbols")).Returns(String.Join(", ", mySymbols.ToArray()));
+        var key = "symbols";
+        var input = "TestEnvironmentSetup";
+        Environment.SetEnvironmentVariable(key, input);
+
+        key = input + "_SF";
+        input = "1000";
+        Environment.SetEnvironmentVariable(key, input);
+
+        key = "folderPath";
+        input = PathUtil.GetTestPath("");
+        Environment.SetEnvironmentVariable(key, input);
 
         var programMock = new Mock<Main>(); // can't mock program
         var consumerMock = new Mock<IConsumer>();
-        var inputMock = new Mock<Ingest>(envMock.Object, null){
+        var inputMock = new Mock<Ingest>(){
             CallBase = true
         };
 

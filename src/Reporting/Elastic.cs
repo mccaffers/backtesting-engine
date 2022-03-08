@@ -11,9 +11,7 @@ namespace Report;
 public static class Reporting
 {
 
-    static EnvironmentVariables env { get; } = new EnvironmentVariables();
-
-    static CloudConnectionPool pool = new CloudConnectionPool(env.Get("elasticCloudID"), new BasicAuthenticationCredentials(env.Get("elasticUser"),env.Get("elasticPassword")));
+    static CloudConnectionPool pool = new CloudConnectionPool(EnvironmentVariables.elasticCloudID, new BasicAuthenticationCredentials(EnvironmentVariables.elasticUser,EnvironmentVariables.elasticPassword));
     
     static ConnectionSettings settings = new ConnectionSettings(pool).RequestTimeout(TimeSpan.FromMinutes(2));
 
@@ -25,12 +23,12 @@ public static class Reporting
     public static void EndOfRunReport(string reason){
         var report = new ReportObj(){
             date = DateTime.Now,
-            symbols= env.Get("symbols").Split(","),
+            symbols= EnvironmentVariables.symbols,
             pnl=Program.accountObj.pnl,
-            runID=env.Get("runID"),
+            runID=EnvironmentVariables.runID,
             openingEquity=Program.accountObj.openingEquity,
             maximumDrawndownPercentage=Program.accountObj.maximumDrawndownPercentage,
-            strategy=env.Get("strategy"),
+            strategy=EnvironmentVariables.strategy,
             status="complete",
             reason=reason
         };
@@ -40,12 +38,12 @@ public static class Reporting
     public static void TradeUpdate(DateTime date, string symbol, decimal profit){
          tradeUpdateArray.Add(new ReportObj(){
             date=date,
-            symbols= env.Get("symbols").Split(","),
+            symbols=EnvironmentVariables.symbols,
             pnl=Program.accountObj.pnl,
-            runID=env.Get("runID"),
+            runID=EnvironmentVariables.runID,
             openingEquity=Program.accountObj.openingEquity,
             maximumDrawndownPercentage=Program.accountObj.maximumDrawndownPercentage,
-            strategy=env.Get("strategy")
+            strategy=EnvironmentVariables.strategy
         });
         BatchTradeUpdate();
     }

@@ -18,15 +18,14 @@ public static class Program
     public static ConcurrentDictionary<string, TradeHistoryObject> tradeHistory { get; } = new ConcurrentDictionary<string, TradeHistoryObject >();
 
     public readonly static AccountObj accountObj = new AccountObj();
-    public readonly static EnvironmentVariables env = new EnvironmentVariables();
 
     // Dependency Injection Scope
     public readonly static IServiceScope scope = RegisterServices().CreateScope();
 
     public static async Task Main(string[] args)
     {
-        Program.accountObj.openingEquity = decimal.Parse(env.Get("accountEquity"));
-        Program.accountObj.maximumDrawndownPercentage = decimal.Parse(env.Get("maximumDrawndownPercentage"));
+        Program.accountObj.openingEquity = decimal.Parse(EnvironmentVariables.accountEquity);
+        Program.accountObj.maximumDrawndownPercentage = decimal.Parse(EnvironmentVariables.maximumDrawndownPercentage);
 
         await new Main().IngestAndConsume(new Consumer(), new Ingest());
     }
@@ -37,7 +36,7 @@ public static class Program
         // Define the services to inject
         var services = new ServiceCollection();
 
-        foreach(var i in env.Get("strategy").Split(",")){
+        foreach(var i in EnvironmentVariables.strategy.Split(",")){
 
             var _type = Type.GetType("backtesting_engine_strategies." + i);
 

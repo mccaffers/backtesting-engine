@@ -6,25 +6,25 @@ namespace Tests;
 
 public class EnvironmentVariableTests
 {
-    [Fact]
-    public void CheckEnvironmentVariables()
-    {
-        // Arrange
-        var key = "Env";
-        var input = "Test";
-        Environment.SetEnvironmentVariable(key, input);
+    // [Fact]
+    // public void CheckEnvironmentVariables()
+    // {
+    //     // Arrange
+    //     var key = "Env";
+    //     var input = "Test";
+    //     Environment.SetEnvironmentVariable(key, input);
 
-        // Act
-        var output = new Utilities.EnvironmentVariables().Get(key);
+    //     // Act
+    //     var output = new Utilities.EnvironmentVariables().Get(key);
 
-        // Assert
-        Assert.Equal(input, output);
-    }
+    //     // Assert
+    //     Assert.Equal(input, output);
+    // }
 
-    [Fact]
-    public void CheckMissingEnvVariable(){
-        Assert.Throws<ArgumentException>(() => new Utilities.EnvironmentVariables().Get("Missing"));
-    }
+    // [Fact]
+    // public void CheckMissingEnvVariable(){
+    //     Assert.Throws<ArgumentException>(() => new Utilities.EnvironmentVariables().Get("Missing"));
+    // }
 
 
 }

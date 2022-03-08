@@ -9,19 +9,16 @@ namespace backtesting_engine_ingest;
 public class Ingest
 {
     private readonly IEnumerable<string>  symbols;
-    private EnvironmentVariables env { get; }
 
-    public List<string> fileNames { get; }
+    public List<string> fileNames { get; } = new List<string>();
     public string folderPath { get; }
     public Dictionary<string, StreamReader> streamDictionary { get; }
     public Dictionary<string, PriceObj> localInputBuffer { get; }
 
-    public Ingest(EnvironmentVariables? env = null, List<string>? fileNames = null)
+    public Ingest()
     {
-        this.env = env ?? new EnvironmentVariables(); // Allow injectable env variables
-        this.symbols = symbols ?? ImmutableArray.Create(this.env.Get("symbols").Split(","));
-        this.fileNames = fileNames ?? new List<string> ();
-        this.folderPath = this.env.Get("folderPath");
+        this.symbols = EnvironmentVariables.symbols;
+        this.folderPath = EnvironmentVariables.folderPath;
         this.streamDictionary = new Dictionary<string, StreamReader>();
         this.localInputBuffer = new Dictionary<string, PriceObj>();
     }
@@ -131,11 +128,8 @@ public class Ingest
         var bid = decimal.Parse(values[2]);
         var symbol = this.symbols.First(x => fileName.Contains(x));
 
-        var scalingFactor=0m;
-        if(!decimal.TryParse(this.env.Get(symbol+"_SF"), out scalingFactor)){
-            throw new ArgumentException("Cannot read scaling factor of symbol");
-        }
-
+        var scalingFactor=EnvironmentVariables.scalingFactor[symbol];
+       
         localInputBuffer.Add(fileName, new PriceObj()
         {
             symbol = symbol,
