@@ -34,3 +34,4 @@ msbuild.wrn
 .vs/
 
 .env/local.env
+tickdata/*

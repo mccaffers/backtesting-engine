@@ -25,17 +25,7 @@ public class ObjectsPopulateTest
     public async void CheckStreamDictionaryContainsAllFiles(params string[] fileNames)
     {
         // Arrange
-        var key = "symbols";
-        var input = "TestEnvironmentSetup";
-        Environment.SetEnvironmentVariable(key, input);
-
-        key = input + "_SF";
-        input = "1000";
-        Environment.SetEnvironmentVariable(key, input);
-
-        key = "folderPath";
-        input = PathUtil.GetTestPath("");
-        Environment.SetEnvironmentVariable(key, input);
+        TestEnvironment.SetEnvironmentVariables(); 
 
         var inputMock = new Mock<Ingest>();
 
@@ -53,7 +43,11 @@ public class ObjectsPopulateTest
         inputMock.Protected()
         .Setup("StreamReaderCleanup");
 
+        // inputMock.Object.EnvironmentSetup();
+
         // inputMock.Protected().SetupGet<IEnumerable<string>>("fileNames").Returns(fileNames);
+        inputMock.SetupGet(x => x.fileNames).Returns(fileNames.ToList());
+        // inputMock.Object.fileNames = fileNames.ToList();
 
         // Act
         var inputObj = inputMock.Object;

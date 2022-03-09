@@ -10,7 +10,7 @@ public class Ingest
 {
     private readonly IEnumerable<string>  symbols;
 
-    public List<string> fileNames { get; } = new List<string>();
+    public virtual List<string> fileNames { get; } = new List<string>();
     public string folderPath { get; }
     public Dictionary<string, StreamReader> streamDictionary { get; }
     public Dictionary<string, PriceObj> localInputBuffer { get; }
@@ -18,7 +18,7 @@ public class Ingest
     public Ingest()
     {
         this.symbols = EnvironmentVariables.symbols;
-        this.folderPath = EnvironmentVariables.folderPath;
+        // this.folderPath = EnvironmentVariables.folderPath;
         this.streamDictionary = new Dictionary<string, StreamReader>();
         this.localInputBuffer = new Dictionary<string, PriceObj>();
     }
@@ -29,8 +29,10 @@ public class Ingest
         var arrayHolder = new List<string>();
 
         // Loop around every epic to check what files are present
-        foreach(var epic in this.symbols){
-            DirectoryInfo di = new DirectoryInfo(Path.Combine(this.folderPath, epic));
+        foreach(var symbol in this.symbols){
+            var symbolFolder = Path.Combine(EnvironmentVariables.tickDataFolder, symbol);
+
+            DirectoryInfo di = new DirectoryInfo(symbolFolder);
             var files = di.GetFiles("*.csv").OrderBy(x => x.Name);
 
             foreach (var file in files) {

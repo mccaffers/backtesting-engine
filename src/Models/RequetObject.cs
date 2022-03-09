@@ -55,6 +55,6 @@ public class RequestObject {
     }
 
     public void UpdateLevelWithSlippage(decimal slippage){
-        this.level = this.direction == TradeDirection.SELL? this.level-slippage : this.level+slippage;
+        this.level = this.direction == TradeDirection.SELL? this.level+slippage : this.level-slippage;
     }
 }

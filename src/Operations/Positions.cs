@@ -20,7 +20,7 @@ public static class Positions {
             myTradeObj.UpdateClose(priceObj);
 
             if (myTradeObj.direction == TradeDirection.BUY &&
-                    priceObj.bid <= myTradeObj.stopLevel || priceObj.bid >= myTradeObj.limitLevel) {
+                    (priceObj.bid <= myTradeObj.stopLevel || priceObj.bid >= myTradeObj.limitLevel)) {
                 UpdateTradeHistory(myTradeObj);
             } else if (myTradeObj.direction == TradeDirection.SELL &&
                      (priceObj.ask >= myTradeObj.stopLevel || priceObj.ask <= myTradeObj.limitLevel)){ 

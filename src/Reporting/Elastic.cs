@@ -21,6 +21,10 @@ public static class Reporting
     private static List<ReportObj> tradeUpdateArray = new List<ReportObj>();
 
     public static void EndOfRunReport(string reason){
+         if(!EnvironmentVariables.reportingFlag){
+            return;
+        }
+
         var report = new ReportObj(){
             date = DateTime.Now,
             symbols= EnvironmentVariables.symbols,
@@ -34,6 +38,15 @@ public static class Reporting
         };
         esClient.Index(report,b=>b.Index("report"));
     }
+
+    public static void SendStack(Exception message){
+         if(!EnvironmentVariables.reportingFlag){
+            return;
+        }
+        
+        esClient.Index(message,b=>b.Index("exception"));
+    }
+
 
     public static void TradeUpdate(DateTime date, string symbol, decimal profit){
          tradeUpdateArray.Add(new ReportObj(){
@@ -49,6 +62,9 @@ public static class Reporting
     }
 
     private static void BatchTradeUpdate(){
+        if(!EnvironmentVariables.reportingFlag){
+            return;
+        }
 
         if(DateTime.Now.Subtract(lastPostTime).TotalSeconds <= 5 ){
             return;

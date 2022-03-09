@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,19 +17,6 @@ namespace Tests;
 public class DataInputTests
 {
 
-    private void SetEnvironmentVariables(){
-
-        Environment.SetEnvironmentVariable("symbols", "TestEnvironmentSetup");
-        Environment.SetEnvironmentVariable("TestEnvironmentSetup" + "_SF", "1000");
-        Environment.SetEnvironmentVariable("folderPath", PathUtil.GetTestPath(""));
-        Environment.SetEnvironmentVariable("strategy", "random");
-        Environment.SetEnvironmentVariable("runID", "debug");
-        Environment.SetEnvironmentVariable("elasticUser", "debug");
-        Environment.SetEnvironmentVariable("elasticPassword", "debug");
-        Environment.SetEnvironmentVariable("elasticCloudID", "debug");
-        Environment.SetEnvironmentVariable("accountEquity", "debug");
-        Environment.SetEnvironmentVariable("maximumDrawndownPercentage", "debug");
-    }
 
     [Theory]
     [InlineData(1, "2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75")]
@@ -38,7 +26,7 @@ public class DataInputTests
     [InlineData(0, "")]
     public void TestPopulateLocalBuffer(int expectedResult, string line){
 
-        SetEnvironmentVariables(); 
+        TestEnvironment.SetEnvironmentVariables(); 
 
         var inputMock = new Mock<Ingest>(){
             CallBase = true
@@ -53,29 +41,11 @@ public class DataInputTests
     }
     
     [Fact]
-    public async void TestFile()
+    public async void TestingReadFile()
     {
 
-        var mySymbols = new List<string>();
-        mySymbols.Add("testSymbol");
-
-        var myFiles = new List<string>();
-        myFiles.Add(PathUtil.GetTestPath("testSymbol.csv"));
-
-        // Arrange
-        var key = "symbols";
-        var input = "TestEnvironmentSetup";
-        Environment.SetEnvironmentVariable(key, input);
-
-        key = input + "_SF";
-        input = "1000";
-        Environment.SetEnvironmentVariable(key, input);
-
-        key = "folderPath";
-        input = PathUtil.GetTestPath("");
-        Environment.SetEnvironmentVariable(key, input);
-
-
+        TestEnvironment.SetEnvironmentVariables(); 
+       
         var programMock = new Mock<Main>(); // can't mock program
         var consumerMock = new Mock<IConsumer>();
         var inputMock = new Mock<Ingest>(){
@@ -84,12 +54,13 @@ public class DataInputTests
 
         inputMock.Setup(x=>x.EnvironmentSetup());
 
+        // Ingore the consumer
         consumerMock.Setup<Task>(x=>x.ConsumeAsync(It.IsAny<BufferBlock<PriceObj>>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(0));
         // programMock.Setup(x=>x.EnvironmentSetup());
         // inputMock.Setup(x=>x.ReadLines(It.IsAny<BufferBlock<PriceObj>>())).Returns(Task.CompletedTask);
-
+//
         var programObj = programMock.Object;
-        // programObj.fileNames.Add(GetTestPath("testSymbol.csv"));
+        inputMock.Object.fileNames.Add(Path.Combine(PathUtil.GetTestPath("TestEnvironmentSetup"), "testSymbol.csv"));
 
         await programObj.IngestAndConsume(consumerMock.Object, inputMock.Object);
 

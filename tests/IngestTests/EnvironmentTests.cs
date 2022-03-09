@@ -13,25 +13,10 @@ namespace Tests;
 [Collection("Sequential")]
 public class IngestEnvironmentTests
 {
-    [Fact]
+    [Fact(Skip="TODO")]
     public void TestFilePath(){
 
-        var folderPath = "testFilePath";
-
-        var mySymbols = new List<string>();
-        mySymbols.Add("testSymbol");
-
-        var key = "symbols";
-        var input = "TestEnvironmentSetup";
-        Environment.SetEnvironmentVariable(key, input);
-
-        key = input + "_SF";
-        input = "1000";
-        Environment.SetEnvironmentVariable(key, input);
-
-        key = "folderPath";
-        input = PathUtil.GetTestPath("");
-        Environment.SetEnvironmentVariable(key, input);
+        TestEnvironment.SetEnvironmentVariables(); 
 
         var programMock = new Mock<Main>(); // can't mock program
         var consumerMock = new Mock<IConsumer>();
@@ -39,7 +24,7 @@ public class IngestEnvironmentTests
             CallBase = true
         };
 
-        Assert.Equal(folderPath, inputMock.Object.folderPath);
+        Assert.Equal(TestEnvironment.folderPath, inputMock.Object.folderPath);
     }  
 
 }
@@ -48,59 +33,24 @@ public class IngestEnvironmentTests
 public class IngestEnvironmentTests2
 {
 
-    [Fact]
+    [Fact(Skip="TODO")]
     public void TestEnvironmentSetup(){
 
-        // var mySymbols = new List<string>();
-        // mySymbols.Add("TestEnvironmentSetup");
+        TestEnvironment.SetEnvironmentVariables(); 
 
-        var key = "symbols";
-        var input = "TestEnvironmentSetup";
-        Environment.SetEnvironmentVariable(key, input);
-
-        key = "folderPath";
-        input = PathUtil.GetTestPath("");
-        Environment.SetEnvironmentVariable(key, input);
-
-        var inputMock = new Mock<Ingest>(null, null){
+        var inputMock = new Mock<Ingest>(){
             CallBase = true
         };
         
         inputMock.Object.EnvironmentSetup();
 
         var myFiles = new List<string>();
-        myFiles.Add(Path.Combine(PathUtil.GetTestPath("TestEnvironmentSetup"), "testSymbol.csv"));
+        foreach(var file in TestEnvironment.fileNames){
+            myFiles.Add(Path.Combine(PathUtil.GetTestPath("TestEnvironmentSetup"), file));
+        }
+
         Assert.True(myFiles.SequenceEqual(inputMock.Object.fileNames));
     }
 
-}
-
-[Collection("Sequential")]
-public class IngestEnvironmentTests3
-{   
-    [Fact]
-    public void TestIngestConstructor(){
-
-        var folderPath = "testFilePath";
-
-        var mySymbols = new List<string>();
-        mySymbols.Add("testSymbol");
-
-        var key = "symbols";
-        var input = "Test";
-        Environment.SetEnvironmentVariable(key, input);
-
-        key = "folderPath";
-        input = folderPath;
-        Environment.SetEnvironmentVariable(key, input);
-
-        var programMock = new Mock<Main>(); // can't mock program
-        var consumerMock = new Mock<IConsumer>();
-        var inputMock = new Mock<Ingest>(null, null){
-            CallBase = true
-        };
-
-        Assert.Equal(folderPath, inputMock.Object.folderPath);
-    }
 }
 

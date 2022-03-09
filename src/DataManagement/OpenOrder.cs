@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using backtesting_engine;
 using backtesting_engine_models;
 using backtesting_engine_operations;
+using Newtonsoft.Json;
 using Utilities;
 
 namespace backtesting_engine;
@@ -16,7 +17,7 @@ public static class OpenOrder
         if(openTradesCount!=0){
             return;
         }
-        
+
         Program.openTrades.TryAdd(reqObj.key, reqObj);
     }
 }
