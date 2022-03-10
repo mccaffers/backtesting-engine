@@ -57,7 +57,7 @@ public class Consumer : IConsumer
             // await Reporting.EndOfRunReport("accountExceededDrawdownThreshold");
 
             // stop any more trades
-            throw new MyException("Exceeded threshold PL:"+ Program.accountObj.pnl, false);
+            throw new MyException("Exceeded threshold PL:"+ Program.accountObj.pnl);
         }
     }
 }

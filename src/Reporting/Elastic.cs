@@ -8,10 +8,10 @@ using Utilities;
 
 namespace Report;
 
+// TODO move this and rename
 public class MyException : ArgumentException {
 
     public DateTime date {get;set;}
-    public bool report {get;set;} = true;
 
     public MyException(string? message) : base(message)
     {
@@ -22,13 +22,6 @@ public class MyException : ArgumentException {
     {
         date = DateTime.Now;
     }
-
-    public MyException(string? message, bool report) : base(message)
-    {
-        date = DateTime.Now;
-        report = false;
-    }
-
 }
 
 public static class Reporting
