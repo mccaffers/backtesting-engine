@@ -8,9 +8,31 @@ using Utilities;
 
 namespace Report;
 
+public class MyException : ArgumentException {
+
+    public DateTime date {get;set;}
+    public bool report {get;set;} = true;
+
+    public MyException(string? message) : base(message)
+    {
+        date = DateTime.Now;
+    }
+
+    public MyException(string? message, Exception? innerException) : base(message, innerException)
+    {
+        date = DateTime.Now;
+    }
+
+    public MyException(string? message, bool report) : base(message)
+    {
+        date = DateTime.Now;
+        report = false;
+    }
+
+}
+
 public static class Reporting
 {
-
     static CloudConnectionPool pool = new CloudConnectionPool(EnvironmentVariables.elasticCloudID, new BasicAuthenticationCredentials(EnvironmentVariables.elasticUser,EnvironmentVariables.elasticPassword));
     
     static ConnectionSettings settings = new ConnectionSettings(pool).RequestTimeout(TimeSpan.FromMinutes(2));
@@ -18,51 +40,62 @@ public static class Reporting
     static ElasticClient esClient = new ElasticClient(settings);
 
     private static DateTime lastPostTime = DateTime.Now;
-    private static List<ReportObj> tradeUpdateArray = new List<ReportObj>();
+    private static List<ReportTradeObj> tradeUpdateArray = new List<ReportTradeObj>();
 
-    public static void EndOfRunReport(string reason){
-         if(!EnvironmentVariables.reportingFlag){
+    public static async Task EndOfRunReport(string reason){
+         if(!EnvironmentVariables.reportingEnabled){
             return;
         }
 
-        var report = new ReportObj(){
+
+        var report = new ReportFinalObj(){
             date = DateTime.Now,
+            hostname = EnvironmentVariables.hostname,
             symbols= EnvironmentVariables.symbols,
             pnl=Program.accountObj.pnl,
             runID=EnvironmentVariables.runID,
             openingEquity=Program.accountObj.openingEquity,
             maximumDrawndownPercentage=Program.accountObj.maximumDrawndownPercentage,
             strategy=EnvironmentVariables.strategy,
-            status="complete",
-            reason=reason
+            positiveTradeCount=Program.tradeHistory.Count(x=>x.Value.profit>0),
+            negativeTradeCount=Program.tradeHistory.Count(x=>x.Value.profit<0),
+            positivePercentage=(Program.tradeHistory.Count(x=>x.Value.profit>0)/Program.tradeHistory.Count(x=>x.Value.profit<0))*100,
+            systemRunTimeInMinutes=DateTime.Now.Subtract(Program.systemStartTime).TotalMinutes
         };
-        esClient.Index(report,b=>b.Index("report"));
+
+        if(reason=="EndOfBuffer"){
+            report.complete = true;
+        } else {
+            report.complete = false;
+            report.reason = reason;
+        }
+        
+        await esClient.IndexAsync(report,b=>b.Index("report"));
+        System.Threading.Thread.Sleep(5000);
     }
 
-    public static void SendStack(Exception message){
-         if(!EnvironmentVariables.reportingFlag){
+    public static async void SendStack(MyException message){
+         if(!EnvironmentVariables.reportingEnabled){
             return;
         }
         
-        esClient.Index(message,b=>b.Index("exception"));
+        await esClient.IndexAsync(message,b=>b.Index("exception"));
+        System.Threading.Thread.Sleep(5000);
     }
 
-
     public static void TradeUpdate(DateTime date, string symbol, decimal profit){
-         tradeUpdateArray.Add(new ReportObj(){
+         tradeUpdateArray.Add(new ReportTradeObj(){
             date=date,
             symbols=EnvironmentVariables.symbols,
             pnl=Program.accountObj.pnl,
             runID=EnvironmentVariables.runID,
-            openingEquity=Program.accountObj.openingEquity,
-            maximumDrawndownPercentage=Program.accountObj.maximumDrawndownPercentage,
-            strategy=EnvironmentVariables.strategy
+            tradeProfit=profit
         });
         BatchTradeUpdate();
     }
 
     private static void BatchTradeUpdate(){
-        if(!EnvironmentVariables.reportingFlag){
+        if(!EnvironmentVariables.reportingEnabled){
             return;
         }
 
@@ -73,7 +106,7 @@ public static class Reporting
         lastPostTime=DateTime.Now;
         
         // Upload the trade results
-        esClient.Bulk(bd => bd.IndexMany(tradeUpdateArray, (descriptor, s) => descriptor.Index("trades")));
+        esClient.BulkAsync(bd => bd.IndexMany(tradeUpdateArray, (descriptor, s) => descriptor.Index("trades")));
                 
         // Clear the history
         tradeUpdateArray.RemoveRange(0, tradeUpdateArray.Count);

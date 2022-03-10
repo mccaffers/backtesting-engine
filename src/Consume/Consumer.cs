@@ -43,22 +43,21 @@ public class Consumer : IConsumer
             ReviewEquity();
         }
 
-        Reporting.EndOfRunReport("EndOfBuffer");
     }
 
     public void ReviewEquity()
     {
         
-        if (Program.accountObj.hasAccountExceededDrawdownThreshold())
-        {
+        if (Program.accountObj.hasAccountExceededDrawdownThreshold()){
             // close all trades
             Positions.CloseAll();
             
             // trigger final report
-            Reporting.EndOfRunReport("accountExceededDrawdownThreshold");
+            Program.systemMessage = "accountExceededDrawdownThreshold";
+            // await Reporting.EndOfRunReport("accountExceededDrawdownThreshold");
 
             // stop any more trades
-            throw new ArgumentException("Exceeded threshold PL:"+ Program.accountObj.pnl);
+            throw new MyException("Exceeded threshold PL:"+ Program.accountObj.pnl, false);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace backtesting_engine;
 public class Main
 {
     protected readonly BufferBlock<PriceObj> buffer = new BufferBlock<PriceObj>();
+
     protected readonly CancellationTokenSource cts = new CancellationTokenSource();
 
     public async Task IngestAndConsume(IConsumer c, Ingest i)

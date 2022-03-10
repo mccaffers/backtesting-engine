@@ -42,11 +42,6 @@ This backtesting engine is a personal project of mine, built in C# to explore an
     2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75
     ```
 
-### Deploy
-
-1. Review variables in ```./scripts/config```, updating the path and symbols you wish to backtest
-2. Run ```deploy.sh``` which builds and runs the dotnet application locally
-
 ### License
 [MIT](https://choosealicense.com/licenses/mit/)
 

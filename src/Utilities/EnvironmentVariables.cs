@@ -1,4 +1,4 @@
-using System.Reflection;
+using System.Net;
 
 namespace Utilities;
 
@@ -8,12 +8,12 @@ public static class EnvironmentVariables
     static EnvironmentVariables()
     { }
 
-    private static string Get(string envName){
+    private static string Get(string envName, bool option = false){
         var output = Environment.GetEnvironmentVariable(envName);
-        if(output == null){
+        if(output == null && !option){
             throw new ArgumentException("Missing environment variable " + envName);
         }
-        return output;
+        return output ?? "";
     }
 
     public static string strategy {get;} = Get("strategy");
@@ -26,10 +26,11 @@ public static class EnvironmentVariables
     public static string maximumDrawndownPercentage {get;} = Get("maximumDrawndownPercentage");
     public static string s3Bucket {get;} = Get("s3Bucket");
     public static string s3Path {get;} = Get("s3Path");
-
+    public static string hostname {get;} = Dns.GetHostName();
+    
     // Custom environment variables
     public static string tickDataFolder = Path.Combine(Path.GetFullPath("./" + localFolderPath));
-    public static bool reportingFlag {get;} = bool.Parse(Get("reportingFlag"));
+    public static bool reportingEnabled {get;} = bool.Parse(Get("reportingEnabled"));
     public static string[] symbols {get;} = Get("symbols").Split(",");
     public static int[] years {get;} =  Get("years").Split(',').Select(n => Convert.ToInt32(n)).ToArray();
 
