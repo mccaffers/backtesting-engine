@@ -34,4 +34,7 @@ msbuild.wrn
 .vs/
 
 .env/local.env
+.env/aws.env
+engine.zip
 tickdata/*
+data.sh

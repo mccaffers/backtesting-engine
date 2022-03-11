@@ -42,6 +42,16 @@ This backtesting engine is a personal project of mine, built in C# to explore an
     2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75
     ```
 
+### Notes
+
+```
+age -p -a -o ./.env/local.env.age ./.env/local.env
+age --decrypt -o ./.env/local.env ./.env/local.env.age
+
+age -p -a -o ./.env/aws.env.age ./.env/aws.env
+age --decrypt -o ./.env/aws.env ./.env/aws.env.age
+```
+
 ### License
 [MIT](https://choosealicense.com/licenses/mit/)
 

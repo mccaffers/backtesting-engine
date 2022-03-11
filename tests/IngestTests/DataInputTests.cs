@@ -17,7 +17,6 @@ namespace Tests;
 public class DataInputTests
 {
 
-
     [Theory]
     [InlineData(1, "2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75")]
     [InlineData(0, "UTC,AskPrice,BidPrice,AskVolume,BidVolume")]

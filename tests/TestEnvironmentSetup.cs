@@ -9,7 +9,7 @@ class TestEnvironment {
     public static void SetEnvironmentVariables(){
         Environment.SetEnvironmentVariable("symbols", "TestEnvironmentSetup");
         Environment.SetEnvironmentVariable("TestEnvironmentSetup" + "_SF", "1000");
-        Environment.SetEnvironmentVariable("folderPath", PathUtil.GetTestPath(""));
+        Environment.SetEnvironmentVariable("symbolFolder", "Resources");
         Environment.SetEnvironmentVariable("strategy", "random");
         Environment.SetEnvironmentVariable("runID", "debug");
         Environment.SetEnvironmentVariable("elasticUser", "debug");
@@ -17,5 +17,9 @@ class TestEnvironment {
         Environment.SetEnvironmentVariable("elasticCloudID", "debug");
         Environment.SetEnvironmentVariable("accountEquity", "debug");
         Environment.SetEnvironmentVariable("maximumDrawndownPercentage", "debug");
+        Environment.SetEnvironmentVariable("s3Bucket", "debug");
+        Environment.SetEnvironmentVariable("s3Path", "debug");
+        Environment.SetEnvironmentVariable("years", "2000");
+        Environment.SetEnvironmentVariable("reportingEnabled", "false");
     }
 }

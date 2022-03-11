@@ -12,7 +12,7 @@ using Report;
 
 namespace backtesting_engine;
 
-public static class Program
+public class Program
 {
 
     public static ConcurrentDictionary<string, RequestObject> openTrades { get; } = new ConcurrentDictionary<string, RequestObject>();
@@ -33,7 +33,7 @@ public static class Program
     public static async Task Main(string[] args) {
 
         try{
-            await StartEngine();
+            await new Program().StartEngine();
         } catch(Exception ex){
 
             System.Console.WriteLine(ex);
@@ -56,7 +56,7 @@ public static class Program
         
     }
 
-    private static async Task StartEngine(){
+    private async Task StartEngine(){
 
         foreach(var year in EnvironmentVariables.years){
             foreach(var symbol in EnvironmentVariables.symbols){
@@ -79,12 +79,12 @@ public static class Program
         }
     }
 
-    private static async Task Decompress(string symbol){
+    private async Task Decompress(string symbol){
         var command = "zstd -d -f --rm ./tickdata/"+symbol+"/*.zst";
         await ShellHelper.Bash(command);
     }
 
-    private static async Task PullFromS3(string symbolFolder, string symbol, int year){
+    private async Task PullFromS3(string symbolFolder, string symbol, int year){
         var s3Path = EnvironmentVariables.s3Path;
         var s3bucket = EnvironmentVariables.s3Bucket;
 

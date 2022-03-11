@@ -11,14 +11,11 @@ public class Ingest
     private readonly IEnumerable<string>  symbols;
 
     public virtual List<string> fileNames { get; } = new List<string>();
-    public string folderPath { get; }
     public Dictionary<string, StreamReader> streamDictionary { get; }
     public Dictionary<string, PriceObj> localInputBuffer { get; }
 
-    public Ingest()
-    {
+    public Ingest() {
         this.symbols = EnvironmentVariables.symbols;
-        // this.folderPath = EnvironmentVariables.folderPath;
         this.streamDictionary = new Dictionary<string, StreamReader>();
         this.localInputBuffer = new Dictionary<string, PriceObj>();
     }
