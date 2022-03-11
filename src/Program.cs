@@ -69,13 +69,12 @@ public class Program
                     await PullFromS3(symbolFolder, symbol, year);
                     await Decompress(symbol);
                 }
-
-                // Start Backtesting Engine
-                await new Main().IngestAndConsume(new Consumer(), new Ingest());
-
-                // Clean up
-                await CleanSymbolFolder(symbolFolder);
             }
+            // Start Backtesting Engine
+            await new Main().IngestAndConsume(new Consumer(), new Ingest());
+
+            // Clean up
+            await CleanSymbolFolder(EnvironmentVariables.tickDataFolder);
         }
     }
 

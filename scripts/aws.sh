@@ -1,6 +1,10 @@
 #!/bin/bash
 set -ex
 
+set -o allexport
+source ./.env/aws.env
+set +o allexport
+
 # Remove binary files
 rm -rf ./src/bin/
 rm -rf ./src/obj/
@@ -28,7 +32,11 @@ while read line; do echo "export "$line  >> ./data.sh; done < .env/local.env
 # cat ./.env/local.env >> ./data.sh
 
 cat << EOF >> ./data.sh
+
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
+
 # Pull the project files
+sudo yum install -y libicu60 zstd
 aws s3api get-object --bucket ${awsDeployBucket//[-]/.} --key run/${runID}.zip /home/ec2-user/files.zip &
 
 # Setup dotnet
@@ -36,7 +44,6 @@ export HOME=/root/
 wget https://dot.net/v1/dotnet-install.sh
 sh dotnet-install.sh -c Current
 ln -s /root/.dotnet/dotnet /usr/bin/dotnet
-sudo yum install -y libicu60
 
 # Extract project files
 cd /home/ec2-user/
@@ -45,10 +52,10 @@ unzip files.zip -d ./project
 rm -rf ./files.zip
 
 # Run project
-dotnet build /home/ec2-user/project
+dotnet build /home/ec2-user/project -v q
 dotnet run --project  /home/ec2-user/project/src
 
-poweroff
+# poweroff
 }  &> /home/ec2-user/output.txt 
 EOF
 
