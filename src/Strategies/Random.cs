@@ -32,8 +32,8 @@ public class RandomStrategy : IStrategy
         {
             direction = direction,
             size = 1,
-            stopDistancePips = 100,
-            limitDistancePips = 100,
+            stopDistancePips = 20,
+            limitDistancePips = 20,
         };
 
         RequestOpenTrade.Request(openOrderRequest);

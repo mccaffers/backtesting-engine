@@ -19,6 +19,8 @@ public static class EnvironmentVariables
     public static string strategy {get;} = Get("strategy");
     public static string runID {get;} = Get("runID");
     public static string symbolFolder { get; } = Get("symbolFolder", true);
+    public static string stopDistanceInPips { get; } = Get("stopDistanceInPips");
+    public static string limitDistanceInPips { get; } = Get("limitDistanceInPips");
     public static string elasticPassword {get;} = Get("elasticPassword");
     public static string elasticUser {get;} = Get("elasticUser");
     public static string elasticCloudID {get;} = Get("elasticCloudID");

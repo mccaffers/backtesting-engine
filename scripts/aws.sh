@@ -29,9 +29,10 @@ EOF
 
 while read line; do echo "export "$line  >> ./data.sh; done < .env/local.env
 
-# cat ./.env/local.env >> ./data.sh
-
 cat << EOF >> ./data.sh
+
+export symbols=${symbols}
+export runID=${runID}
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
@@ -55,7 +56,7 @@ rm -rf ./files.zip
 dotnet build /home/ec2-user/project -v q
 dotnet run --project  /home/ec2-user/project/src
 
-# poweroff
+poweroff
 }  &> /home/ec2-user/output.txt 
 EOF
 
@@ -68,11 +69,12 @@ aws ec2 run-instances    --image-id resolve:ssm:/aws/service/ami-amazon-linux-la
                          --security-group-ids ${awsDeploySecurityGroupID} \
                          --user-data file://data.sh \
                          --iam-instance-profile=${awsDeployIAMEC2Role} \
-                         --instance-initiated-shutdown-behavior terminate;
+                         --instance-initiated-shutdown-behavior terminate \
+                        --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='$runID'},{Key=Symbol,Value='$symbols'}]' >> /dev/null
 
 # Cleanup
 rm data.sh
-rm engine.zip
+
 }
 
 # For each strategy
@@ -81,14 +83,18 @@ rm engine.zip
 declare -a strategies=("RandomTrade") 
 for strategy in "${strategies[@]}"
 do
-    declare -a symbols=("EURUSD")
-    for symbol in "${symbols[@]}"
+    declare -a symbolsArray=("EURUSD")
+    for symbol in "${symbolsArray[@]}"
     do
-        for x  in `seq 1 1 1`
+        for x  in `seq 1 1 5`
         do
+            export symbols=$symbol
             deploy
+            sleep 0.8
         done
     done
 done
 
-
+# Remove the source files
+rm engine.zip
+echo $runID
