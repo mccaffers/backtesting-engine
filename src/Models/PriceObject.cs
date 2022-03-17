@@ -5,5 +5,4 @@ public class PriceObj {
     public decimal bid {get;set;}
     public decimal ask {get;set;}
     public DateTime date {get; set;}
-    public decimal scalingFactor {get;set;}
 }

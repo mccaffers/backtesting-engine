@@ -25,7 +25,7 @@ public class RandomStrategy : IStrategy
 
         if (randomInt== 0)
         { // 0 or 1
-            direction = TradeDirection.SELL;
+            // direction = TradeDirection.SELL;
         }
 
         var openOrderRequest = new RequestObject(priceObj)

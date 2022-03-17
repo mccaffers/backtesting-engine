@@ -21,6 +21,7 @@ public class ReportFinalObj {
 
     // Trading Stats
     public decimal pnl {get;set;}
+    public double tradingTimespanInDays {get;set;}
     public int positiveTradeCount {get;set;}
     public int negativeTradeCount {get;set;}
     public int positivePercentage {get;set;}

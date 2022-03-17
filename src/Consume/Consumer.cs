@@ -37,6 +37,9 @@ public class Consumer : IConsumer
                 i.Invoke(priceObj);
             }
 
+            // Keep track of trade time
+            Program.tradeTime = priceObj.date;
+
             // Review open positions, check if the new symbol data meets the threshold for LIMI/STOP levels
             Positions.Review(priceObj);
             
@@ -57,7 +60,7 @@ public class Consumer : IConsumer
             // await Reporting.EndOfRunReport("accountExceededDrawdownThreshold");
 
             // stop any more trades
-            throw new MyException("Exceeded threshold PL:"+ Program.accountObj.pnl);
+            throw new TradingException("Exceeded threshold PL:"+ Program.accountObj.pnl);
         }
     }
 }

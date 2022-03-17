@@ -127,15 +127,12 @@ public class Ingest
         var bid = decimal.Parse(values[2]);
         var symbol = this.symbols.First(x => fileName.Contains(x));
 
-        var scalingFactor=EnvironmentVariables.scalingFactor[symbol];
-       
         localInputBuffer.Add(fileName, new PriceObj()
         {
             symbol = symbol,
             bid = bid,
             ask = ask,
-            date = dateTime,
-            scalingFactor = scalingFactor
+            date = dateTime
         });
     }
 

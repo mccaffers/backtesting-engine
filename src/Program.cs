@@ -19,6 +19,7 @@ public class Program
     public static ConcurrentDictionary<string, TradeHistoryObject> tradeHistory { get; } = new ConcurrentDictionary<string, TradeHistoryObject >();
     
     public static DateTime systemStartTime {get;} = DateTime.Now;
+    public static DateTime tradeTime {get;set;}
 
     public static string systemMessage {get;set;} = "";
 
@@ -38,12 +39,15 @@ public class Program
 
             System.Console.WriteLine(ex);
 
-            if(ex is MyException){
+            if(ex is TradingException){
+
                 // Known trading except
-                await Reporting.EndOfRunReport(((MyException)ex).Message);
+                await Reporting.EndOfRunReport(((TradingException)ex).Message);
+                
             } else {
+
                 // Unknown exception, wrap to get date and more
-                MyException myEx = new MyException(ex.Message, ex);
+                TradingException myEx = new TradingException(ex.Message, ex);
                 Reporting.SendStack(myEx); // send to elastic
                 await Reporting.EndOfRunReport("Unknown system exception, see ex log");
             }

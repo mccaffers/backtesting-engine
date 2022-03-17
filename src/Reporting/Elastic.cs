@@ -9,16 +9,16 @@ using Utilities;
 namespace Report;
 
 // TODO move this and rename
-public class MyException : ArgumentException {
+public class TradingException : ArgumentException {
 
     public DateTime date {get;set;}
 
-    public MyException(string? message) : base(message)
+    public TradingException(string? message) : base(message)
     {
         date = DateTime.Now;
     }
 
-    public MyException(string? message, Exception? innerException) : base(message, innerException)
+    public TradingException(string? message, Exception? innerException) : base(message, innerException)
     {
         date = DateTime.Now;
     }
@@ -27,19 +27,17 @@ public class MyException : ArgumentException {
 public static class Reporting
 {
     static CloudConnectionPool pool = new CloudConnectionPool(EnvironmentVariables.elasticCloudID, new BasicAuthenticationCredentials(EnvironmentVariables.elasticUser,EnvironmentVariables.elasticPassword));
-    
     static ConnectionSettings settings = new ConnectionSettings(pool).RequestTimeout(TimeSpan.FromMinutes(2));
-
     static ElasticClient esClient = new ElasticClient(settings);
 
     private static DateTime lastPostTime = DateTime.Now;
     private static List<ReportTradeObj> tradeUpdateArray = new List<ReportTradeObj>();
 
     public static async Task EndOfRunReport(string reason){
+        
          if(!EnvironmentVariables.reportingEnabled){
             return;
         }
-
 
         var report = new ReportFinalObj(){
             date = DateTime.Now,
@@ -53,8 +51,12 @@ public static class Reporting
             positiveTradeCount=Program.tradeHistory.Count(x=>x.Value.profit>0),
             negativeTradeCount=Program.tradeHistory.Count(x=>x.Value.profit<0),
             positivePercentage=(Program.tradeHistory.Count(x=>x.Value.profit>0)/Program.tradeHistory.Count(x=>x.Value.profit<0))*100,
-            systemRunTimeInMinutes=DateTime.Now.Subtract(Program.systemStartTime).TotalMinutes
+            systemRunTimeInMinutes=DateTime.Now.Subtract(Program.systemStartTime).TotalMinutes,
         };
+
+        if(Program.tradeHistory.Count>0){
+            report.tradingTimespanInDays=Program.tradeTime.Subtract(Program.tradeHistory.First().Value.openDate).TotalDays;
+        }
 
         if(reason=="EndOfBuffer"){
             report.complete = true;
@@ -67,7 +69,7 @@ public static class Reporting
         System.Threading.Thread.Sleep(5000);
     }
 
-    public static async void SendStack(MyException message){
+    public static async void SendStack(TradingException message){
          if(!EnvironmentVariables.reportingEnabled){
             return;
         }

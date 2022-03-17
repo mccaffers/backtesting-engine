@@ -5,9 +5,6 @@ namespace Utilities;
 public static class EnvironmentVariables
 {
 
-    static EnvironmentVariables()
-    { }
-
     private static string Get(string envName, bool optional = false){
         var output = Environment.GetEnvironmentVariable(envName);
         if(output == null && !optional){
@@ -36,18 +33,29 @@ public static class EnvironmentVariables
     public static string[] symbols {get;} = Get("symbols").Split(",");
     public static int[] years {get;} =  Get("years").Split(',').Select(n => Convert.ToInt32(n)).ToArray();
 
-    public static Dictionary<string, decimal> scalingFactor { get; } = PopulateDictionary();
+    private static Dictionary<string, decimal> scalingFactorDictionary { get; } = PopulateDictionary();
 
     private static Dictionary<string, decimal> PopulateDictionary(){
         Dictionary<string, decimal> localdictionary = new Dictionary<string, decimal>();
-        foreach(var symbol in symbols){
+        // scalingFactor="EURUSD,10000;GBPUSD,10000";
+        foreach(var symbol in Get("scalingFactor").Split(";")){
+            var sfString = symbol.ToString().Split(",");
             decimal sf;
-            if(!decimal.TryParse(Get(symbol+"_SF"), out sf)){
+            if(!decimal.TryParse(sfString[1], out sf)){
                 throw new ArgumentException("Cannot read scaling factor of symbol");
             }
-            localdictionary.Add(symbol, sf);
+            localdictionary.Add(sfString[0], sf);
         }
         return localdictionary;
+    }
+    public static decimal GetScalingFactor(string symbol){
+        var scalingFactor = 0m;
+        var output = scalingFactorDictionary.TryGetValue(symbol, out scalingFactor);
+
+        if(!output){
+            throw new ArgumentException("Missing scaling factor");
+        }
+        return scalingFactor;
     }
 
 }

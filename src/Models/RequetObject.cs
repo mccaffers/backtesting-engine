@@ -31,7 +31,7 @@ public class RequestObject {
     public string key {get;}
     public PriceObj priceObj { get; }
     public DateTime openDate {get;}
-    public string? symbol {get;}
+    public string symbol {get;}
 
     // Private set propertises
     public decimal level {get; private set;}
@@ -50,7 +50,7 @@ public class RequestObject {
         this.close = this.direction == TradeDirection.BUY? priceObj.bid : priceObj.ask;
         this.closeDate = priceObj.date;
         this.profit = ((this.direction == TradeDirection.BUY ? this.close - this.level : this.level - this.close) 
-                        * priceObj.scalingFactor)
+                        * EnvironmentVariables.GetScalingFactor(priceObj.symbol))
                             * this.size;
     }
 

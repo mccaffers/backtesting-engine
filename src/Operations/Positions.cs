@@ -19,6 +19,10 @@ public static class Positions {
 
             myTradeObj.UpdateClose(priceObj);
 
+            if(myTradeObj.closeDate.Hour == 22 &&  myTradeObj.closeDate.Minute>=29 && myTradeObj.closeDate.Day==2){
+                System.Console.WriteLine("caught");
+            }
+
             if (myTradeObj.direction == TradeDirection.BUY &&
                     (priceObj.bid <= myTradeObj.stopLevel || priceObj.bid >= myTradeObj.limitLevel)) {
                 UpdateTradeHistory(myTradeObj);
@@ -47,7 +51,7 @@ public static class Positions {
 
     public static decimal CalculateProfit(decimal level, RequestObject openTradeObj){
         var difference = openTradeObj.direction == TradeDirection.BUY ? level - openTradeObj.level : openTradeObj.level - level;
-        return difference * openTradeObj.priceObj.scalingFactor * openTradeObj.size;
+        return difference * EnvironmentVariables.GetScalingFactor(openTradeObj.symbol) * openTradeObj.size;
     }
     
 }
