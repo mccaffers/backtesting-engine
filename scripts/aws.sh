@@ -1,6 +1,7 @@
 #!/bin/bash
 set -ex
 
+init() {
 set -o allexport
 source ./.env/aws.env
 set +o allexport
@@ -18,6 +19,7 @@ runID=$(uuidgen|sed -e 's/-//g')
 
 # Same this version to s3, to run the experiment below, runID is referenced in the script below
 aws s3api put-object --bucket ${awsDeployBucket//[-]/.} --key run/${runID}.zip --body ./engine.zip
+}
 
 deploy () {
 
@@ -77,13 +79,19 @@ rm data.sh
 
 }
 
+####
+AWS Deploy Script
+
+# Calls init() function which setups the binary for deployment
+init
+
 # For each strategy
 #   For each symbol
 #       Run how many times
 declare -a strategies=("RandomTrade") 
 for strategy in "${strategies[@]}"
 do
-    declare -a symbolsArray=("EURUSD")
+    declare -a symbolsArray=("EURUSD", "GBPUSD")
     for symbol in "${symbolsArray[@]}"
     do
         for x  in `seq 1 1 5`

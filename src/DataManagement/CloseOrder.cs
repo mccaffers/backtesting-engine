@@ -3,7 +3,7 @@ using backtesting_engine;
 using backtesting_engine_ingest;
 using backtesting_engine_models;
 using backtesting_engine_operations;
-using Report;
+using Reporting;
 using Utilities;
 
 namespace backtesting_engine;
@@ -18,6 +18,6 @@ public static class CloseOrder
 
         System.Console.WriteLine(tradeHistoryObj.closeDateTime + "\t" + Program.accountObj.pnl.ToString("0.##") + "\t Closed trade for " + tradeHistoryObj.symbol + "\t" + tradeHistoryObj.profit.ToString("0.##") + "\t" + tradeHistoryObj.direction + "\t" + tradeHistoryObj.level.ToString("0.####") + "\t" + tradeHistoryObj.closeLevel.ToString("0.####"));
 
-        Reporting.TradeUpdate(tradeHistoryObj.closeDateTime, tradeHistoryObj.symbol, tradeHistoryObj.profit);
+        Elastic.TradeUpdate(tradeHistoryObj.closeDateTime, tradeHistoryObj.symbol, tradeHistoryObj.profit);
     }
 }

@@ -4,27 +4,12 @@ using backtesting_engine_models;
 using Elasticsearch.Net;
 using Nest;
 using Newtonsoft.Json;
+using trading_exception;
 using Utilities;
 
-namespace Report;
+namespace Reporting;
 
-// TODO move this and rename
-public class TradingException : ArgumentException {
-
-    public DateTime date {get;set;}
-
-    public TradingException(string? message) : base(message)
-    {
-        date = DateTime.Now;
-    }
-
-    public TradingException(string? message, Exception? innerException) : base(message, innerException)
-    {
-        date = DateTime.Now;
-    }
-}
-
-public static class Reporting
+public static class Elastic
 {
     static CloudConnectionPool pool = new CloudConnectionPool(EnvironmentVariables.elasticCloudID, new BasicAuthenticationCredentials(EnvironmentVariables.elasticUser,EnvironmentVariables.elasticPassword));
     static ConnectionSettings settings = new ConnectionSettings(pool).RequestTimeout(TimeSpan.FromMinutes(2));
@@ -69,7 +54,7 @@ public static class Reporting
         System.Threading.Thread.Sleep(5000);
     }
 
-    public static async void SendStack(TradingException message){
+    public static async Task SendStack(TradingException message){
          if(!EnvironmentVariables.reportingEnabled){
             return;
         }

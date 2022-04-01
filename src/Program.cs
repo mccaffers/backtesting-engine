@@ -8,7 +8,8 @@ using Newtonsoft.Json;
 using Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using backtesting_engine_strategies;
-using Report;
+using Reporting;
+using trading_exception;
 
 namespace backtesting_engine;
 
@@ -39,24 +40,21 @@ public class Program
 
             System.Console.WriteLine(ex);
 
-            if(ex is TradingException){
-
-                // Known trading except
-                await Reporting.EndOfRunReport(((TradingException)ex).Message);
-                
+            if(ex is TradingException tradingException){
+                await Elastic.EndOfRunReport(tradingException.Message);
             } else {
-
-                // Unknown exception, wrap to get date and more
+                // If a unexpected exception gets throw, lets wrap it as a trading exception    
+                // which contributes system datetime
                 TradingException myEx = new TradingException(ex.Message, ex);
-                Reporting.SendStack(myEx); // send to elastic
-                await Reporting.EndOfRunReport("Unknown system exception, see ex log");
+                await Elastic.SendStack(myEx); // send to elastic
+                await Elastic.EndOfRunReport("Unknown system exception, see ex log");
             }
 
             return;
             
         }
            
-        await Reporting.EndOfRunReport("EndOfBuffer");
+        await Elastic.EndOfRunReport("EndOfBuffer");
         
     }
 
@@ -82,12 +80,12 @@ public class Program
         }
     }
 
-    private async Task Decompress(string symbol){
+    private static async Task Decompress(string symbol){
         var command = "zstd -d -f --rm ./tickdata/"+symbol+"/*.zst";
         await ShellHelper.Bash(command);
     }
 
-    private async Task PullFromS3(string symbolFolder, string symbol, int year){
+    private static async Task PullFromS3(string symbolFolder, string symbol, int year){
         var s3Path = EnvironmentVariables.s3Path;
         var s3bucket = EnvironmentVariables.s3Bucket;
 
@@ -95,7 +93,7 @@ public class Program
         var command = "mkdir -p " + symbolFolder;
         await ShellHelper.Bash(command);
 
-        command = "aws s3api get-object --bucket "+s3bucket+" --key "+s3Path+symbol+"/"+year+".csv.zst "+symbolFolder + "/"+year+".csv.zst";
+        command = "aws s3api get-object --bucket "+s3bucket+" --key "+s3Path+"/"+symbol+"/"+year+".csv.zst "+symbolFolder + "/"+year+".csv.zst";
         await ShellHelper.Bash(command);
     }
 
@@ -107,7 +105,6 @@ public class Program
 
     private static ServiceProvider RegisterServices()
     {
-
         // Define the services to inject
         var services = new ServiceCollection();
 
@@ -115,22 +112,13 @@ public class Program
 
             var _type = Type.GetType("backtesting_engine_strategies." + i);
 
-            // Double check the class name is correct
-            if(_type==null){
-                continue;
-            }
-
-            var instance = Activator.CreateInstance(_type);
-
             // Verfiy the strategy can be created
-            if(instance==null){
-                continue;
+            if(Activator.CreateInstance(_type) is IStrategy strategyInstance){
+                services.AddScoped<IStrategy>(serviceProvider =>
+                {
+                    return strategyInstance;
+                });
             }
-
-            services.AddScoped<IStrategy>(serviceProvider =>
-            {
-                return (IStrategy)instance;
-            });
         }
 
         if(services.Count == 0){

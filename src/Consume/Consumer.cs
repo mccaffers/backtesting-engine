@@ -1,14 +1,9 @@
-using System.Collections.Concurrent;
-using System.Globalization;
 using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
-using backtesting_engine_models;
 using backtesting_engine_operations;
 using backtesting_engine_strategies;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Report;
-using Utilities;
+using trading_exception;
 
 namespace backtesting_engine_ingest;
 
@@ -57,7 +52,6 @@ public class Consumer : IConsumer
             
             // trigger final report
             Program.systemMessage = "accountExceededDrawdownThreshold";
-            // await Reporting.EndOfRunReport("accountExceededDrawdownThreshold");
 
             // stop any more trades
             throw new TradingException("Exceeded threshold PL:"+ Program.accountObj.pnl);

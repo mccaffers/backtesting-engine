@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
@@ -16,7 +17,7 @@ public interface IStrategy
 
 public class RandomStrategy : IStrategy
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
+    [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
     public void Invoke(PriceObj priceObj)
     {
 

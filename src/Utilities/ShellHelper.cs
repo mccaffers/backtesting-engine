@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 
+namespace Utilities;
+
 public static class ShellHelper
 {
     public static Task<int> Bash(this string cmd)
