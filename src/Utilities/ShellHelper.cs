@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
 namespace Utilities;
@@ -12,7 +13,7 @@ public static class ShellHelper
         var process = new Process {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "bash",
+                    FileName = "/bin/bash",
                     Arguments = $"-c \"{escapedArgs}\"",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

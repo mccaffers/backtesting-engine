@@ -39,6 +39,9 @@ public static class EnvironmentVariables
         Dictionary<string, decimal> localdictionary = new Dictionary<string, decimal>();
         // scalingFactor="EURUSD,10000;GBPUSD,10000";
         foreach(var symbol in Get("scalingFactor").Split(";")){
+            if(string.IsNullOrEmpty(symbol)){
+                continue;
+            }
             var sfString = symbol.ToString().Split(",");
             decimal sf;
             if(!decimal.TryParse(sfString[1], out sf)){
