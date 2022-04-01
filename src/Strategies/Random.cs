@@ -21,12 +21,12 @@ public class RandomStrategy : IStrategy
     public void Invoke(PriceObj priceObj)
     {
 
-        TradeDirection direction = TradeDirection.BUY;
         var randomInt = new Random().Next(2); 
-
+        // 0 or 1
+        TradeDirection direction = TradeDirection.BUY;
         if (randomInt== 0)
-        { // 0 or 1
-            // direction = TradeDirection.SELL;
+        { 
+            direction = TradeDirection.SELL;
         }
 
         var openOrderRequest = new RequestObject(priceObj)

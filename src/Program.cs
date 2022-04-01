@@ -35,7 +35,7 @@ public class Program
     public static async Task Main(string[] args) {
 
         try{
-            await new Program().StartEngine();
+            await StartEngine();
         } catch(Exception ex){
 
             System.Console.WriteLine(ex);
@@ -58,7 +58,7 @@ public class Program
         
     }
 
-    private async Task StartEngine(){
+    private static async Task StartEngine(){
 
         foreach(var year in EnvironmentVariables.years){
             foreach(var symbol in EnvironmentVariables.symbols){
@@ -110,10 +110,10 @@ public class Program
 
         foreach(var i in EnvironmentVariables.strategy.Split(",")){
 
-            var _type = Type.GetType("backtesting_engine_strategies." + i);
+            var _type = Type.GetType("backtesting_engine_strategies." + i) ?? default(Type);
 
             // Verfiy the strategy can be created
-            if(Activator.CreateInstance(_type) is IStrategy strategyInstance){
+            if(_type is not null && Activator.CreateInstance(_type) is IStrategy strategyInstance){
                 services.AddScoped<IStrategy>(serviceProvider =>
                 {
                     return strategyInstance;

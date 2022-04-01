@@ -39,7 +39,7 @@ public static class Elastic
             systemRunTimeInMinutes=DateTime.Now.Subtract(Program.systemStartTime).TotalMinutes,
         };
 
-        if(Program.tradeHistory.Count>0){
+        if(!Program.tradeHistory.IsEmpty){
             report.tradingTimespanInDays=Program.tradeTime.Subtract(Program.tradeHistory.First().Value.openDate).TotalDays;
         }
 

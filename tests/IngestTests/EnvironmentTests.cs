@@ -27,7 +27,7 @@ public class IngestEnvironmentTests
         inputMock.Object.EnvironmentSetup();
 
         Assert.True(inputMock.Object.fileNames.All(x=>x.Contains(TestEnvironment.folderPath)));
-        Assert.True(inputMock.Object.fileNames.Count == TestEnvironment.fileNames.Count());
+        Assert.True(inputMock.Object.fileNames.Count == TestEnvironment.fileNames.Length);
     }  
 
 }

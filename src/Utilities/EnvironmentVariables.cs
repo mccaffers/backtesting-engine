@@ -28,7 +28,7 @@ public static class EnvironmentVariables
     public static string hostname {get;} = Dns.GetHostName();
     
     // Custom environment variables
-    public static string tickDataFolder = Path.Combine(Path.GetFullPath("./" + symbolFolder));
+    public static string tickDataFolder {get;} = Path.Combine(Path.GetFullPath("./" + symbolFolder));
     public static bool reportingEnabled {get;} = bool.Parse(Get("reportingEnabled"));
     public static string[] symbols {get;} = Get("symbols").Split(",");
     public static int[] years {get;} =  Get("years").Split(',').Select(n => Convert.ToInt32(n)).ToArray();
@@ -37,7 +37,7 @@ public static class EnvironmentVariables
 
     private static Dictionary<string, decimal> PopulateDictionary(){
         Dictionary<string, decimal> localdictionary = new Dictionary<string, decimal>();
-        // scalingFactor="EURUSD,10000;GBPUSD,10000";
+
         foreach(var symbol in Get("scalingFactor").Split(";")){
             if(string.IsNullOrEmpty(symbol)){
                 continue;
