@@ -17,6 +17,13 @@ public interface IStrategy
 
 public class RandomStrategy : IStrategy
 {
+    IRequestOpenTrade requestOpenTrade;
+
+    public RandomStrategy(IRequestOpenTrade requestOpenTrade)
+    {
+        this.requestOpenTrade = requestOpenTrade;
+    }
+
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
     public void Invoke(PriceObj priceObj)
     {
@@ -37,6 +44,6 @@ public class RandomStrategy : IStrategy
             limitDistancePips = 20,
         };
 
-        RequestOpenTrade.Request(openOrderRequest);
+        this.requestOpenTrade.Request(openOrderRequest);
     }
 }

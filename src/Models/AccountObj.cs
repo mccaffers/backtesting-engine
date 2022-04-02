@@ -1,24 +1,34 @@
+using System.Collections.Concurrent;
+using backtesting_engine_models;
 using backtesting_engine_operations;
 
 namespace backtesting_engine;
 
-public class AccountObj : TradingBase {
+public class AccountObj
+{
+    ConcurrentDictionary<string, RequestObject> openTrades;
+    ConcurrentDictionary<string, TradeHistoryObject> tradeHistory;
 
-    public AccountObj(IServiceProvider provider) : base(provider)
-    {
-        
+    public AccountObj( ConcurrentDictionary<string, RequestObject> openTrades, ConcurrentDictionary<string, TradeHistoryObject> tradeHistory ){
+        this.openTrades = openTrades;
+        this.tradeHistory = tradeHistory;
     }
-    
+
     public decimal openingEquity { get; init; }
-    public decimal maximumDrawndownPercentage {get;set;}
+    public decimal maximumDrawndownPercentage { get; set; }
 
-    public decimal pnl { get {
-        var pl = this.tradingObjects.tradeHistory.Sum(x => x.Value.profit);
-        return this.openingEquity + pl +  this.tradingObjects.openTrades.Sum(x=>Positions.CalculateProfit(x.Value.close, x.Value));
-    }}
+    public decimal pnl
+    {
+        get
+        {
+            var pl = tradeHistory.Sum(x => x.Value.profit);
+            return this.openingEquity + pl + openTrades.Sum(x => Positions.CalculateProfit(x.Value.close, x.Value));
+        }
+    }
 
-    public bool hasAccountExceededDrawdownThreshold(){
-        return (this.pnl < this.openingEquity*(1-(this.maximumDrawndownPercentage/100)));
+    public bool hasAccountExceededDrawdownThreshold()
+    {
+        return (this.pnl < this.openingEquity * (1 - (this.maximumDrawndownPercentage / 100)));
     }
 
 }

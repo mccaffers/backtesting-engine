@@ -2,19 +2,17 @@ using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
 using backtesting_engine_operations;
 using backtesting_engine_strategies;
-using Microsoft.Extensions.DependencyInjection;
-using trading_exception;
 
 namespace backtesting_engine_ingest;
-
-
 
 public class Consumer : IConsumer
 {
     IEnumerable<IStrategy>? strategies;
+    IPositions positions;
 
-    public Consumer(IEnumerable<IStrategy> strategies) {
+    public Consumer(IEnumerable<IStrategy> strategies, IPositions positions) {
         this.strategies = strategies;
+        this.positions = positions;
     }
 
     public async Task ConsumeAsync(BufferBlock<PriceObj> buffer, CancellationToken cts)
@@ -38,7 +36,7 @@ public class Consumer : IConsumer
             // Program.tradeTime = priceObj.date;
 
             // Review open positions, check if the new symbol data meets the threshold for LIMI/STOP levels
-            // Positions.Review(priceObj);
+            this.positions.Review(priceObj);
 
             // ReviewEquity();
         }

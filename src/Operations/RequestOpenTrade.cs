@@ -4,25 +4,43 @@ using Utilities;
 
 namespace backtesting_engine_operations;
 
-public static class RequestOpenTrade
+public interface IRequestOpenTrade
 {
+    void Request(RequestObject reqObj);
+}
+
+public class RequestOpenTrade : IRequestOpenTrade
+{
+
+    IOpenOrder openOrder;
+
+    public RequestOpenTrade(IOpenOrder openOrder)
+    {
+        this.openOrder = openOrder;
+    }
+
     // Validation on opening a trade
-    public static void Request(RequestObject reqObj){   
+    public void Request(RequestObject reqObj)
+    {
 
         decimal stopLevel = 0m;
         decimal limitLevel = 0m;
         decimal scalingFactor = EnvironmentVariables.GetScalingFactor(reqObj.symbol);
 
-        decimal slippage = 1m/scalingFactor;
+        decimal slippage = 1m / scalingFactor;
         reqObj.UpdateLevelWithSlippage(slippage);
 
-        if(reqObj.stopDistancePips != 0 && reqObj.limitDistancePips!=0){
+        if (reqObj.stopDistancePips != 0 && reqObj.limitDistancePips != 0)
+        {
 
-             if(reqObj.direction == TradeDirection.SELL) {
-                stopLevel = reqObj.level +  (reqObj.stopDistancePips / scalingFactor);
+            if (reqObj.direction == TradeDirection.SELL)
+            {
+                stopLevel = reqObj.level + (reqObj.stopDistancePips / scalingFactor);
                 limitLevel = reqObj.level - (reqObj.limitDistancePips / scalingFactor);
-                
-            } else if (reqObj.direction == TradeDirection.BUY) {
+
+            }
+            else if (reqObj.direction == TradeDirection.BUY)
+            {
                 stopLevel = reqObj.level - (reqObj.stopDistancePips / scalingFactor);
                 limitLevel = reqObj.level + (reqObj.limitDistancePips / scalingFactor);
             }
@@ -31,7 +49,7 @@ public static class RequestOpenTrade
         reqObj.stopLevel = stopLevel;
         reqObj.limitLevel = limitLevel;
 
-        // OpenOrder.Request(reqObj);
+        this.openOrder.Request(reqObj);
     }
 
 }

@@ -8,14 +8,19 @@ public interface ITradingObjects
     ConcurrentDictionary<string, TradeHistoryObject> tradeHistory { get; }
     string test { get; set; }
     DateTime tradeTime { get; set; }
+    AccountObj accountObj {get; init;}
 }
 
 public class TradingObjects : ITradingObjects
 {
+    public TradingObjects(IServiceProvider provider) {
+        accountObj = new AccountObj(openTrades, tradeHistory);
+    }
+
     public ConcurrentDictionary<string, RequestObject> openTrades { get; } = new ConcurrentDictionary<string, RequestObject>();
     public ConcurrentDictionary<string, TradeHistoryObject> tradeHistory { get; } = new ConcurrentDictionary<string, TradeHistoryObject>();
     public string test { get; set; } = "";
     public DateTime tradeTime { get; set; }
-    public static AccountObj accountObj;
+    public AccountObj accountObj {get; init;}
 
 }

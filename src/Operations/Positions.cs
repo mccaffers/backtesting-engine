@@ -5,44 +5,65 @@ using Utilities;
 
 namespace backtesting_engine_operations;
 
-public class Positions : TradingBase {
+public interface IPositions
+{
+    void CloseAll();
+    IEnumerable<RequestObject> GetOrderBook(string symbol);
+    void Review(PriceObj priceObj);
+    void UpdateTradeHistory(RequestObject reqObj);
+}
 
-    public Positions(IServiceProvider provider) : base(provider)
+public class Positions : TradingBase, IPositions
+{
+
+    ICloseOrder closeOrder;
+
+    public Positions(IServiceProvider provider, ICloseOrder closeOrder) : base(provider)
     {
-        
+        this.closeOrder = closeOrder;
     }
 
-    public void CloseAll(){
-        foreach(var item in this.tradingObjects.openTrades){
+    public void CloseAll()
+    {
+        foreach (var item in this.tradingObjects.openTrades)
+        {
             UpdateTradeHistory(item.Value);
         }
     }
-    
-    public void Review(PriceObj priceObj){
 
-        foreach(var myTradeObj in GetOrderBook(priceObj.symbol)){
+    public void Review(PriceObj priceObj)
+    {
+
+        foreach (var myTradeObj in GetOrderBook(priceObj.symbol))
+        {
 
             myTradeObj.UpdateClose(priceObj);
 
-            if(myTradeObj.closeDate.Hour == 22 &&  myTradeObj.closeDate.Minute>=29 && myTradeObj.closeDate.Day==2){
-                System.Console.WriteLine("caught");
-            }
+            // if (myTradeObj.closeDate.Hour == 22 && myTradeObj.closeDate.Minute >= 29 && myTradeObj.closeDate.Day == 2)
+            // {
+            //     System.Console.WriteLine("caught");
+            // }
 
             if (myTradeObj.direction == TradeDirection.BUY &&
-                    (priceObj.bid <= myTradeObj.stopLevel || priceObj.bid >= myTradeObj.limitLevel)) {
+                    (priceObj.bid <= myTradeObj.stopLevel || priceObj.bid >= myTradeObj.limitLevel))
+            {
                 UpdateTradeHistory(myTradeObj);
-            } else if (myTradeObj.direction == TradeDirection.SELL &&
-                     (priceObj.ask >= myTradeObj.stopLevel || priceObj.ask <= myTradeObj.limitLevel)){ 
+            }
+            else if (myTradeObj.direction == TradeDirection.SELL &&
+                   (priceObj.ask >= myTradeObj.stopLevel || priceObj.ask <= myTradeObj.limitLevel))
+            {
                 UpdateTradeHistory(myTradeObj);
             }
         }
     }
 
-    public IEnumerable<RequestObject> GetOrderBook(string symbol){
-        return this.tradingObjects.openTrades.Where(x => x.Key.Contains(symbol)).Select(x=>x.Value);
+    public IEnumerable<RequestObject> GetOrderBook(string symbol)
+    {
+        return this.tradingObjects.openTrades.Where(x => x.Key.Contains(symbol)).Select(x => x.Value);
     }
 
-    public void UpdateTradeHistory(RequestObject reqObj){
+    public void UpdateTradeHistory(RequestObject reqObj)
+    {
 
         TradeHistoryObject tradeHistoryObj = new TradeHistoryObject();
         tradeHistoryObj.closeLevel = reqObj.close;
@@ -51,12 +72,13 @@ public class Positions : TradingBase {
         tradeHistoryObj.runningTime = reqObj.closeDate.Subtract(reqObj.openDate).TotalMinutes;
 
         PropertyCopier<RequestObject, TradeHistoryObject>.Copy(reqObj, tradeHistoryObj);
-        // CloseOrder.Request(tradeHistoryObj);
-  }
+        this.closeOrder.Request(tradeHistoryObj);
+    }
 
-    public static decimal CalculateProfit(decimal level, RequestObject openTradeObj){
+    public static decimal CalculateProfit(decimal level, RequestObject openTradeObj)
+    {
         var difference = openTradeObj.direction == TradeDirection.BUY ? level - openTradeObj.level : openTradeObj.level - level;
         return difference * EnvironmentVariables.GetScalingFactor(openTradeObj.symbol) * openTradeObj.size;
     }
-    
+
 }

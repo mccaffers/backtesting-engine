@@ -7,17 +7,26 @@ using Utilities;
 
 namespace backtesting_engine;
 
-public static class OpenOrder
+public interface IOpenOrder
 {
+    void Request(RequestObject reqObj);
+}
+
+public class OpenOrder : TradingBase, IOpenOrder
+{
+    public OpenOrder(IServiceProvider provider) : base(provider) { }
+
     // Data Update
-    public static void Request(RequestObject reqObj){   
+    public void Request(RequestObject reqObj)
+    {
 
         // One trade open at the moment
-        var openTradesCount = Program.openTrades.Count(x => x.Key.Contains(reqObj.priceObj.symbol));
-        if(openTradesCount!=0){
+        var openTradesCount = this.tradingObjects.openTrades.Count(x => x.Key.Contains(reqObj.priceObj.symbol));
+        if (openTradesCount != 0)
+        {
             return;
         }
 
-        Program.openTrades.TryAdd(reqObj.key, reqObj);
+        this.tradingObjects.openTrades.TryAdd(reqObj.key, reqObj);
     }
 }

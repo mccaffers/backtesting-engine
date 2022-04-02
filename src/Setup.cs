@@ -50,12 +50,15 @@ public class SystemSetup : ISystemSetup
 
     private static async Task Decompress(string symbol)
     {
+        System.Console.WriteLine("Decompressing - " + symbol);
         var command = "zstd -d -f --rm ./tickdata/" + symbol + "/*.zst";
         await ShellHelper.Bash(command);
     }
 
     private static async Task PullFromS3(string symbolFolder, string symbol, int year)
     {
+        System.Console.WriteLine("Pulling tick data from S3 - " + symbol);
+
         var s3Path = EnvironmentVariables.s3Path;
         var s3bucket = EnvironmentVariables.s3Bucket;
 
