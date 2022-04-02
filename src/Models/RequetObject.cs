@@ -47,6 +47,7 @@ public class RequestObject {
     public decimal limitLevel {get; set;}
 
     public void UpdateClose(PriceObj priceObj){
+
         this.close = this.direction == TradeDirection.BUY? priceObj.bid : priceObj.ask;
         this.closeDate = priceObj.date;
         this.profit = ((this.direction == TradeDirection.BUY ? this.close - this.level : this.level - this.close) 

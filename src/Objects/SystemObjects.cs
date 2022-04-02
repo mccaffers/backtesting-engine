@@ -1,18 +1,9 @@
-using System.Collections.Concurrent;
-using backtesting_engine;
-using backtesting_engine_models;
+using backtesting_engine.interfaces;
 
-public interface ISystemObjects
-{
-    DateTime systemStartTime { get; }
-}
+namespace backtesting_engine;
 
 public class SystemObjects : ISystemObjects
 {
-
     public DateTime systemStartTime { get; } = DateTime.Now;
-
     public static string systemMessage { get; set; } = "";
-
-
 }

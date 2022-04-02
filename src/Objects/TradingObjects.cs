@@ -1,15 +1,9 @@
 using System.Collections.Concurrent;
 using backtesting_engine;
+using backtesting_engine.interfaces;
 using backtesting_engine_models;
 
-public interface ITradingObjects
-{
-    ConcurrentDictionary<string, RequestObject> openTrades { get; }
-    ConcurrentDictionary<string, TradeHistoryObject> tradeHistory { get; }
-    string test { get; set; }
-    DateTime tradeTime { get; set; }
-    AccountObj accountObj {get; init;}
-}
+namespace backtesting_engine;
 
 public class TradingObjects : ITradingObjects
 {

@@ -11,12 +11,12 @@ using backtesting_engine_strategies;
 using Reporting;
 using trading_exception;
 using backtesting_engine_operations;
+using backtesting_engine.interfaces;
 
 namespace backtesting_engine;
 
-public class Program
+class Program
 {
-
     async static Task Main(string[] args) =>
         await Task.FromResult(
             new ServiceCollection()
@@ -36,33 +36,6 @@ public class Program
         .ContinueWith(task=>{
             System.Console.WriteLine("Finished");
         });
-
-
 }
 
-public static class ServiceExtension {
-
-    public static IServiceCollection RegisterStrategies(this IServiceCollection services)
-    {
-        // Define the services to inject
-        // var services = ;
-
-        foreach(var i in EnvironmentVariables.strategy.Split(",")){
-
-            var _type = Type.GetType("backtesting_engine_strategies." + i) ?? default(Type);
-
-            // Verfiy the strategy can be created
-            if(_type is not null && typeof(IStrategy).IsAssignableFrom(_type) ){
-                services.AddSingleton(typeof(IStrategy), _type);
-            }
-        }
-
-        if(services.Count == 0){
-            throw new ArgumentException("No Strategies Found");
-        }
-
-        // Keep a record of the ServiceProvider to call it in the Trade Class
-        return services; //IServiceScope
-    }
-}
 

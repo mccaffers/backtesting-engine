@@ -1,14 +1,17 @@
+using backtesting_engine.interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace backtesting_engine;
 
 public abstract class TradingBase {
 
-    public string test = "";
     protected ITradingObjects tradingObjects;
+    protected ISystemObjects systemObjects;
 
-    public TradingBase(IServiceProvider provider)
+    protected TradingBase(IServiceProvider provider)
     {
         this.tradingObjects = provider.GetRequiredService<ITradingObjects>();
+        this.systemObjects = provider.GetRequiredService<ISystemObjects>();
+
     }
  }

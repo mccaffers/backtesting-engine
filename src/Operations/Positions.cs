@@ -1,6 +1,7 @@
 using backtesting_engine;
 using backtesting_engine_ingest;
 using backtesting_engine_models;
+using trading_exception;
 using Utilities;
 
 namespace backtesting_engine_operations;
@@ -11,16 +12,29 @@ public interface IPositions
     IEnumerable<RequestObject> GetOrderBook(string symbol);
     void Review(PriceObj priceObj);
     void UpdateTradeHistory(RequestObject reqObj);
+    void ReviewEquity();
 }
 
 public class Positions : TradingBase, IPositions
 {
 
-    ICloseOrder closeOrder;
+    readonly ICloseOrder closeOrder;
 
     public Positions(IServiceProvider provider, ICloseOrder closeOrder) : base(provider)
     {
         this.closeOrder = closeOrder;
+    }
+
+    public void ReviewEquity()
+    {
+        
+        if (this.tradingObjects.accountObj.hasAccountExceededDrawdownThreshold()){
+            // close all trades
+            CloseAll();
+
+            // stop any more trades
+            throw new TradingException("Exceeded threshold PL:" + this.tradingObjects.accountObj.pnl);
+        }
     }
 
     public void CloseAll()
@@ -34,15 +48,12 @@ public class Positions : TradingBase, IPositions
     public void Review(PriceObj priceObj)
     {
 
+        this.tradingObjects.tradeTime = priceObj.date;
+
         foreach (var myTradeObj in GetOrderBook(priceObj.symbol))
         {
 
             myTradeObj.UpdateClose(priceObj);
-
-            // if (myTradeObj.closeDate.Hour == 22 && myTradeObj.closeDate.Minute >= 29 && myTradeObj.closeDate.Day == 2)
-            // {
-            //     System.Console.WriteLine("caught");
-            // }
 
             if (myTradeObj.direction == TradeDirection.BUY &&
                     (priceObj.bid <= myTradeObj.stopLevel || priceObj.bid >= myTradeObj.limitLevel))

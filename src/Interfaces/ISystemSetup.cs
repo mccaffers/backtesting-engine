@@ -1,4 +1,4 @@
-namespace backtesting_engine;
+namespace backtesting_engine.interfaces;
 
 public interface ISystemSetup
 {

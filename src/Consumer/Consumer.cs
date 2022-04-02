@@ -1,5 +1,6 @@
 using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
+using backtesting_engine.interfaces;
 using backtesting_engine_operations;
 using backtesting_engine_strategies;
 
@@ -7,8 +8,8 @@ namespace backtesting_engine_ingest;
 
 public class Consumer : IConsumer
 {
-    IEnumerable<IStrategy>? strategies;
-    IPositions positions;
+    readonly IEnumerable<IStrategy>? strategies;
+    readonly IPositions positions;
 
     public Consumer(IEnumerable<IStrategy> strategies, IPositions positions) {
         this.strategies = strategies;
@@ -26,38 +27,19 @@ public class Consumer : IConsumer
             var priceObj = await buffer.ReceiveAsync();
 
             // Invoke all the strategies defined in configuration
-            // var strategies = Program.scope.ServiceProvider.GetServices<IStrategy>();
-            foreach (var i in strategies)
+            foreach (var i in strategies ?? Array.Empty<IStrategy>())
             {
                 i.Invoke(priceObj);
             }
 
-            // Keep track of trade time
-            // Program.tradeTime = priceObj.date;
-
             // Review open positions, check if the new symbol data meets the threshold for LIMI/STOP levels
             this.positions.Review(priceObj);
-
-            // ReviewEquity();
+            this.positions.ReviewEquity();
         }
 
     }
 
-    // public void ReviewEquity()
-    // {
-
-    //     if (Program.accountObj.hasAccountExceededDrawdownThreshold())
-    //     {
-    //         // close all trades
-    //         Positions.CloseAll();
-
-    //         // trigger final report
-    //         Program.systemMessage = "accountExceededDrawdownThreshold";
-
-    //         // stop any more trades
-    //         throw new TradingException("Exceeded threshold PL:" + Program.accountObj.pnl);
-    //     }
-    // }
+   
 }
 
 public static class PropertyCopier<TParent, TChild> where TParent : class

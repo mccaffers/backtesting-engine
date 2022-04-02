@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using backtesting_engine.interfaces;
 using backtesting_engine_ingest;
 using Utilities;
 

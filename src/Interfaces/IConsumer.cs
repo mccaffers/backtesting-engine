@@ -1,6 +1,6 @@
 using System.Threading.Tasks.Dataflow;
 
-namespace backtesting_engine;
+namespace backtesting_engine.interfaces;
 
 public interface IConsumer
 {

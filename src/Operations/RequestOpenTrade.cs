@@ -12,7 +12,7 @@ public interface IRequestOpenTrade
 public class RequestOpenTrade : IRequestOpenTrade
 {
 
-    IOpenOrder openOrder;
+    readonly IOpenOrder openOrder;
 
     public RequestOpenTrade(IOpenOrder openOrder)
     {
