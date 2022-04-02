@@ -16,94 +16,23 @@ namespace backtesting_engine;
 public class Program
 {
 
-    public static ConcurrentDictionary<string, RequestObject> openTrades { get; } = new ConcurrentDictionary<string, RequestObject>();
-    public static ConcurrentDictionary<string, TradeHistoryObject> tradeHistory { get; } = new ConcurrentDictionary<string, TradeHistoryObject >();
-    
-    public static DateTime systemStartTime {get;} = DateTime.Now;
-    public static DateTime tradeTime {get;set;}
+    async static Task Main(string[] args) =>
+        await Task.FromResult(
+            RegisterStrategies()
+            .AddSingleton<IIngest, Ingest>()
+            .AddSingleton<IConsumer, Consumer>()
+            .AddSingleton<ITaskManager, TaskManager>()
+            .AddSingleton<ISystemSetup, SystemSetup>()
+            .AddSingleton<ITradingObjects, TradingObjects>()
+            .BuildServiceProvider(true)
+            .CreateScope()
+            .ServiceProvider
+            .GetRequiredService<ISystemSetup>())
+        .ContinueWith(task=>{
+            System.Console.WriteLine("Finished");
+        });
 
-    public static string systemMessage {get;set;} = "";
-
-    public readonly static AccountObj accountObj = new AccountObj(){
-        openingEquity = decimal.Parse(EnvironmentVariables.accountEquity),
-        maximumDrawndownPercentage = decimal.Parse(EnvironmentVariables.maximumDrawndownPercentage)
-    };
-    
-    // Dependency Injection Scope
-    public readonly static IServiceScope scope = RegisterServices().CreateScope();
-
-    public static async Task Main(string[] args) {
-
-        try{
-            await StartEngine();
-        } catch(Exception ex){
-
-            System.Console.WriteLine(ex);
-
-            if(ex is TradingException tradingException){
-                await Elastic.EndOfRunReport(tradingException.Message);
-            } else {
-                // If a unexpected exception gets throw, lets wrap it as a trading exception    
-                // which contributes system datetime
-                TradingException myEx = new TradingException(ex.Message, ex);
-                await Elastic.SendStack(myEx); // send to elastic
-                await Elastic.EndOfRunReport("Unknown system exception, see ex log");
-            }
-
-            return;
-            
-        }
-           
-        await Elastic.EndOfRunReport("EndOfBuffer");
-        
-    }
-
-    private static async Task StartEngine(){
-
-        foreach(var year in EnvironmentVariables.years){
-            foreach(var symbol in EnvironmentVariables.symbols){
-
-                var symbolFolder = Path.Combine(EnvironmentVariables.tickDataFolder, symbol);
-                var csvFile = Path.Combine(symbolFolder, year+".csv");
-                
-                // Check if file already exists
-                if(!File.Exists(csvFile)){
-                    await PullFromS3(symbolFolder, symbol, year);
-                    await Decompress(symbol);
-                }
-            }
-            // Start Backtesting Engine
-            await new Main().IngestAndConsume(new Consumer(), new Ingest());
-
-            // Clean up
-            await CleanSymbolFolder(EnvironmentVariables.tickDataFolder);
-        }
-    }
-
-    private static async Task Decompress(string symbol){
-        var command = "zstd -d -f --rm ./tickdata/"+symbol+"/*.zst";
-        await ShellHelper.Bash(command);
-    }
-
-    private static async Task PullFromS3(string symbolFolder, string symbol, int year){
-        var s3Path = EnvironmentVariables.s3Path;
-        var s3bucket = EnvironmentVariables.s3Bucket;
-
-        // Setup folder space for tick data
-        var command = "mkdir -p " + symbolFolder;
-        await ShellHelper.Bash(command);
-
-        command = "aws s3api get-object --bucket "+s3bucket+" --key "+s3Path+"/"+symbol+"/"+year+".csv.zst "+symbolFolder + "/"+year+".csv.zst";
-        await ShellHelper.Bash(command);
-    }
-
-    private static async Task CleanSymbolFolder(string symbolFolder){
-        // Delete procssed data to free up space
-        var command = "rm -rf " + symbolFolder + "/*";
-        await ShellHelper.Bash(command);
-    }
-
-    private static ServiceProvider RegisterServices()
+    private static ServiceCollection RegisterStrategies()
     {
         // Define the services to inject
         var services = new ServiceCollection();
@@ -114,7 +43,7 @@ public class Program
 
             // Verfiy the strategy can be created
             if(_type is not null && Activator.CreateInstance(_type) is IStrategy strategyInstance){
-                services.AddScoped<IStrategy>(serviceProvider =>
+                services.AddSingleton<IStrategy>(serviceProvider =>
                 {
                     return strategyInstance;
                 });
@@ -126,6 +55,7 @@ public class Program
         }
 
         // Keep a record of the ServiceProvider to call it in the Trade Class
-        return services.BuildServiceProvider(true); //IServiceScope
+        return services; //IServiceScope
     }
 }
+

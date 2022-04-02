@@ -6,38 +6,52 @@ using Utilities;
 
 namespace backtesting_engine_ingest;
 
-public class Ingest
+public interface IIngest
 {
-    private readonly IEnumerable<string>  symbols;
+    List<string> fileNames { get; }
+    Dictionary<string, StreamReader> streamDictionary { get; }
+    Dictionary<string, PriceObj> localInputBuffer { get; }
+
+    void EnvironmentSetup();
+    Task ReadLines(BufferBlock<PriceObj> buffer, CancellationToken cts);
+}
+
+public class Ingest : IIngest
+{
+    private readonly IEnumerable<string> symbols;
 
     public virtual List<string> fileNames { get; } = new List<string>();
     public Dictionary<string, StreamReader> streamDictionary { get; }
     public Dictionary<string, PriceObj> localInputBuffer { get; }
 
-    public Ingest() {
+    public Ingest()
+    {
         this.symbols = EnvironmentVariables.symbols;
         this.streamDictionary = new Dictionary<string, StreamReader>();
         this.localInputBuffer = new Dictionary<string, PriceObj>();
     }
 
-    public virtual void EnvironmentSetup() {
+    public virtual void EnvironmentSetup()
+    {
 
         // Create a temporary list
         var arrayHolder = new List<string>();
 
         // Loop around every epic to check what files are present
-        foreach(var symbol in this.symbols){
+        foreach (var symbol in this.symbols)
+        {
             var symbolFolder = Path.Combine(EnvironmentVariables.tickDataFolder, symbol);
 
             DirectoryInfo di = new DirectoryInfo(symbolFolder);
             var files = di.GetFiles("*.csv").OrderBy(x => x.Name);
 
-            foreach (var file in files) {
+            foreach (var file in files)
+            {
                 arrayHolder.Add(file.FullName);
             }
         }
-        
-        this.fileNames.AddRange(arrayHolder.OrderBy(x=>x).ToList());
+
+        this.fileNames.AddRange(arrayHolder.OrderBy(x => x).ToList());
     }
 
     // 1. Builds a dictionary of filenames (.csv's) to read
@@ -46,7 +60,7 @@ public class Ingest
     CancellationToken _cts;
     public async Task ReadLines(BufferBlock<PriceObj> buffer, CancellationToken cts)
     {
-        _cts=cts;
+        _cts = cts;
         foreach (var file in fileNames)
         {
             streamDictionary.Add(file, ReadFile(file));
@@ -82,7 +96,7 @@ public class Ingest
         // Loop statements if files still have contents to parse
         while (streamDictionary.Any(x => !x.Value.EndOfStream))
         {
-        
+
             _cts.ThrowIfCancellationRequested();
 
             foreach (var file in streamDictionary)
@@ -153,14 +167,15 @@ public class Ingest
     {
         return values.Length > 4 &&
             values.Any(x => x.Length > 0) &&
-            values.Skip(1).All(x=> decimal.TryParse(x, NumberStyles.Any, CultureInfo.InvariantCulture, out _));
+            values.Skip(1).All(x => decimal.TryParse(x, NumberStyles.Any, CultureInfo.InvariantCulture, out _));
     }
 
     // Extract the datetime from the string
     public static (bool parsed, DateTime datetime) extractDt(string dtString)
     {
         DateTime localDt;
-        if(dtString.Contains('+')){
+        if (dtString.Contains('+'))
+        {
             dtString = dtString.Substring(0, dtString.LastIndexOf("+")); // Stripping everything off before the + sign
         }
         var parsedDt = DateTime.TryParseExact(dtString, StringFormats.dtFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out localDt);

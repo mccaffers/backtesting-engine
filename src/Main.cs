@@ -6,19 +6,27 @@ using Utilities;
 
 namespace backtesting_engine;
 
-public class Main
+public class TaskManager : ITaskManager
 {
     protected readonly BufferBlock<PriceObj> buffer = new BufferBlock<PriceObj>();
-
     protected readonly CancellationTokenSource cts = new CancellationTokenSource();
 
-    public async Task IngestAndConsume(IConsumer c, Ingest i)
+    IConsumer c;
+    IIngest i;
+
+    public TaskManager(IConsumer c, IIngest i)
+    {
+        this.c = c;
+        this.i = i;
+    }
+
+    public async Task IngestAndConsume()
     {
         i.EnvironmentSetup();
 
         Task taskProduce = i.ReadLines(buffer, cts.Token).CancelOnFaulted(cts);
         Task consumer = c.ConsumeAsync(buffer, cts.Token).CancelOnFaulted(cts);
-        
+
         // await until both the producer and the consumer are finished
         await Task.WhenAll(taskProduce, consumer);
     }

@@ -10,15 +10,15 @@ class TestEnvironment {
         Environment.SetEnvironmentVariable("symbols", "TestEnvironmentSetup");
         Environment.SetEnvironmentVariable("scalingFactor", "TestEnvironmentSetup,1000;");
         Environment.SetEnvironmentVariable("symbolFolder", "Resources");
-        Environment.SetEnvironmentVariable("strategy", "random");
+        Environment.SetEnvironmentVariable("strategy", "debug");
         Environment.SetEnvironmentVariable("runID", "debug");
         Environment.SetEnvironmentVariable("elasticUser", "debug");
         Environment.SetEnvironmentVariable("elasticPassword", "debug");
         Environment.SetEnvironmentVariable("elasticCloudID", "debug");
-        Environment.SetEnvironmentVariable("accountEquity", "debug");
+        Environment.SetEnvironmentVariable("accountEquity", "100");
         Environment.SetEnvironmentVariable("stopDistanceInPips", "10");
         Environment.SetEnvironmentVariable("limitDistanceInPips", "10");
-        Environment.SetEnvironmentVariable("maximumDrawndownPercentage", "debug");
+        Environment.SetEnvironmentVariable("maximumDrawndownPercentage", "50");
         Environment.SetEnvironmentVariable("s3Bucket", "debug");
         Environment.SetEnvironmentVariable("s3Path", "debug");
         Environment.SetEnvironmentVariable("years", "2000");

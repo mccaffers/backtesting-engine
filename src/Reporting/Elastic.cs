@@ -20,38 +20,39 @@ public static class Elastic
 
     public static async Task EndOfRunReport(string reason){
         
-         if(!EnvironmentVariables.reportingEnabled){
-            return;
-        }
+        await Task.FromResult(true);
+        //  if(!EnvironmentVariables.reportingEnabled){
+        //     return;
+        // }
 
-        var report = new ReportFinalObj(){
-            date = DateTime.Now,
-            hostname = EnvironmentVariables.hostname,
-            symbols= EnvironmentVariables.symbols,
-            pnl=Program.accountObj.pnl,
-            runID=EnvironmentVariables.runID,
-            openingEquity=Program.accountObj.openingEquity,
-            maximumDrawndownPercentage=Program.accountObj.maximumDrawndownPercentage,
-            strategy=EnvironmentVariables.strategy,
-            positiveTradeCount=Program.tradeHistory.Count(x=>x.Value.profit>0),
-            negativeTradeCount=Program.tradeHistory.Count(x=>x.Value.profit<0),
-            positivePercentage=(Program.tradeHistory.Count(x=>x.Value.profit>0)/Program.tradeHistory.Count(x=>x.Value.profit<0))*100,
-            systemRunTimeInMinutes=DateTime.Now.Subtract(Program.systemStartTime).TotalMinutes,
-        };
+        // var report = new ReportFinalObj(){
+        //     date = DateTime.Now,
+        //     hostname = EnvironmentVariables.hostname,
+        //     symbols= EnvironmentVariables.symbols,
+        //     pnl=Program.accountObj.pnl,
+        //     runID=EnvironmentVariables.runID,
+        //     openingEquity=Program.accountObj.openingEquity,
+        //     maximumDrawndownPercentage=Program.accountObj.maximumDrawndownPercentage,
+        //     strategy=EnvironmentVariables.strategy,
+        //     positiveTradeCount=Program.tradeHistory.Count(x=>x.Value.profit>0),
+        //     negativeTradeCount=Program.tradeHistory.Count(x=>x.Value.profit<0),
+        //     positivePercentage=(Program.tradeHistory.Count(x=>x.Value.profit>0)/Program.tradeHistory.Count(x=>x.Value.profit<0))*100,
+        //     systemRunTimeInMinutes=DateTime.Now.Subtract(Program.systemStartTime).TotalMinutes,
+        // };
 
-        if(!Program.tradeHistory.IsEmpty){
-            report.tradingTimespanInDays=Program.tradeTime.Subtract(Program.tradeHistory.First().Value.openDate).TotalDays;
-        }
+        // if(!Program.tradeHistory.IsEmpty){
+        //     report.tradingTimespanInDays=Program.tradeTime.Subtract(Program.tradeHistory.First().Value.openDate).TotalDays;
+        // }
 
-        if(reason=="EndOfBuffer"){
-            report.complete = true;
-        } else {
-            report.complete = false;
-            report.reason = reason;
-        }
+        // if(reason=="EndOfBuffer"){
+        //     report.complete = true;
+        // } else {
+        //     report.complete = false;
+        //     report.reason = reason;
+        // }
         
-        await esClient.IndexAsync(report,b=>b.Index("report"));
-        System.Threading.Thread.Sleep(5000);
+        // await esClient.IndexAsync(report,b=>b.Index("report"));
+        // System.Threading.Thread.Sleep(5000);
     }
 
     public static async Task SendStack(TradingException message){
@@ -64,14 +65,15 @@ public static class Elastic
     }
 
     public static void TradeUpdate(DateTime date, string symbol, decimal profit){
-         tradeUpdateArray.Add(new ReportTradeObj(){
-            date=date,
-            symbols=EnvironmentVariables.symbols,
-            pnl=Program.accountObj.pnl,
-            runID=EnvironmentVariables.runID,
-            tradeProfit=profit
-        });
-        BatchTradeUpdate();
+        return;
+        //  tradeUpdateArray.Add(new ReportTradeObj(){
+        //     date=date,
+        //     symbols=EnvironmentVariables.symbols,
+        //     pnl=Program.accountObj.pnl,
+        //     runID=EnvironmentVariables.runID,
+        //     tradeProfit=profit
+        // });
+        // BatchTradeUpdate();
     }
 
     private static void BatchTradeUpdate(){

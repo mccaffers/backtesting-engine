@@ -7,14 +7,15 @@ using trading_exception;
 
 namespace backtesting_engine_ingest;
 
-public interface IConsumer
-{
-    Task ConsumeAsync(BufferBlock<PriceObj> buffer, CancellationToken cts);
-    void ReviewEquity();
-}
+
 
 public class Consumer : IConsumer
 {
+    IEnumerable<IStrategy>? strategies;
+
+    public Consumer(IEnumerable<IStrategy> strategies) {
+        this.strategies = strategies;
+    }
 
     public async Task ConsumeAsync(BufferBlock<PriceObj> buffer, CancellationToken cts)
     {
@@ -27,36 +28,38 @@ public class Consumer : IConsumer
             var priceObj = await buffer.ReceiveAsync();
 
             // Invoke all the strategies defined in configuration
-            var strategies = Program.scope.ServiceProvider.GetServices<IStrategy>();
-            foreach(var i in strategies){
+            // var strategies = Program.scope.ServiceProvider.GetServices<IStrategy>();
+            foreach (var i in strategies)
+            {
                 i.Invoke(priceObj);
             }
 
             // Keep track of trade time
-            Program.tradeTime = priceObj.date;
+            // Program.tradeTime = priceObj.date;
 
             // Review open positions, check if the new symbol data meets the threshold for LIMI/STOP levels
-            Positions.Review(priceObj);
-            
-            ReviewEquity();
+            // Positions.Review(priceObj);
+
+            // ReviewEquity();
         }
 
     }
 
-    public void ReviewEquity()
-    {
-        
-        if (Program.accountObj.hasAccountExceededDrawdownThreshold()){
-            // close all trades
-            Positions.CloseAll();
-            
-            // trigger final report
-            Program.systemMessage = "accountExceededDrawdownThreshold";
+    // public void ReviewEquity()
+    // {
 
-            // stop any more trades
-            throw new TradingException("Exceeded threshold PL:"+ Program.accountObj.pnl);
-        }
-    }
+    //     if (Program.accountObj.hasAccountExceededDrawdownThreshold())
+    //     {
+    //         // close all trades
+    //         Positions.CloseAll();
+
+    //         // trigger final report
+    //         Program.systemMessage = "accountExceededDrawdownThreshold";
+
+    //         // stop any more trades
+    //         throw new TradingException("Exceeded threshold PL:" + Program.accountObj.pnl);
+    //     }
+    // }
 }
 
 public static class PropertyCopier<TParent, TChild> where TParent : class

@@ -24,8 +24,6 @@ public static class ShellHelper
         };
         process.Exited += (sender, args) =>
         {
-            System.Console.WriteLine(process.StandardError.ReadToEnd());
-            System.Console.WriteLine(process.StandardOutput.ReadToEnd());
             if (process.ExitCode == 0) {
                 source.SetResult(0);
             } else {
@@ -37,7 +35,6 @@ public static class ShellHelper
         try {
             process.Start();
         } catch (Exception e) {
-            System.Console.WriteLine(e);
             source.SetException(e);
         }
         return source.Task;

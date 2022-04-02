@@ -5,15 +5,20 @@ using Utilities;
 
 namespace backtesting_engine_operations;
 
-public static class Positions {
+public class Positions : TradingBase {
 
-    public static void CloseAll(){
-        foreach(var item in Program.openTrades){
+    public Positions(IServiceProvider provider) : base(provider)
+    {
+        
+    }
+
+    public void CloseAll(){
+        foreach(var item in this.tradingObjects.openTrades){
             UpdateTradeHistory(item.Value);
         }
     }
     
-    public static void Review(PriceObj priceObj){
+    public void Review(PriceObj priceObj){
 
         foreach(var myTradeObj in GetOrderBook(priceObj.symbol)){
 
@@ -33,11 +38,11 @@ public static class Positions {
         }
     }
 
-    public static IEnumerable<RequestObject> GetOrderBook(string symbol){
-        return Program.openTrades.Where(x => x.Key.Contains(symbol)).Select(x=>x.Value);
+    public IEnumerable<RequestObject> GetOrderBook(string symbol){
+        return this.tradingObjects.openTrades.Where(x => x.Key.Contains(symbol)).Select(x=>x.Value);
     }
 
-    public static void UpdateTradeHistory(RequestObject reqObj){
+    public void UpdateTradeHistory(RequestObject reqObj){
 
         TradeHistoryObject tradeHistoryObj = new TradeHistoryObject();
         tradeHistoryObj.closeLevel = reqObj.close;
@@ -46,7 +51,7 @@ public static class Positions {
         tradeHistoryObj.runningTime = reqObj.closeDate.Subtract(reqObj.openDate).TotalMinutes;
 
         PropertyCopier<RequestObject, TradeHistoryObject>.Copy(reqObj, tradeHistoryObj);
-        CloseOrder.Request(tradeHistoryObj);
+        // CloseOrder.Request(tradeHistoryObj);
   }
 
     public static decimal CalculateProfit(decimal level, RequestObject openTradeObj){

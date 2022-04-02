@@ -39,34 +39,32 @@ public class DataInputTests
         Assert.Equal(expectedResult, inputMock?.Object.localInputBuffer.Count);
     }
     
-    [Fact]
-    public async void TestingReadFile()
-    {
+    // [Fact]
+    // public async void TestingReadFile()
+    // {
 
-        TestEnvironment.SetEnvironmentVariables(); 
+    //     TestEnvironment.SetEnvironmentVariables(); 
        
-        var programMock = new Mock<Main>(); // can't mock program
-        var consumerMock = new Mock<IConsumer>();
-        var inputMock = new Mock<Ingest>(){
-            CallBase = true
-        };
+    //     var programMock = new Mock<Main>(); // can't mock program
+    //     var consumerMock = new Mock<IConsumer>();
+    //     var inputMock = new Mock<Ingest>(){
+    //         CallBase = true
+    //     };
 
-        inputMock.Setup(x=>x.EnvironmentSetup());
+    //     inputMock.Setup(x=>x.EnvironmentSetup());
 
-        // Ingore the consumer
-        consumerMock.Setup<Task>(x=>x.ConsumeAsync(It.IsAny<BufferBlock<PriceObj>>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(0));
-        // programMock.Setup(x=>x.EnvironmentSetup());
-        // inputMock.Setup(x=>x.ReadLines(It.IsAny<BufferBlock<PriceObj>>())).Returns(Task.CompletedTask);
-//
-        var programObj = programMock.Object;
-        inputMock.Object.fileNames.Add(Path.Combine(PathUtil.GetTestPath("TestEnvironmentSetup"), "testSymbol.csv"));
+    //     // Ingore the consumer
+    //     consumerMock.Setup<Task>(x=>x.ConsumeAsync(It.IsAny<BufferBlock<PriceObj>>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(0));
 
-        await programObj.IngestAndConsume(consumerMock.Object, inputMock.Object);
+    //     var programObj = programMock.Object;
+    //     inputMock.Object.fileNames.Add(Path.Combine(PathUtil.GetTestPath("TestEnvironmentSetup"), "testSymbol.csv"));
 
-        BufferBlock<PriceObj> buffer = programObj.GetFieldValue<BufferBlock<PriceObj>>("buffer");
-        IList<PriceObj>? items;
-        var output = buffer.TryReceiveAll(out items);
+    //     await programObj.IngestAndConsume(consumerMock.Object, inputMock.Object);
 
-        Assert.True(items!=null && items.Count == 1);
-    }
+    //     BufferBlock<PriceObj> buffer = programObj.GetFieldValue<BufferBlock<PriceObj>>("buffer");
+    //     IList<PriceObj>? items;
+    //     var output = buffer.TryReceiveAll(out items);
+
+    //     Assert.True(items!=null && items.Count == 1);
+    // }
 }
