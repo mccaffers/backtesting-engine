@@ -37,4 +37,4 @@ msbuild.wrn
 .env/aws.env
 engine.zip
 tickdata/
-data.sh
+scripts/data.sh

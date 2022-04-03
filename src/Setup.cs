@@ -11,15 +11,18 @@ public class SystemSetup : ISystemSetup
     {
         Task.Run(async () =>
         {
+            var reportMessage="EndOfBuffer"; //default
             try {
                 await StartEngine(main);
-            } catch (Exception ex) {
-                System.Console.WriteLine(ex);
-                TradingException myEx = new TradingException(ex.Message, ex);
-                await elastic.EndOfRunReport(myEx.Message);
-                await elastic.SendStack(myEx); // report error to elastic for review
+            } catch (TradingException tradingException) {
+                Console.WriteLine(tradingException);
+                reportMessage=tradingException.Message;
+            } catch(Exception ex){
+                Console.WriteLine(ex);
+                reportMessage=ex.Message;
+                await elastic.SendStack(new TradingException(ex.Message)); // report error to elastic for review
             } finally {
-                await elastic.EndOfRunReport("EndOfBuffer");
+                await elastic.EndOfRunReport(reportMessage);
             }
         }).Wait();
     }
