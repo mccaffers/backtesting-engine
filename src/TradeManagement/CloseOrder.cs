@@ -16,7 +16,11 @@ public interface ICloseOrder
 public class CloseOrder : TradingBase, ICloseOrder
 {
 
-    public CloseOrder(IServiceProvider provider) : base(provider) {}
+    readonly IElastic elastic;
+
+    public CloseOrder(IServiceProvider provider, IElastic elastic) : base(provider) {
+        this.elastic = elastic;
+    }
 
     // Data Update
     public void Request(TradeHistoryObject tradeHistoryObj)
@@ -27,6 +31,6 @@ public class CloseOrder : TradingBase, ICloseOrder
 
         System.Console.WriteLine(tradeHistoryObj.closeDateTime + "\t" + this.tradingObjects.accountObj.pnl.ToString("0.##") + "\t Closed trade for " + tradeHistoryObj.symbol + "\t" + tradeHistoryObj.profit.ToString("0.##") + "\t" + tradeHistoryObj.direction + "\t" + tradeHistoryObj.level.ToString("0.####") + "\t" + tradeHistoryObj.closeLevel.ToString("0.####"));
 
-        Elastic.TradeUpdate(tradeHistoryObj.closeDateTime, tradeHistoryObj.symbol, tradeHistoryObj.profit);
+        this.elastic.TradeUpdate(tradeHistoryObj.closeDateTime, tradeHistoryObj.symbol, tradeHistoryObj.profit);
     }
 }

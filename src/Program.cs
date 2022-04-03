@@ -15,7 +15,7 @@ using backtesting_engine.interfaces;
 
 namespace backtesting_engine;
 
-class Program
+static class Program
 {
     async static Task Main(string[] args) =>
         await Task.FromResult(
@@ -28,7 +28,9 @@ class Program
             .AddSingleton<IPositions, Positions>()
             .AddSingleton<ITaskManager, TaskManager>()
             .AddSingleton<ISystemSetup, SystemSetup>()
+            .AddSingleton<IElastic, Elastic>()
             .AddSingleton<ITradingObjects, TradingObjects>()
+            .AddSingleton<ISystemObjects, SystemObjects>()
             .AddSingleton<IRequestOpenTrade, RequestOpenTrade>()
             .BuildServiceProvider(true)
             .CreateScope()

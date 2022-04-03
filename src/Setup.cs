@@ -7,9 +7,8 @@ namespace backtesting_engine;
 
 public class SystemSetup : ISystemSetup
 {
-    public SystemSetup(ITaskManager main)
+    public SystemSetup(ITaskManager main, IElastic elastic)
     {
-
         Task.Run(async () =>
         {
             try {
@@ -17,10 +16,10 @@ public class SystemSetup : ISystemSetup
             } catch (Exception ex) {
                 System.Console.WriteLine(ex);
                 TradingException myEx = new TradingException(ex.Message, ex);
-                await Elastic.EndOfRunReport(myEx.Message);
-                await Elastic.SendStack(myEx); // report error to elastic for review
+                await elastic.EndOfRunReport(myEx.Message);
+                await elastic.SendStack(myEx); // report error to elastic for review
             }
-            await Elastic.EndOfRunReport("EndOfBuffer");
+            await elastic.EndOfRunReport("EndOfBuffer");
         }).Wait();
     }
 
