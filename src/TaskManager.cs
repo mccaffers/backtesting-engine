@@ -12,21 +12,21 @@ public class TaskManager : ITaskManager
     protected readonly BufferBlock<PriceObj> buffer = new BufferBlock<PriceObj>();
     protected readonly CancellationTokenSource cts = new CancellationTokenSource();
 
-    IConsumer c;
-    IIngest i;
+    readonly IConsumer con;
+    readonly IIngest ing;
 
     public TaskManager(IConsumer c, IIngest i)
     {
-        this.c = c;
-        this.i = i;
+        this.con = c;
+        this.ing = i;
     }
 
     public async Task IngestAndConsume()
     {
-        i.EnvironmentSetup();
+        ing.EnvironmentSetup();
 
-        Task taskProduce = i.ReadLines(buffer, cts.Token).CancelOnFaulted(cts);
-        Task consumer = c.ConsumeAsync(buffer, cts.Token).CancelOnFaulted(cts);
+        Task taskProduce = ing.ReadLines(buffer, cts.Token).CancelOnFaulted(cts);
+        Task consumer = con.ConsumeAsync(buffer, cts.Token).CancelOnFaulted(cts);
 
         // await until both the producer and the consumer are finished
         await Task.WhenAll(taskProduce, consumer);

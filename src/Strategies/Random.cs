@@ -17,7 +17,7 @@ public interface IStrategy
 
 public class RandomStrategy : IStrategy
 {
-    IRequestOpenTrade requestOpenTrade;
+    readonly IRequestOpenTrade requestOpenTrade;
 
     public RandomStrategy(IRequestOpenTrade requestOpenTrade)
     {

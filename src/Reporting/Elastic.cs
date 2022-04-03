@@ -24,8 +24,8 @@ public class Elastic : TradingBase, IElastic
     static ConnectionSettings settings = new ConnectionSettings(pool).RequestTimeout(TimeSpan.FromMinutes(2));
     static ElasticClient esClient = new ElasticClient(settings);
 
-    private static DateTime lastPostTime = DateTime.Now;
-    private static List<ReportTradeObj> tradeUpdateArray = new List<ReportTradeObj>();
+    private DateTime lastPostTime = DateTime.Now;
+    private List<ReportTradeObj> tradeUpdateArray = new List<ReportTradeObj>();
 
     public async Task EndOfRunReport(string reason)
     {
