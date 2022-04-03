@@ -10,15 +10,15 @@ public class AccountObj
     readonly ConcurrentDictionary<string, RequestObject> openTrades;
     readonly ConcurrentDictionary<string, TradeHistoryObject> tradeHistory;
 
+    public decimal openingEquity { get; init; } 
+    public decimal maximumDrawndownPercentage { get; set; }
+
     public AccountObj( ConcurrentDictionary<string, RequestObject> openTrades, ConcurrentDictionary<string, TradeHistoryObject> tradeHistory ){
         this.openTrades = openTrades;
         this.tradeHistory = tradeHistory;
         this.openingEquity = decimal.Parse(EnvironmentVariables.accountEquity);
         this.maximumDrawndownPercentage = decimal.Parse(EnvironmentVariables.maximumDrawndownPercentage);
     }
-
-    public decimal openingEquity { get; init; } 
-    public decimal maximumDrawndownPercentage { get; set; }
 
     public decimal pnl
     {

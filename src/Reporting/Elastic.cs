@@ -26,14 +26,15 @@ public class Elastic : TradingBase, IElastic
 
     private DateTime lastPostTime = DateTime.Now;
     private List<ReportTradeObj> tradeUpdateArray = new List<ReportTradeObj>();
+    private bool hasSentFinalReport;
 
     public async Task EndOfRunReport(string reason)
     {
-
-        if (!EnvironmentVariables.reportingEnabled)
+        if (!EnvironmentVariables.reportingEnabled || hasSentFinalReport)
         {
             return;
         }
+        hasSentFinalReport=true;
 
         var report = new ReportFinalObj()
         {
@@ -56,12 +57,9 @@ public class Elastic : TradingBase, IElastic
             report.tradingTimespanInDays = this.tradingObjects.tradeTime.Subtract(this.tradingObjects.tradeHistory.First().Value.openDate).TotalDays;
         }
 
-        if (reason == "EndOfBuffer")
-        {
+        if (reason == "EndOfBuffer") {
             report.complete = true;
-        }
-        else
-        {
+        } else {
             report.complete = false;
             report.reason = reason;
         }

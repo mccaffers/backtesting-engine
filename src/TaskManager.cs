@@ -28,7 +28,6 @@ public class TaskManager : ITaskManager
         Task taskProduce = ing.ReadLines(buffer, cts.Token).CancelOnFaulted(cts);
         Task consumer = con.ConsumeAsync(buffer, cts.Token).CancelOnFaulted(cts);
 
-        // await until both the producer and the consumer are finished
         await Task.WhenAll(taskProduce, consumer);
     }
 }

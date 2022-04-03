@@ -18,8 +18,9 @@ public class SystemSetup : ISystemSetup
                 TradingException myEx = new TradingException(ex.Message, ex);
                 await elastic.EndOfRunReport(myEx.Message);
                 await elastic.SendStack(myEx); // report error to elastic for review
+            } finally {
+                await elastic.EndOfRunReport("EndOfBuffer");
             }
-            await elastic.EndOfRunReport("EndOfBuffer");
         }).Wait();
     }
 
