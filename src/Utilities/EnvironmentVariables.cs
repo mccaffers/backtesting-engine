@@ -26,6 +26,7 @@ public static class EnvironmentVariables
     public static string s3Bucket {get;} = Get("s3Bucket");
     public static string s3Path {get;} = Get("s3Path");
     public static string hostname {get;} = Dns.GetHostName();
+    public static string runIteration {get;} = Get("runIteration");
     
     // Custom environment variables
     public static string tickDataFolder {get;} = Path.Combine(Path.GetFullPath("./" + symbolFolder));

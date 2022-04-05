@@ -7,11 +7,12 @@ public class ReportFinalObj {
     public string? runID {get;set;}
     public string? hostname {get;set;}
     public double systemRunTimeInMinutes {get;set;}
+    public int runIteration {get;set;}
 
     // Engine Information
     public string[]? symbols { get;set; }
     public string? strategy {get;set;}
-    public bool complete {get;set;}
+    public bool complete {get;set;} = true;
     public string? reason {get;set;}
     public string? detailedReason {get;set;}
 
@@ -36,4 +37,5 @@ public class ReportTradeObj {
     public decimal pnl {get;set;}
     public string? runID {get;set;}
     public decimal tradeProfit {get;set;}
+    public int runIteration {get;set;}
 }

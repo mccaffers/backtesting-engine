@@ -1,14 +1,26 @@
 #!/bin/bash
 set -ex
 
+###################
+# AWS Deploy Script
+###################
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-init() {
-    
+main() {
+
+    # Calls init() function which setups the binary for deployment
     set -o allexport
     source ./.env/aws.env
     source ./.env/local.env
     set +o allexport
+
+    # Trading Variables
+    declare -a strategies=("RandomStrategy") 
+    declare -a symbolsArray=("EURUSD") #, "GBPUSD")
+    stopLossInPipsRange="30 10 30"
+    limitInPipsRange="30 10 30"
+    iterationRange="1 1 1"
 
     # Remove binary files
     rm -rf ./src/bin/ ./src/obj/ ./tests/bin/ ./tests/obj/
@@ -20,6 +32,57 @@ init() {
 
     # Same this version to s3, to run the experiment below, runID is referenced in the script below
     aws s3api put-object --bucket ${awsDeployBucket} --key run/${runID}.zip --body ./engine.zip
+    aws s3api put-object-tagging \
+    --bucket ${awsDeployBucket}  \
+    --key run/${runID}.zip \
+    --tagging '{"TagSet": [{ "Key": "temp", "Value": "true" }]}'
+
+    export reportingEnabled=true
+
+    # Start the loop of the variables
+    strategiesFunc
+
+    # Remove the source files
+    rm engine.zip
+    echo $runID
+}
+
+strategiesFunc(){
+    for strategy in "${strategies[@]}"
+    do
+        symbolsFunc
+    done
+}
+
+symbolsFunc(){
+    for symbols in "${symbolsArray[@]}"
+    do
+        iterationsFunc
+    done
+}
+
+iterationsFunc(){
+    # Run how many times
+    for runIteration in `seq $iterationRange`
+    do
+        stopFunc
+        limitFunc
+        deploy
+    done
+}
+
+stopFunc(){
+    for pips in `seq $stopLossInPipsRange`
+    do
+        export stopDistanceInPips=$pips
+    done
+}
+
+limitFunc(){
+    for pips in `seq $limitInPipsRange`
+    do
+        export limitDistanceInPips=$pips
+    done
 }
 
 deploy () {
@@ -27,7 +90,7 @@ deploy () {
     envsubst < $SCRIPT_DIR/awstemplate.sh > $SCRIPT_DIR/data.sh
 
     # Deploy
-    aws ec2 run-instances    --image-id resolve:ssm:/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-arm64-gp2  \
+    aws ec2 run-instances   --image-id resolve:ssm:/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-arm64-gp2  \
                             --count 1 \
                             --instance-type ${awsDeployInstanceType//[-]/.} \
                             --key-name ${awsDeployKeyName} \
@@ -38,42 +101,8 @@ deploy () {
                             --instance-initiated-shutdown-behavior terminate \
                             --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='$runID'},{Key=Symbol,Value='$symbols'}]' >> /dev/null
 
-    # # Cleanup
+    # Cleanup
     rm -rf $SCRIPT_DIR/data.sh
+    sleep 0.8
 }
-
-###################
-# AWS Deploy Script
-###################
-
-# Calls init() function which setups the binary for deployment
-init
-
-# For each strategy
-#   For each symbol
-#       Run how many times
-
-export reportingEnabled=true
-
-declare -a strategies=("RandomStrategy") 
-for strategy in "${strategies[@]}"
-do
-    declare -a symbolsArray=("EURUSD") #, "GBPUSD")
-    for symbol in "${symbolsArray[@]}"
-    do
-        for x  in `seq 1 1 1`
-        do
-            for pips  in `seq 20 10 20`
-            do
-                export stopDistanceInPips=$pips
-                export limitDistanceInPips=$pips
-                deploy
-                sleep 0.8
-            done
-        done
-    done
-done
-
-# Remove the source files
-rm engine.zip
-echo $runID
+main;

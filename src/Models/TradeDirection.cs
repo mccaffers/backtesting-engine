@@ -4,3 +4,8 @@ public enum TradeDirection {
     BUY,
     SELL
 }
+
+public enum TradeRun {
+    COMPLETE,
+    INCOMPLETE
+}

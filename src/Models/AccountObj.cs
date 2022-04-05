@@ -31,6 +31,9 @@ public class AccountObj
 
     public bool hasAccountExceededDrawdownThreshold()
     {
+        if(this.maximumDrawndownPercentage==0){
+            return false;
+        }
         return (this.pnl < this.openingEquity * (1 - (this.maximumDrawndownPercentage / 100)));
     }
 

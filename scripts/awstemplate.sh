@@ -17,6 +17,7 @@ export elasticUser=${elasticUser}
 export elasticPassword="${elasticPassword}"
 export elasticEndpoint="${elasticEndpoint}"
 export elasticCloudID="${elasticCloudID}"
+export runIteration=${runIteration}
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 

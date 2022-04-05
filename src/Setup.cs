@@ -1,4 +1,5 @@
 using backtesting_engine.interfaces;
+using backtesting_engine_models;
 using Reporting;
 using trading_exception;
 using Utilities;
@@ -9,21 +10,18 @@ public class SystemSetup : ISystemSetup
 {
     public SystemSetup(ITaskManager main, IElastic elastic)
     {
-        Task.Run(async () =>
-        {
-            var reportMessage="EndOfBuffer"; //default
+        Task<string>.Run(async () =>{            
             try {
                 await StartEngine(main);
             } catch (TradingException tradingException) {
-                Console.WriteLine(tradingException);
-                reportMessage=tradingException.Message;
+                return tradingException.Message;
             } catch(Exception ex){
-                Console.WriteLine(ex);
-                reportMessage=ex.Message;
                 await elastic.SendStack(new TradingException(ex.Message)); // report error to elastic for review
-            } finally {
-                await elastic.EndOfRunReport(reportMessage);
-            }
+                return ex.Message;
+            } 
+            return string.Empty;
+        }).ContinueWith(async taskOutput => {
+            await elastic.EndOfRunReport(taskOutput.Result);
         }).Wait();
     }
 
