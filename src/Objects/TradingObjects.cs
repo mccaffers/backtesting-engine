@@ -7,7 +7,7 @@ namespace backtesting_engine;
 
 public class TradingObjects : ITradingObjects
 {
-    public TradingObjects(IServiceProvider provider) {
+    public TradingObjects() {
         accountObj = new AccountObj(openTrades, tradeHistory);
     }
 

@@ -11,9 +11,13 @@ namespace Reporting;
 
 public interface IElastic
 {
+    List<ReportTradeObj> tradeUpdateArray { get; init; }
+
+    Task BatchTradeUpdate();
     Task EndOfRunReport(string reason = "");
+    Task SendBatchedObjects(List<ReportTradeObj> localClone);
     Task SendStack(TradingException message);
-    void TradeUpdate(DateTime date, string symbol, decimal profit);
+    Task TradeUpdate(DateTime date, string symbol, decimal profit);
 }
 
 public class Elastic : TradingBase, IElastic
@@ -24,22 +28,25 @@ public class Elastic : TradingBase, IElastic
     public bool switchHasSentFinalReport;
     IElasticClient elasticClient;
 
-    public Elastic(IServiceProvider provider, IElasticClient elasticClient) : base(provider) { 
+    public Elastic(IServiceProvider provider, IElasticClient elasticClient) : base(provider)
+    {
         this.tradeUpdateArray = new List<ReportTradeObj>();
         this.elasticClient = elasticClient;
     }
 
     public async Task EndOfRunReport(string reason = "")
     {
-        if (!EnvironmentVariables.reportingEnabled || switchHasSentFinalReport) {
+        if (!EnvironmentVariables.reportingEnabled || switchHasSentFinalReport)
+        {
             return;
         }
-        
+
         switchHasSentFinalReport = true;
 
-        var positivePercentage=0;
-        if(this.tradingObjects.tradeHistory.Count(x => x.Value.profit > 0) > 0){
-            positivePercentage= (this.tradingObjects.tradeHistory.Count(x => x.Value.profit > 0) / this.tradingObjects.tradeHistory.Count(x => x.Value.profit < 0)) * 100;
+        var positivePercentage = 0;
+        if (this.tradingObjects.tradeHistory.Count(x => x.Value.profit > 0) > 0)
+        {
+            positivePercentage = (this.tradingObjects.tradeHistory.Count(x => x.Value.profit > 0) / this.tradingObjects.tradeHistory.Count(x => x.Value.profit < 0)) * 100;
         }
 
         var report = new ReportFinalObj()
@@ -71,7 +78,8 @@ public class Elastic : TradingBase, IElastic
         }
 
         // Make sure we send all of the trading objects
-        await SendBatchedObjects();
+        await SendBatchedObjects(tradeUpdateArray);
+
         var response = await elasticClient.IndexAsync(report, b => b.Index("report"));
         System.Console.WriteLine(response);
 
@@ -82,7 +90,8 @@ public class Elastic : TradingBase, IElastic
 
     public async Task SendStack(TradingException message)
     {
-        if (!EnvironmentVariables.reportingEnabled) {
+        if (!EnvironmentVariables.reportingEnabled)
+        {
             return;
         }
 
@@ -90,7 +99,7 @@ public class Elastic : TradingBase, IElastic
         System.Threading.Thread.Sleep(5000);
     }
 
-    public void TradeUpdate(DateTime date, string symbol, decimal profit)
+    public async Task TradeUpdate(DateTime date, string symbol, decimal profit)
     {
         tradeUpdateArray.Add(new ReportTradeObj()
         {
@@ -101,34 +110,33 @@ public class Elastic : TradingBase, IElastic
             runIteration = int.Parse(EnvironmentVariables.runIteration),
             tradeProfit = profit
         });
-        BatchTradeUpdate();
+        await BatchTradeUpdate();
     }
 
-    public void BatchTradeUpdate()
+    public async Task BatchTradeUpdate()
     {
-        if (!EnvironmentVariables.reportingEnabled) {
+        if (!EnvironmentVariables.reportingEnabled)
+        {
             return;
         }
 
-        if (DateTime.Now.Subtract(lastPostTime).TotalSeconds <= 5) {
+        if (DateTime.Now.Subtract(lastPostTime).TotalSeconds <= 5)
+        {
             return;
         }
 
         lastPostTime = DateTime.Now;
-        _ = SendBatchedObjects(); // don't wait (await) for this, let it process in the background
+        List<ReportTradeObj> localClone = new List<ReportTradeObj>(tradeUpdateArray);
+        await SendBatchedObjects(localClone); // don't wait (await) for this, let it process in the background
     }
 
-    public async Task SendBatchedObjects()
+    public async Task SendBatchedObjects(List<ReportTradeObj> localClone)
     {
         // Upload the trade results
-        var response =  await elasticWrapper(tradeUpdateArray, "trades");
+        var response = await elasticClient.BulkAsync(bd => bd.IndexMany(localClone, (descriptor, s) => descriptor.Index("trades")));
+
         // Clear the history
-        tradeUpdateArray.RemoveRange(0, tradeUpdateArray.Count);
+        tradeUpdateArray.RemoveAll(x => localClone.Any(y => y.id == x.id));
     }
-
-    public virtual async Task<BulkResponse> elasticWrapper(List<ReportTradeObj> reportList, string index){
-        return await elasticClient.BulkAsync(bd => bd.IndexMany(reportList, (descriptor, s) => descriptor.Index(index)));
-    }
-
 }
 

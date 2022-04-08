@@ -26,12 +26,10 @@ public class ReportFinalObj {
     public int positiveTradeCount {get;set;}
     public int negativeTradeCount {get;set;}
     public int positivePercentage {get;set;}
-
-
-    
 }
 
 public class ReportTradeObj {
+    public string id {get;} =  Guid.NewGuid().ToString();
     public DateTime date {get;set;}
     public string[]? symbols { get;set; }
     public decimal pnl {get;set;}
