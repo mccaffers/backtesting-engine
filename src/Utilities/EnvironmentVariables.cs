@@ -23,6 +23,7 @@ public interface IEnvironmentVariables
     string[] symbols { get; init; }
     int[] years { get; init; }
     Dictionary<string, decimal> scalingFactorDictionary { get; init; }
+    string scalingFactor {get; init; }
 
     decimal GetScalingFactor(string symbol);
 }
@@ -51,6 +52,7 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.symbols = Get("symbols").Split(",");
         this.years = Get("years").Split(',').Select(n => Convert.ToInt32(n)).ToArray();
         this.scalingFactorDictionary = PopulateDictionary();
+        this.scalingFactor = Get("scalingFactor");
     }
 
     private static string Get(string envName, bool optional = false)
@@ -77,6 +79,7 @@ public class EnvironmentVariables : IEnvironmentVariables
     public string s3Path { get; init; }
     public string hostname { get; init; }
     public string runIteration { get; init; }
+    public string scalingFactor {get; init; }
 
     // Custom environment variables
     public string tickDataFolder { get; init; }
@@ -89,7 +92,7 @@ public class EnvironmentVariables : IEnvironmentVariables
     {
         Dictionary<string, decimal> localdictionary = new Dictionary<string, decimal>();
 
-        foreach (var symbol in Get("scalingFactor").Split(";"))
+        foreach (var symbol in this.scalingFactor.Split(";"))
         {
             if (string.IsNullOrEmpty(symbol))
             {

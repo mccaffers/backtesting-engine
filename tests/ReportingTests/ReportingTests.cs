@@ -27,76 +27,69 @@ namespace Tests;
 public class ReportingTests
 {
 
-    private void ElasticSetup(){
-        TestEnvironment.SetEnvironmentVariables(); 
-        Environment.SetEnvironmentVariable("reportingEnabled", "true");
-    }
-
     private static string symbolName="TestEnvironmentSetup";
 
-    // [Fact]
-    // public async Task TestElasticSearchFinalReport(){
+    [Fact]
+    public async Task TestElasticSearchFinalReport(){
 
-    //     TestEnvironment.SetEnvironmentVariables(); 
-    //     Environment.SetEnvironmentVariable("reportingEnabled", "true");
+        var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
+        environmentMock.SetupGet<bool>(x=>x.reportingEnabled).Returns(true);
 
-    //     var services = new ServiceCollection()
-    //     .AddSingleton<ITradingObjects, TradingObjects>()
-    //     .AddSingleton<ISystemObjects, SystemObjects>().BuildServiceProvider(true);
+        var provider = new ServiceCollection()
+            .AddSingleton<ITradingObjects, TradingObjects>()
+            .AddSingleton<ISystemObjects, SystemObjects>()
+            .AddSingleton<IEnvironmentVariables>(environmentMock.Object)
+            .BuildServiceProvider(true);
 
-    //     var response = new Mock<IndexResponse>();
+        var elasticClient = new Mock<IElasticClient>();
+        elasticClient.Setup(c => c.IndexAsync(It.IsAny<ReportFinalObj>(),
+                                                It.IsAny<Func<IndexDescriptor<ReportFinalObj>,
+                                                    IIndexRequest<ReportFinalObj>>>(), 
+                                                It.IsAny<CancellationToken>()))
+                                .ReturnsAsync( () => {return new Mock<IndexResponse>().Object;});
 
-    //     var elasticClient = new Mock<IElasticClient>();
-    //     elasticClient.Setup(c => c.IndexAsync(It.IsAny<ReportFinalObj>(),
-    //                                             It.IsAny<Func<IndexDescriptor<ReportFinalObj>,
-    //                                                 IIndexRequest<ReportFinalObj>>>(), 
-    //                                             It.IsAny<CancellationToken>()))
-    //                             .ReturnsAsync( ( ) => { return response.Object; }).Verifiable();
+        var reportingMock = new Mock<Reporting>(provider, elasticClient.Object, environmentMock.Object){
+            CallBase = true
+        };
 
-    //     var reportingMock = new Mock<Reporting>(services, elasticClient.Object){
-    //         CallBase = true
-    //     };
-
-    //     await reportingMock.Object.EndOfRunReport("");
-    //     System.Console.WriteLine(reportingMock.Object.switchHasSentFinalReport);
-    //     Assert.True(reportingMock.Object.switchHasSentFinalReport);
-    // }
+        await reportingMock.Object.EndOfRunReport("");
+        System.Console.WriteLine(reportingMock.Object.switchHasSentFinalReport);
+        Assert.True(reportingMock.Object.switchHasSentFinalReport);
+    }
 
     [Fact]
     public async Task TestElasticStackMethod(){
 
-        ElasticSetup();
 
-        // Arrange Environment
-        TestEnvironment.SetEnvironmentVariables(); 
-        Environment.SetEnvironmentVariable("reportingEnabled", "true");
+        // Arrange Environment Variables
+        var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
+        environmentMock.SetupGet<bool>(x=>x.reportingEnabled).Returns(true);
+        var environmentObj = environmentMock.Object;
         
         // Arrange local variables
         bool indexAsyncCalled=false;
-        IndexName index="";
-        var response = new Mock<IndexResponse>();
+        IndexName index=string.Empty;
 
+        // Setup local dependency provider
         var services = new ServiceCollection()
             .AddSingleton<ITradingObjects, TradingObjects>()
-            .AddSingleton<IEnvironmentVariables>(new EnvironmentVariables())
+            .AddSingleton<IEnvironmentVariables>(environmentObj)
             .AddSingleton<ISystemObjects, SystemObjects>().BuildServiceProvider(true);
         
-        var elasticClient = new Mock<IElasticClient>();
-
         // Setup the elasticClient to mock the IndexAsync Method
+        var elasticClient = new Mock<IElasticClient>();
         elasticClient.Setup(c => c.IndexAsync<TradingException>(It.IsAny<TradingException>(),
                                         It.IsAny<Func<IndexDescriptor<TradingException>, IIndexRequest<TradingException>>>(), 
                                             It.IsAny<CancellationToken>()))
-                        .ReturnsAsync((TradingException exception,
+                    .ReturnsAsync((TradingException exception,
                                     Func<IndexDescriptor<TradingException>, IIndexRequest<TradingException>> indexDescriptor,
                                         CancellationToken ct) => {
-                                // Capture the index name, and return a blank index response
-                                index = indexDescriptor.Invoke(new IndexDescriptor<TradingException>()).Index;
-                                return response.Object;
-                        })
-                        .Callback(()=>indexAsyncCalled=true);     
+                                        index = indexDescriptor.Invoke(new IndexDescriptor<TradingException>()).Index; // Capture elastic index name
+                                        return new Mock<IndexResponse>().Object; // Fake any response from Elastic
+                    })
+                    .Callback(()=>indexAsyncCalled=true);     
 
-        var reportingMock = new Mock<Reporting>(services, elasticClient.Object, new EnvironmentVariables()){
+        var reportingMock = new Mock<Reporting>(services, elasticClient.Object, environmentObj){
             CallBase = true
         };
 
@@ -111,67 +104,139 @@ public class ReportingTests
     [Fact]
     public async Task TestElasticTradeUpdatekMethod(){
 
-        ElasticSetup();
-
-        // Arrange Environment
-        TestEnvironment.SetEnvironmentVariables(); 
-        Environment.SetEnvironmentVariable("reportingEnabled", "true");
+        // Arrange Environment Variables
+        var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
+        environmentMock.SetupGet<bool>(x=>x.reportingEnabled).Returns(true);
+        var environmentObj = environmentMock.Object;
 
         // Arrange local variables
         bool bulkAsyncCalled=false;
-        IndexName index="";
         int recordsToBulkIndex=0;
+        IndexName index=string.Empty;
 
-        var response = new Mock<BulkResponse>();
-
-        var tradingObject = new TradingObjects(new EnvironmentVariables());
-
-        var priceObj = new PriceObj(){
-            date=DateTime.Now,
-            symbol=symbolName,
-            bid=100,
-            ask=120
-        };
-
-        var reqObj = new RequestObject(priceObj)
-        {
-            direction = TradeDirection.BUY,
-            size = 1,
-            stopDistancePips = 20,
-            limitDistancePips = 20,
-        };
-
-        tradingObject.openTrades.TryAdd(reqObj.key, reqObj);
-        
-        priceObj.bid = 120;
-        priceObj.ask = 140;
-
-        tradingObject.openTrades.Where(x=>x.Key == reqObj.key)
-                                .First()
-                                .Value.UpdateClose(priceObj, 
-                                                    new EnvironmentVariables().GetScalingFactor(priceObj.symbol));
-
+        // Setup local dependency provider
         var provider = new ServiceCollection()
-            .AddSingleton<ITradingObjects>(tradingObject)
+            .AddSingleton<IEnvironmentVariables>(environmentObj)
+            .AddSingleton<ITradingObjects, TradingObjects>()
             .AddSingleton<ISystemObjects, SystemObjects>()
             .BuildServiceProvider(true);
-        
-        var elasticClient = new Mock<IElasticClient>();
 
         // Setup the elasticClient to mock the BulkAsync Method
+        var elasticClient = new Mock<IElasticClient>();
+        elasticClient.Setup(c => c.BulkAsync(It.IsAny<Func<BulkDescriptor,IBulkRequest>>(),It.IsAny<CancellationToken>()))
+                        .ReturnsAsync((Func<BulkDescriptor,IBulkRequest> bulkDescriptor, CancellationToken ct) => {
+
+                                // Create a BulkDescriptor to run the Func against so I can retrieve the operations
+                                var bulkDesc = new BulkDescriptor().IndexMany<ReportTradeObj>(new List<ReportTradeObj>());
+
+                                // Invoke on the bulk descriptor
+                                var operations = bulkDescriptor.Invoke(bulkDesc).Operations;
+
+                                // Retrieve the index name and count
+                                index = operations.First().Index;
+                                recordsToBulkIndex= operations.Count;
+
+                                // Return a blank bulk response
+                                return new Mock<BulkResponse>().Object;
+                        })
+                        .Callback(()=>{
+                            // TODO I think I can do this via a verify as well
+                            bulkAsyncCalled=true; // Record that bulkAsync has been called
+                        });     
+
+        var reportingMock = new Mock<Reporting>(provider, elasticClient.Object, environmentMock.Object){
+            CallBase = true
+        };
+
+        // Force an trigger of the bulk update method as more than {x} seconds have passed
+        reportingMock.Object.lastPostTime = DateTime.Now.Subtract(TimeSpan.FromDays(1));
+
+        // Act
+        await reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10);
+
+        // Assert
+        Assert.Equal(1, recordsToBulkIndex); // one record has been added
+        Assert.True(bulkAsyncCalled); // Confirm that the indexAsync was called
+        Assert.Equal("trades", index); // check it's the right index
+    }
+
+    [Fact(Skip = "WIP")]
+    public async Task ComplexTradeUpdateAndReport(){
+
+        // Arrange Environment Variables
+        var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
+        environmentMock.SetupGet<bool>(x=>x.reportingEnabled).Returns(true);
+        var environmentObj = environmentMock.Object;
+
+        // Arrange local variables
+        bool bulkAsyncCalled=false;
+        int recordsToBulkIndex=0;
+        IndexName index=string.Empty;
+
+        // Setup local dependency provider
+        var provider = new ServiceCollection()
+            .AddSingleton<IEnvironmentVariables>(environmentObj)
+            .AddSingleton<ITradingObjects, TradingObjects>()
+            .AddSingleton<ISystemObjects, SystemObjects>()
+            .BuildServiceProvider(true);
+
+        // Pull the trading objects from the service provider
+        var tradingObject = provider.GetService<ITradingObjects>();
+        Assert.NotNull(tradingObject);
+
+        // Act
+        // Generate from price events
+
+        // Inital price event
+        // var priceObj = new PriceObj(){
+        //     date=DateTime.Now,
+        //     symbol=symbolName,
+        //     bid=100,
+        //     ask=120
+        // };
+
+        // // Create a trade request object to open a trade
+        // var reqObj = new RequestObject(priceObj)
+        // {
+        //     direction = TradeDirection.BUY,
+        //     size = 1,
+        //     stopDistancePips = 20,
+        //     limitDistancePips = 20,
+        // };
+
+        // // Add it to the concurrent dictionary
+        // tradingObject?.openTrades.TryAdd(reqObj.key, reqObj);
+
+
+        // // Create a new price event
+        // var priceObjNext = new PriceObj(){
+        //     date=DateTime.Now,
+        //     symbol=symbolName,
+        //     bid=120,
+        //     ask=140
+        // };
+        
+        // // Update the close price on the open trade which updates the account pnl
+        // tradingObject?.openTrades.Where(x=>x.Key == reqObj.key)
+        //                             .First()
+        //                             .Value
+        //                             .UpdateClose(priceObjNext, environmentMock.Object.GetScalingFactor(priceObj.symbol));
+
+        // Setup the elasticClient to mock the BulkAsync Method
+        var elasticClient = new Mock<IElasticClient>();
         elasticClient.Setup(c => c.BulkAsync(It.IsAny<Func<BulkDescriptor,IBulkRequest>>(),It.IsAny<CancellationToken>()))
                         .ReturnsAsync((Func<BulkDescriptor,IBulkRequest> bulkDescriptor, CancellationToken ct) => {
                                 var bulkDesc = new BulkDescriptor().IndexMany<ReportTradeObj>(new List<ReportTradeObj>());
                                 var operations = bulkDescriptor.Invoke(bulkDesc).Operations;
                                 index = operations.First().Index;
                                 recordsToBulkIndex= operations.Count;
-                                return response.Object;
+                                return new Mock<BulkResponse>().Object;
                         })
                         .Callback(()=>{
                             bulkAsyncCalled=true;
                         });     
 
-        var reportingMock = new Mock<Reporting>(provider, elasticClient.Object, new EnvironmentVariables()){
+        var reportingMock = new Mock<Reporting>(provider, elasticClient.Object, environmentMock.Object){
             CallBase = true
         };
 
