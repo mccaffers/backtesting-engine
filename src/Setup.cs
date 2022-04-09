@@ -7,15 +7,21 @@ namespace backtesting_engine;
 
 public class SystemSetup : ISystemSetup
 {
-    IEnvironmentVariables envVariables;
+    readonly IEnvironmentVariables envVariables;
+    readonly ITaskManager main;
+    readonly IReporting elastic;
+
 
     public SystemSetup(ITaskManager main, IReporting elastic, IEnvironmentVariables envVariables)
     {
+        this.envVariables = envVariables;
+        this.elastic = elastic;
+        this.main = main;
+
         Task<string>.Run(async () =>
         {
             try
             {
-                this.envVariables = envVariables;
                 await StartEngine(main, envVariables);
             }
             catch (TradingException tradingException)
