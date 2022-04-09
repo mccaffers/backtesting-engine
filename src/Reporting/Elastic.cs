@@ -22,11 +22,11 @@ public interface IElastic
 
 public class Elastic : TradingBase, IElastic
 {
-
-    public DateTime lastPostTime = DateTime.Now;
+    public DateTime lastPostTime {get; set;} = DateTime.Now;
     public List<ReportTradeObj> tradeUpdateArray { get; init; }
-    public bool switchHasSentFinalReport;
-    IElasticClient elasticClient;
+    public bool switchHasSentFinalReport { get; set; }
+
+    private IElasticClient elasticClient;
 
     public Elastic(IServiceProvider provider, IElasticClient elasticClient) : base(provider)
     {
@@ -44,7 +44,7 @@ public class Elastic : TradingBase, IElastic
         switchHasSentFinalReport = true;
 
         var positivePercentage = 0;
-        if (this.tradingObjects.tradeHistory.Count(x => x.Value.profit > 0) > 0)
+        if (this.tradingObjects.tradeHistory.Any(x => x.Value.profit > 0))
         {
             positivePercentage = (this.tradingObjects.tradeHistory.Count(x => x.Value.profit > 0) / this.tradingObjects.tradeHistory.Count(x => x.Value.profit < 0)) * 100;
         }
@@ -133,7 +133,7 @@ public class Elastic : TradingBase, IElastic
     public async Task SendBatchedObjects(List<ReportTradeObj> localClone)
     {
         // Upload the trade results
-        var response = await elasticClient.BulkAsync(bd => bd.IndexMany(localClone, (descriptor, s) => descriptor.Index("trades")));
+        await elasticClient.BulkAsync(bd => bd.IndexMany(localClone, (descriptor, s) => descriptor.Index("trades")));
 
         // Clear the history
         tradeUpdateArray.RemoveAll(x => localClone.Any(y => y.id == x.id));

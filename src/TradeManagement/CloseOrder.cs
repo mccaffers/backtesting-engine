@@ -25,7 +25,6 @@ public class CloseOrder : TradingBase, ICloseOrder
     // Data Update
     public void Request(TradeHistoryObject tradeHistoryObj)
     {
-
         this.tradingObjects.tradeHistory.TryAdd(DictionaryKeyStrings.CloseTradeKey(tradeHistoryObj), tradeHistoryObj);
         this.tradingObjects.openTrades.TryRemove(tradeHistoryObj.key, out _);
 

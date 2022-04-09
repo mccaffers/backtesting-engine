@@ -28,12 +28,15 @@ namespace Tests;
 public class ElasticTests
 {
 
+    private void ElasticSetup(){
+        TestEnvironment.SetEnvironmentVariables(); 
+        Environment.SetEnvironmentVariable("reportingEnabled", "true");
+    }
+
+    private string symbolName="TestEnvironmentSetup";
+
     [Fact]
     public async void TestElasticSearchFinalReport(){
-
-        TestEnvironment.SetEnvironmentVariables(); 
-        
-        Environment.SetEnvironmentVariable("reportingEnabled", "true");
 
         var services = new ServiceCollection()
         .AddSingleton<ITradingObjects, TradingObjects>()
@@ -46,21 +49,11 @@ public class ElasticTests
                                                 It.IsAny<Func<IndexDescriptor<ReportFinalObj>,
                                                     IIndexRequest<backtesting_engine.ReportFinalObj>>>(), 
                                                 It.IsAny<CancellationToken>()))
-        .ReturnsAsync(response.Object);
+                        .ReturnsAsync(response.Object);
 
         var elasticMock = new Mock<Elastic>(services, elasticClient.Object){
             CallBase = true
         };
-
-        List<ReportTradeObj> tradeObjects = new List<ReportTradeObj>();
-        tradeObjects.Add(new ReportTradeObj(){
-            date=DateTime.Now,
-            symbols=new string[]{"EURUSD", "GBPUSD"},
-            pnl=200,
-            runID="unittests",
-            tradeProfit=10,
-            runIteration=1
-        });
 
         await elasticMock.Object.EndOfRunReport("");
 
@@ -122,7 +115,6 @@ public class ElasticTests
         IndexName index="";
         int recordsToBulkIndex=0;
 
-        string symbolName ="TestEnvironmentSetup";
         var response = new Mock<BulkResponse>();
 
         var tradingObject = new TradingObjects();
