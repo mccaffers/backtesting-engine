@@ -39,12 +39,14 @@ public class ElasticTests
         .AddSingleton<ITradingObjects, TradingObjects>()
         .AddSingleton<ISystemObjects, SystemObjects>().BuildServiceProvider(true);
 
+        var response = new Mock<IndexResponse>();
+
         var elasticClient = new Mock<IElasticClient>();
         elasticClient.Setup(c => c.IndexAsync(It.IsAny<ReportFinalObj>(),
                                                 It.IsAny<Func<IndexDescriptor<ReportFinalObj>,
                                                     IIndexRequest<backtesting_engine.ReportFinalObj>>>(), 
                                                 It.IsAny<CancellationToken>()))
-        .Returns(Task.FromResult<IndexResponse>(new IndexResponse()));
+        .ReturnsAsync(response.Object);
 
         var elasticMock = new Mock<Elastic>(services, elasticClient.Object){
             CallBase = true
@@ -75,6 +77,7 @@ public class ElasticTests
         // Arrange local variables
         bool indexAsyncCalled=false;
         IndexName index="";
+        var response = new Mock<IndexResponse>();
 
         var services = new ServiceCollection()
             .AddSingleton<ITradingObjects, TradingObjects>()
@@ -86,12 +89,12 @@ public class ElasticTests
         elasticClient.Setup(c => c.IndexAsync<TradingException>(It.IsAny<TradingException>(),
                                         It.IsAny<Func<IndexDescriptor<TradingException>, IIndexRequest<TradingException>>>(), 
                                             It.IsAny<CancellationToken>()))
-                        .Returns((TradingException exception,
+                        .ReturnsAsync((TradingException exception,
                                     Func<IndexDescriptor<TradingException>, IIndexRequest<TradingException>> indexDescriptor,
                                         CancellationToken ct) => {
                                 // Capture the index name, and return a blank index response
                                 index = indexDescriptor.Invoke(new IndexDescriptor<TradingException>()).Index;
-                                return Task.FromResult(new IndexResponse());
+                                return response.Object;
                         })
                         .Callback(()=>indexAsyncCalled=true);     
 
@@ -120,6 +123,7 @@ public class ElasticTests
         int recordsToBulkIndex=0;
 
         string symbolName ="TestEnvironmentSetup";
+        var response = new Mock<BulkResponse>();
 
         var tradingObject = new TradingObjects();
 
@@ -154,12 +158,12 @@ public class ElasticTests
 
         // Setup the elasticClient to mock the BulkAsync Method
         elasticClient.Setup(c => c.BulkAsync(It.IsAny<Func<BulkDescriptor,IBulkRequest>>(),It.IsAny<CancellationToken>()))
-                        .Returns((Func<BulkDescriptor,IBulkRequest> bulkDescriptor, CancellationToken ct) => {
+                        .ReturnsAsync((Func<BulkDescriptor,IBulkRequest> bulkDescriptor, CancellationToken ct) => {
                                 var bulkDesc = new BulkDescriptor().IndexMany<ReportTradeObj>(new List<ReportTradeObj>());
                                 var operations = bulkDescriptor.Invoke(bulkDesc).Operations;
                                 index = operations.First().Index;
                                 recordsToBulkIndex= operations.Count;
-                                return Task.FromResult(new BulkResponse());
+                                return response.Object;
                         })
                         .Callback(()=>{
                             bulkAsyncCalled=true;
