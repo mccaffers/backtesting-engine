@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 using trading_exception;
 using Utilities;
 
-namespace Reporting;
+namespace backtesting_engine.analysis;
 
-public interface IElastic
+public interface IReporting
 {
     List<ReportTradeObj> tradeUpdateArray { get; init; }
 
@@ -20,7 +20,7 @@ public interface IElastic
     Task TradeUpdate(DateTime date, string symbol, decimal profit);
 }
 
-public class Elastic : TradingBase, IElastic
+public class Reporting : TradingBase, IReporting
 {
     public DateTime lastPostTime {get; set;} = DateTime.Now;
     public List<ReportTradeObj> tradeUpdateArray { get; init; }
@@ -28,7 +28,7 @@ public class Elastic : TradingBase, IElastic
 
     private IElasticClient elasticClient;
 
-    public Elastic(IServiceProvider provider, IElasticClient elasticClient) : base(provider)
+    public Reporting(IServiceProvider provider, IElasticClient elasticClient) : base(provider)
     {
         this.tradeUpdateArray = new List<ReportTradeObj>();
         this.elasticClient = elasticClient;

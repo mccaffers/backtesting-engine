@@ -9,23 +9,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
+using backtesting_engine.analysis;
 using backtesting_engine.interfaces;
 using backtesting_engine_ingest;
 using backtesting_engine_models;
 using Elasticsearch.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Moq.Protected;
 using Nest;
-using Reporting;
 using trading_exception;
-using Utilities;
 using Xunit;
 
 namespace Tests;
 
 [Collection("Sequential")]
-public class ElasticTests
+public class ReportingTests
 {
 
     private void ElasticSetup(){
@@ -38,6 +36,8 @@ public class ElasticTests
     [Fact]
     public async void TestElasticSearchFinalReport(){
 
+        ElasticSetup();
+
         var services = new ServiceCollection()
         .AddSingleton<ITradingObjects, TradingObjects>()
         .AddSingleton<ISystemObjects, SystemObjects>().BuildServiceProvider(true);
@@ -45,23 +45,26 @@ public class ElasticTests
         var response = new Mock<IndexResponse>();
 
         var elasticClient = new Mock<IElasticClient>();
+
         elasticClient.Setup(c => c.IndexAsync(It.IsAny<ReportFinalObj>(),
                                                 It.IsAny<Func<IndexDescriptor<ReportFinalObj>,
                                                     IIndexRequest<backtesting_engine.ReportFinalObj>>>(), 
                                                 It.IsAny<CancellationToken>()))
                         .ReturnsAsync(response.Object);
 
-        var elasticMock = new Mock<Elastic>(services, elasticClient.Object){
+        var reportingMock = new Mock<Reporting>(services, elasticClient.Object){
             CallBase = true
         };
 
-        await elasticMock.Object.EndOfRunReport("");
+        await reportingMock.Object.EndOfRunReport("");
 
-        Assert.True(elasticMock.Object.switchHasSentFinalReport);
+        Assert.True(reportingMock.Object.switchHasSentFinalReport);
     }
 
     [Fact]
     public async void TestElasticStackMethod(){
+
+        ElasticSetup();
 
         // Arrange Environment
         TestEnvironment.SetEnvironmentVariables(); 
@@ -91,12 +94,12 @@ public class ElasticTests
                         })
                         .Callback(()=>indexAsyncCalled=true);     
 
-        var elasticMock = new Mock<Elastic>(services, elasticClient.Object){
+        var reportingMock = new Mock<Reporting>(services, elasticClient.Object){
             CallBase = true
         };
 
         // Act
-        await elasticMock.Object.SendStack(new TradingException("test"));
+        await reportingMock.Object.SendStack(new TradingException("test"));
 
         // Assert
         Assert.True(indexAsyncCalled); // Confirm that the indexAsync was called
@@ -105,6 +108,8 @@ public class ElasticTests
 
     [Fact]
     public async void TestElasticTradeUpdatekMethod(){
+
+        ElasticSetup();
 
         // Arrange Environment
         TestEnvironment.SetEnvironmentVariables(); 
@@ -161,15 +166,15 @@ public class ElasticTests
                             bulkAsyncCalled=true;
                         });     
 
-        var elasticMock = new Mock<Elastic>(provider, elasticClient.Object){
+        var reportingMock = new Mock<Reporting>(provider, elasticClient.Object){
             CallBase = true
         };
 
         // Force an trigger of the bulk update method as more than {x} seconds have passed
-        elasticMock.Object.lastPostTime = DateTime.Now.Subtract(TimeSpan.FromDays(1));
+        reportingMock.Object.lastPostTime = DateTime.Now.Subtract(TimeSpan.FromDays(1));
 
         // Act
-        await elasticMock.Object.TradeUpdate(DateTime.Now, symbolName, 10);
+        await reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10);
 
         // Assert
         Assert.Equal(1, recordsToBulkIndex); // one record has been added

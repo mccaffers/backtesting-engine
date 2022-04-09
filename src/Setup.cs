@@ -1,6 +1,5 @@
+using backtesting_engine.analysis;
 using backtesting_engine.interfaces;
-using backtesting_engine_models;
-using Reporting;
 using trading_exception;
 using Utilities;
 
@@ -8,7 +7,7 @@ namespace backtesting_engine;
 
 public class SystemSetup : ISystemSetup
 {
-    public SystemSetup(ITaskManager main, IElastic elastic)
+    public SystemSetup(ITaskManager main, IReporting elastic)
     {
         Task<string>.Run(async () =>{            
             try {

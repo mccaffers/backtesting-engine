@@ -1,19 +1,11 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Immutable;
-using System.Globalization;
-using System.Threading.Tasks.Dataflow;
-using backtesting_engine_ingest;
-using backtesting_engine_models;
-using Newtonsoft.Json;
+﻿using backtesting_engine_ingest;
 using Utilities;
 using Microsoft.Extensions.DependencyInjection;
-using backtesting_engine_strategies;
-using Reporting;
-using trading_exception;
 using backtesting_engine_operations;
 using backtesting_engine.interfaces;
 using Nest;
 using Elasticsearch.Net;
+using backtesting_engine.analysis;
 
 namespace backtesting_engine;
 
@@ -34,7 +26,7 @@ static class Program
             .AddSingleton<IPositions, Positions>()
             .AddSingleton<ITaskManager, TaskManager>()
             .AddSingleton<ISystemSetup, SystemSetup>()
-            .AddSingleton<IElastic, Elastic>()
+            .AddSingleton<IReporting,Reporting>()
             .AddSingleton<ITradingObjects, TradingObjects>()
             .AddSingleton<ISystemObjects, SystemObjects>()
             .AddSingleton<IRequestOpenTrade, RequestOpenTrade>()

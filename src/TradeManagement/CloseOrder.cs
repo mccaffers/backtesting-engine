@@ -1,9 +1,5 @@
-using System.Collections.Concurrent;
-using backtesting_engine;
-using backtesting_engine_ingest;
+using backtesting_engine.analysis;
 using backtesting_engine_models;
-using backtesting_engine_operations;
-using Reporting;
 using Utilities;
 
 namespace backtesting_engine;
@@ -16,10 +12,10 @@ public interface ICloseOrder
 public class CloseOrder : TradingBase, ICloseOrder
 {
 
-    readonly IElastic elastic;
+    readonly IReporting reporting;
 
-    public CloseOrder(IServiceProvider provider, IElastic elastic) : base(provider) {
-        this.elastic = elastic;
+    public CloseOrder(IServiceProvider provider, IReporting reporting) : base(provider) {
+        this.reporting = reporting;
     }
 
     // Data Update
@@ -30,6 +26,6 @@ public class CloseOrder : TradingBase, ICloseOrder
 
         System.Console.WriteLine(tradeHistoryObj.closeDateTime + "\t" + this.tradingObjects.accountObj.pnl.ToString("0.##") + "\t Closed trade for " + tradeHistoryObj.symbol + "\t" + tradeHistoryObj.profit.ToString("0.##") + "\t" + tradeHistoryObj.direction + "\t" + tradeHistoryObj.level.ToString("0.####") + "\t" + tradeHistoryObj.closeLevel.ToString("0.####"));
 
-        this.elastic.TradeUpdate(tradeHistoryObj.closeDateTime, tradeHistoryObj.symbol, tradeHistoryObj.profit);
+        this.reporting.TradeUpdate(tradeHistoryObj.closeDateTime, tradeHistoryObj.symbol, tradeHistoryObj.profit);
     }
 }
