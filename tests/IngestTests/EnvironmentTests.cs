@@ -18,7 +18,9 @@ public class IngestEnvironmentTests
 
         TestEnvironment.SetEnvironmentVariables(); 
 
-        var inputMock = new Mock<Ingest>(){
+        var envVariables = new EnvironmentVariables();
+
+        var inputMock = new Mock<Ingest>(envVariables){
             CallBase = true
         };
 

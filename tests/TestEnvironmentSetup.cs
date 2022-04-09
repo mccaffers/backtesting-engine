@@ -22,7 +22,7 @@ class TestEnvironment {
         Environment.SetEnvironmentVariable("s3Bucket", "debug");
         Environment.SetEnvironmentVariable("s3Path", "debug");
         Environment.SetEnvironmentVariable("years", "2000");
-        Environment.SetEnvironmentVariable("reportingEnabled", "false");
+        Environment.SetEnvironmentVariable("reportingEnabled", "true");
         Environment.SetEnvironmentVariable("runIteration", "0");
     }
 }

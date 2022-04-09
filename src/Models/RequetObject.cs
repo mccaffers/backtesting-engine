@@ -46,12 +46,12 @@ public class RequestObject {
     public decimal stopLevel {get; set;}
     public decimal limitLevel {get; set;}
 
-    public void UpdateClose(PriceObj priceObj){
+    public void UpdateClose(PriceObj priceObj, decimal scalingFactor){
 
         this.close = this.direction == TradeDirection.BUY? priceObj.bid : priceObj.ask;
         this.closeDate = priceObj.date;
         this.profit = ((this.direction == TradeDirection.BUY ? this.close - this.level : this.level - this.close) 
-                        * EnvironmentVariables.GetScalingFactor(priceObj.symbol))
+                        * scalingFactor)
                             * this.size;
     }
 

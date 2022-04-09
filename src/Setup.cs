@@ -7,31 +7,41 @@ namespace backtesting_engine;
 
 public class SystemSetup : ISystemSetup
 {
-    public SystemSetup(ITaskManager main, IReporting elastic)
+    IEnvironmentVariables envVariables;
+
+    public SystemSetup(ITaskManager main, IReporting elastic, IEnvironmentVariables envVariables)
     {
-        Task<string>.Run(async () =>{            
-            try {
-                await StartEngine(main);
-            } catch (TradingException tradingException) {
+        Task<string>.Run(async () =>
+        {
+            try
+            {
+                this.envVariables = envVariables;
+                await StartEngine(main, envVariables);
+            }
+            catch (TradingException tradingException)
+            {
                 return tradingException.Message;
-            } catch(Exception ex){
+            }
+            catch (Exception ex)
+            {
                 await elastic.SendStack(new TradingException(ex.Message)); // report error to elastic for review
                 return ex.Message;
-            } 
+            }
             return string.Empty;
-        }).ContinueWith(async taskOutput => {
+        }).ContinueWith(async taskOutput =>
+        {
             await elastic.EndOfRunReport(taskOutput.Result);
         }).Wait();
     }
 
-    public virtual async Task StartEngine(ITaskManager main)
+    public virtual async Task StartEngine(ITaskManager main, IEnvironmentVariables envVariables)
     {
-        foreach (var year in EnvironmentVariables.years)
+        foreach (var year in envVariables.years)
         {
-            foreach (var symbol in EnvironmentVariables.symbols)
+            foreach (var symbol in envVariables.symbols)
             {
 
-                var symbolFolder = Path.Combine(EnvironmentVariables.tickDataFolder, symbol);
+                var symbolFolder = Path.Combine(envVariables.tickDataFolder, symbol);
                 var csvFile = Path.Combine(symbolFolder, year + ".csv");
 
                 // Check if file already exists
@@ -45,7 +55,7 @@ public class SystemSetup : ISystemSetup
             await main.IngestAndConsume();
 
             // Clean up
-            await CleanSymbolFolder(EnvironmentVariables.tickDataFolder);
+            await CleanSymbolFolder(envVariables.tickDataFolder);
         }
     }
 
@@ -56,12 +66,12 @@ public class SystemSetup : ISystemSetup
         await ShellHelper.Bash(command);
     }
 
-    private static async Task PullFromS3(string symbolFolder, string symbol, int year)
+    private async Task PullFromS3(string symbolFolder, string symbol, int year)
     {
         System.Console.WriteLine("Pulling tick data from S3 - " + symbol);
 
-        var s3Path = EnvironmentVariables.s3Path;
-        var s3bucket = EnvironmentVariables.s3Bucket;
+        var s3Path = envVariables.s3Path;
+        var s3bucket = envVariables.s3Bucket;
 
         // Setup folder space for tick data
         var command = "mkdir -p " + symbolFolder;

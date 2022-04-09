@@ -9,7 +9,7 @@ namespace backtesting_engine;
 
 public class TaskManager : ITaskManager
 {
-    protected readonly BufferBlock<PriceObj> buffer = new BufferBlock<PriceObj>();
+    public BufferBlock<PriceObj> buffer { get; init; } 
     protected readonly CancellationTokenSource cts = new CancellationTokenSource();
 
     readonly IConsumer con;
@@ -19,6 +19,7 @@ public class TaskManager : ITaskManager
     {
         this.con = c;
         this.ing = i;
+        this.buffer = new BufferBlock<PriceObj>();
     }
 
     public async Task IngestAndConsume()

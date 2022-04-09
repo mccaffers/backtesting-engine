@@ -13,10 +13,12 @@ public class RequestOpenTrade : IRequestOpenTrade
 {
 
     readonly IOpenOrder openOrder;
+    readonly IEnvironmentVariables envVariables;
 
-    public RequestOpenTrade(IOpenOrder openOrder)
+    public RequestOpenTrade(IOpenOrder openOrder, IEnvironmentVariables envVariables)
     {
         this.openOrder = openOrder;
+        this.envVariables = envVariables;
     }
 
     // Validation on opening a trade
@@ -25,7 +27,7 @@ public class RequestOpenTrade : IRequestOpenTrade
 
         decimal stopLevel = 0m;
         decimal limitLevel = 0m;
-        decimal scalingFactor = EnvironmentVariables.GetScalingFactor(reqObj.symbol);
+        decimal scalingFactor = envVariables.GetScalingFactor(reqObj.symbol);
 
         decimal slippage = 1m / scalingFactor;
         reqObj.UpdateLevelWithSlippage(slippage);

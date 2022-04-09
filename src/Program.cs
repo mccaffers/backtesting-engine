@@ -12,13 +12,14 @@ namespace backtesting_engine;
 static class Program
 {
 
-    static CloudConnectionPool pool = new CloudConnectionPool(EnvironmentVariables.elasticCloudID, new BasicAuthenticationCredentials(EnvironmentVariables.elasticUser, EnvironmentVariables.elasticPassword));
+    private static EnvironmentVariables variables = new EnvironmentVariables();
+    static CloudConnectionPool pool = new CloudConnectionPool(variables.elasticCloudID, new BasicAuthenticationCredentials(variables.elasticUser, variables.elasticPassword));
     static ConnectionSettings settings = new ConnectionSettings(pool).RequestTimeout(TimeSpan.FromMinutes(2));
 
-    async static Task Main(string[] args) =>
+    async static Task Main(string[] args) => 
         await Task.FromResult(
             new ServiceCollection()
-            .RegisterStrategies()
+            .RegisterStrategies(variables)
             .AddSingleton<IOpenOrder, OpenOrder>()
             .AddSingleton<ICloseOrder, CloseOrder>()
             .AddSingleton<IIngest, backtesting_engine_ingest.Ingest>()
@@ -29,6 +30,7 @@ static class Program
             .AddSingleton<IReporting,Reporting>()
             .AddSingleton<ITradingObjects, TradingObjects>()
             .AddSingleton<ISystemObjects, SystemObjects>()
+            .AddSingleton<IEnvironmentVariables>(variables)
             .AddSingleton<IRequestOpenTrade, RequestOpenTrade>()
             .AddSingleton<IElasticClient>(provider => new ElasticClient(settings))
             .BuildServiceProvider(true)

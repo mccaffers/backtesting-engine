@@ -14,7 +14,7 @@ public interface IReporting
     List<ReportTradeObj> tradeUpdateArray { get; init; }
 
     Task BatchTradeUpdate();
-    Task EndOfRunReport(string reason = "");
+    Task<bool> EndOfRunReport(string reason = "");
     Task SendBatchedObjects(List<ReportTradeObj> localClone);
     Task SendStack(TradingException message);
     Task TradeUpdate(DateTime date, string symbol, decimal profit);
@@ -27,18 +27,21 @@ public class Reporting : TradingBase, IReporting
     public bool switchHasSentFinalReport { get; set; }
 
     private IElasticClient elasticClient;
+    readonly IEnvironmentVariables envVariables;
 
-    public Reporting(IServiceProvider provider, IElasticClient elasticClient) : base(provider)
+    public Reporting(IServiceProvider provider, IElasticClient elasticClient, IEnvironmentVariables envVariables) : base(provider)
     {
         this.tradeUpdateArray = new List<ReportTradeObj>();
-        this.elasticClient = elasticClient;
+        this.elasticClient =  elasticClient;
+        this.envVariables = envVariables;
     }
 
-    public async Task EndOfRunReport(string reason = "")
+    public async Task<bool> EndOfRunReport(string reason = "")
     {
-        if (!EnvironmentVariables.reportingEnabled || switchHasSentFinalReport)
+        if (!envVariables.reportingEnabled || switchHasSentFinalReport)
         {
-            return;
+            System.Console.WriteLine("reporting off");
+            return true;
         }
 
         switchHasSentFinalReport = true;
@@ -52,14 +55,14 @@ public class Reporting : TradingBase, IReporting
         var report = new ReportFinalObj()
         {
             date = DateTime.Now,
-            hostname = EnvironmentVariables.hostname,
-            symbols = EnvironmentVariables.symbols,
+            hostname = envVariables.hostname,
+            symbols = envVariables.symbols,
             pnl = this.tradingObjects.accountObj.pnl,
-            runID = EnvironmentVariables.runID,
-            runIteration = int.Parse(EnvironmentVariables.runIteration),
+            runID = envVariables.runID,
+            runIteration = int.Parse(envVariables.runIteration),
             openingEquity = this.tradingObjects.accountObj.openingEquity,
             maximumDrawndownPercentage = this.tradingObjects.accountObj.maximumDrawndownPercentage,
-            strategy = EnvironmentVariables.strategy,
+            strategy = envVariables.strategy,
             positiveTradeCount = this.tradingObjects.tradeHistory.Count(x => x.Value.profit > 0),
             negativeTradeCount = this.tradingObjects.tradeHistory.Count(x => x.Value.profit < 0),
             positivePercentage = positivePercentage,
@@ -86,12 +89,14 @@ public class Reporting : TradingBase, IReporting
         // Give the requests enough time to clean up, probably 
         // not necessary with the above await operators
         System.Threading.Thread.Sleep(5000);
+        return true;
     }
 
     public async Task SendStack(TradingException message)
     {
-        if (!EnvironmentVariables.reportingEnabled)
+        if (!envVariables.reportingEnabled)
         {
+            System.Console.WriteLine("reporting disabled");
             return;
         }
 
@@ -104,10 +109,10 @@ public class Reporting : TradingBase, IReporting
         tradeUpdateArray.Add(new ReportTradeObj()
         {
             date = date,
-            symbols = EnvironmentVariables.symbols,
+            symbols = envVariables.symbols,
             pnl = this.tradingObjects.accountObj.pnl,
-            runID = EnvironmentVariables.runID,
-            runIteration = int.Parse(EnvironmentVariables.runIteration),
+            runID = envVariables.runID,
+            runIteration = int.Parse(envVariables.runIteration),
             tradeProfit = profit
         });
         await BatchTradeUpdate();
@@ -115,7 +120,7 @@ public class Reporting : TradingBase, IReporting
 
     public async Task BatchTradeUpdate()
     {
-        if (!EnvironmentVariables.reportingEnabled)
+        if (!envVariables.reportingEnabled)
         {
             return;
         }

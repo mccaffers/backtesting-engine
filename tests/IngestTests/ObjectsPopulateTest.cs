@@ -27,7 +27,7 @@ public class ObjectsPopulateTest
         // Arrange
         TestEnvironment.SetEnvironmentVariables(); 
 
-        var inputMock = new Mock<Ingest>();
+        var inputMock = new Mock<Ingest>(new EnvironmentVariables());
 
         // stub out the CoordinatedFileRead so the method doesn't try to read from file
         inputMock.Protected()

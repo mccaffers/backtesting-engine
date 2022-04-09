@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
+using backtesting_engine.interfaces;
 using backtesting_engine_ingest;
 using Moq;
 using Utilities;
@@ -27,7 +28,7 @@ public class DataInputTests
 
         TestEnvironment.SetEnvironmentVariables(); 
 
-        var inputMock = new Mock<Ingest>(){
+        var inputMock = new Mock<Ingest>(new EnvironmentVariables()){
             CallBase = true
         };
 
@@ -39,32 +40,31 @@ public class DataInputTests
         Assert.Equal(expectedResult, inputMock?.Object.localInputBuffer.Count);
     }
     
-    // [Fact]
-    // public async void TestingReadFile()
-    // {
+    [Fact]
+    public async void TestingReadFile()
+    {
 
-    //     TestEnvironment.SetEnvironmentVariables(); 
+        TestEnvironment.SetEnvironmentVariables(); 
        
-    //     var programMock = new Mock<Main>(); // can't mock program
-    //     var consumerMock = new Mock<IConsumer>();
-    //     var inputMock = new Mock<Ingest>(){
-    //         CallBase = true
-    //     };
+        var consumerMock = new Mock<IConsumer>();
+        var ingestMock = new Mock<Ingest>(new EnvironmentVariables()){
+            CallBase = true
+        };
 
-    //     inputMock.Setup(x=>x.EnvironmentSetup());
+        ingestMock.Setup(x=>x.EnvironmentSetup());
+        consumerMock.Setup<Task>(x=>x.ConsumeAsync(It.IsAny<BufferBlock<PriceObj>>(), It.IsAny<CancellationToken>()))
+                        .Returns(Task.FromResult(0));
 
-    //     // Ingore the consumer
-    //     consumerMock.Setup<Task>(x=>x.ConsumeAsync(It.IsAny<BufferBlock<PriceObj>>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(0));
+        var taskManagerMock = new Mock<TaskManager>(consumerMock.Object, ingestMock.Object); // can't mock program
 
-    //     var programObj = programMock.Object;
-    //     inputMock.Object.fileNames.Add(Path.Combine(PathUtil.GetTestPath("TestEnvironmentSetup"), "testSymbol.csv"));
+        ingestMock.Object.fileNames.Add(Path.Combine(PathUtil.GetTestPath("TestEnvironmentSetup"), "testSymbol.csv"));
 
-    //     await programObj.IngestAndConsume(consumerMock.Object, inputMock.Object);
+        await taskManagerMock.Object.IngestAndConsume();
 
-    //     BufferBlock<PriceObj> buffer = programObj.GetFieldValue<BufferBlock<PriceObj>>("buffer");
-    //     IList<PriceObj>? items;
-    //     var output = buffer.TryReceiveAll(out items);
+        BufferBlock<PriceObj> buffer = taskManagerMock.Object.buffer;
+        IList<PriceObj>? items;
+        var output = buffer.TryReceiveAll(out items);
 
-    //     Assert.True(items!=null && items.Count == 1);
-    // }
+        Assert.True(items!=null && items.Count == 1);
+    }
 }

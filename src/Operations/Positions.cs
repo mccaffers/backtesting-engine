@@ -17,12 +17,12 @@ public interface IPositions
 
 public class Positions : TradingBase, IPositions
 {
-
     readonly ICloseOrder closeOrder;
-
-    public Positions(IServiceProvider provider, ICloseOrder closeOrder) : base(provider)
+    readonly IEnvironmentVariables envVaribles;
+    public Positions(IServiceProvider provider, ICloseOrder closeOrder, IEnvironmentVariables envVaribles) : base(provider)
     {
         this.closeOrder = closeOrder;
+        this.envVaribles = envVaribles;
     }
 
     public void ReviewEquity()
@@ -53,7 +53,7 @@ public class Positions : TradingBase, IPositions
         foreach (var myTradeObj in GetOrderBook(priceObj.symbol))
         {
 
-            myTradeObj.UpdateClose(priceObj);
+            myTradeObj.UpdateClose(priceObj, envVaribles.GetScalingFactor(priceObj.symbol));
 
             if (myTradeObj.direction == TradeDirection.BUY &&
                     (priceObj.bid <= myTradeObj.stopLevel || priceObj.bid >= myTradeObj.limitLevel))
@@ -86,10 +86,6 @@ public class Positions : TradingBase, IPositions
         this.closeOrder.Request(tradeHistoryObj);
     }
 
-    public static decimal CalculateProfit(decimal level, RequestObject openTradeObj)
-    {
-        var difference = openTradeObj.direction == TradeDirection.BUY ? level - openTradeObj.level : openTradeObj.level - level;
-        return difference * EnvironmentVariables.GetScalingFactor(openTradeObj.symbol) * openTradeObj.size;
-    }
+
 
 }

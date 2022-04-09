@@ -23,10 +23,12 @@ public class Ingest : IIngest
     public virtual List<string> fileNames { get; } = new List<string>();
     public Dictionary<string, StreamReader> streamDictionary { get; }
     public Dictionary<string, PriceObj> localInputBuffer { get; }
+    readonly IEnvironmentVariables envVariables;
 
-    public Ingest()
+    public Ingest(IEnvironmentVariables envVariables)
     {
-        this.symbols = EnvironmentVariables.symbols;
+        this.envVariables = envVariables;
+        this.symbols = envVariables.symbols;
         this.streamDictionary = new Dictionary<string, StreamReader>();
         this.localInputBuffer = new Dictionary<string, PriceObj>();
     }
@@ -40,7 +42,7 @@ public class Ingest : IIngest
         // Loop around every epic to check what files are present
         foreach (var symbol in this.symbols)
         {
-            var symbolFolder = Path.Combine(EnvironmentVariables.tickDataFolder, symbol);
+            var symbolFolder = Path.Combine(envVariables.tickDataFolder, symbol);
 
             DirectoryInfo di = new DirectoryInfo(symbolFolder);
             var files = di.GetFiles("*.csv").OrderBy(x => x.Name);

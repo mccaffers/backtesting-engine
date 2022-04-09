@@ -13,11 +13,19 @@ public class AccountObj
     public decimal openingEquity { get; init; } 
     public decimal maximumDrawndownPercentage { get; set; }
 
-    public AccountObj( ConcurrentDictionary<string, RequestObject> openTrades, ConcurrentDictionary<string, TradeHistoryObject> tradeHistory ){
+    readonly IEnvironmentVariables envVariables;
+
+    public AccountObj(ConcurrentDictionary<string, RequestObject> openTrades,
+                           ConcurrentDictionary<string, TradeHistoryObject> tradeHistory,
+                           decimal openingEquity,
+                           decimal maximumDrawndownPercentage,
+                           IEnvironmentVariables envVariables){
+
         this.openTrades = openTrades;
         this.tradeHistory = tradeHistory;
-        this.openingEquity = decimal.Parse(EnvironmentVariables.accountEquity);
-        this.maximumDrawndownPercentage = decimal.Parse(EnvironmentVariables.maximumDrawndownPercentage);
+        this.openingEquity = openingEquity;
+        this.maximumDrawndownPercentage = maximumDrawndownPercentage;
+        this.envVariables = envVariables;
     }
 
     public decimal pnl
@@ -25,8 +33,14 @@ public class AccountObj
         get
         {
             var pl = tradeHistory.Sum(x => x.Value.profit);
-            return this.openingEquity + pl + openTrades.Sum(x => Positions.CalculateProfit(x.Value.close, x.Value));
+            return this.openingEquity + pl + openTrades.Sum(x => CalculateProfit(x.Value.close, x.Value));
         }
+    }
+
+    public decimal CalculateProfit(decimal level, RequestObject openTradeObj)
+    {
+        var difference = openTradeObj.direction == TradeDirection.BUY ? level - openTradeObj.level : openTradeObj.level - level;
+        return difference * this.envVariables.GetScalingFactor(openTradeObj.symbol) * openTradeObj.size;
     }
 
     public bool hasAccountExceededDrawdownThreshold()
