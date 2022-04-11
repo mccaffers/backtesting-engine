@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Moq;
+using Moq.Protected;
 using Tests;
 using Utilities;
 
@@ -8,10 +10,11 @@ class TestEnvironment {
     public static string folderPath {get;set;} = PathUtil.GetTestPath("TestEnvironmentSetup");
     public static string[] fileNames {get;set;} = new string[]{"testSymbol.csv"};
 
-    public static Mock<IEnvironmentVariables> SetEnvironmentVariables(){
+    public static Mock<EnvironmentVariables> SetEnvironmentVariables(){
 
-        var environmentMock = new Mock<IEnvironmentVariables>();
-        
+        var environmentMock = new Mock<EnvironmentVariables>();
+        environmentMock.SetupGet<bool>(x=>x.loadFromEnvironmnet).Returns(false);
+
         environmentMock.SetupGet<string[]>(x=>x.symbols).Returns(new string[]{"TestEnvironmentSetup"});
         environmentMock.SetupGet<string>(x=>x.scalingFactor).Returns("TestEnvironmentSetup,1000;");
         environmentMock.SetupGet<string>(x=>x.symbolFolder).Returns("Resources");

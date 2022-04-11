@@ -18,24 +18,30 @@ public interface IEnvironmentVariables
     string s3Path { get; init; }
     string hostname { get; init; }
     string runIteration { get; init; }
+    string scalingFactor { get; init; }
     string tickDataFolder { get; init; }
     bool reportingEnabled { get; init; }
     string[] symbols { get; init; }
     int[] years { get; init; }
-    Dictionary<string, decimal> scalingFactorDictionary { get; init; }
-    string scalingFactor {get; init; }
+    Dictionary<string, decimal> scalingFactorDictionary { get; }
 
     decimal GetScalingFactor(string symbol);
 }
 
 public class EnvironmentVariables : IEnvironmentVariables
 {
+    // Enables the override of the constructor
+    public virtual bool loadFromEnvironmnet { get; } = true;
 
     public EnvironmentVariables()
     {
+        if(!loadFromEnvironmnet){
+            return;
+        }
+
         this.strategy = Get("strategy");
         this.runID = Get("runID");
-        this.symbolFolder = Get("symbolFolder", true);
+        this.symbolFolder = Get("symbolFolder");
         this.stopDistanceInPips = Get("stopDistanceInPips");
         this.limitDistanceInPips = Get("limitDistanceInPips");
         this.elasticPassword = Get("elasticPassword");
@@ -51,68 +57,69 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.reportingEnabled = bool.Parse(Get("reportingEnabled"));
         this.symbols = Get("symbols").Split(",");
         this.years = Get("years").Split(',').Select(n => Convert.ToInt32(n)).ToArray();
-        this.scalingFactorDictionary = PopulateDictionary();
         this.scalingFactor = Get("scalingFactor");
     }
 
-    private static string Get(string envName, bool optional = false)
+    protected string Get(string envName)
     {
         var output = Environment.GetEnvironmentVariable(envName);
-        if (output == null && !optional)
+        if (string.IsNullOrEmpty(output))
         {
             throw new ArgumentException("Missing environment variable " + envName);
         }
         return output ?? "";
     }
 
-    public string strategy { get; init; }
-    public string runID { get; init; }
-    public string symbolFolder { get; init; }
-    public string stopDistanceInPips { get; init; }
-    public string limitDistanceInPips { get; init; }
-    public string elasticPassword { get; init; }
-    public string elasticUser { get; init; }
-    public string elasticCloudID { get; init; }
-    public string accountEquity { get; init; }
-    public string maximumDrawndownPercentage { get; init; }
-    public string s3Bucket { get; init; }
-    public string s3Path { get; init; }
-    public string hostname { get; init; }
-    public string runIteration { get; init; }
-    public string scalingFactor {get; init; }
+    public virtual string strategy { get; init; }
+    public virtual string runID { get; init; }
+    public virtual string symbolFolder { get; init; }
+    public virtual string stopDistanceInPips { get; init; }
+    public virtual string limitDistanceInPips { get; init; }
+    public virtual string elasticPassword { get; init; }
+    public virtual string elasticUser { get; init; }
+    public virtual string elasticCloudID { get; init; }
+    public virtual string accountEquity { get; init; }
+    public virtual string maximumDrawndownPercentage { get; init; }
+    public virtual string s3Bucket { get; init; }
+    public virtual string s3Path { get; init; }
+    public virtual string hostname { get; init; }
+    public virtual string runIteration { get; init; }
+    public virtual string scalingFactor { get; init; }
 
     // Custom environment variables
-    public string tickDataFolder { get; init; }
-    public bool reportingEnabled { get; init; }
-    public string[] symbols { get; init; }
-    public int[] years { get; init; }
-    public Dictionary<string, decimal> scalingFactorDictionary { get; init; }
+    public virtual string tickDataFolder { get; init; }
+    public virtual bool reportingEnabled { get; init; }
+    public virtual string[] symbols { get; init; }
+    public virtual int[] years { get; init; }
 
-    private Dictionary<string, decimal> PopulateDictionary()
+    public Dictionary<string, decimal> scalingFactorDictionary
     {
-        Dictionary<string, decimal> localdictionary = new Dictionary<string, decimal>();
-
-        foreach (var symbol in this.scalingFactor.Split(";"))
+        get
         {
-            if (string.IsNullOrEmpty(symbol))
+            Dictionary<string, decimal> localdictionary = new Dictionary<string, decimal>();
+
+            foreach (var symbol in this.scalingFactor.Split(";"))
             {
-                continue;
+                if (string.IsNullOrEmpty(symbol))
+                {
+                    continue;
+                }
+                var sfString = symbol.ToString().Split(",");
+                decimal sf;
+                if (!decimal.TryParse(sfString[1], out sf))
+                {
+                    throw new ArgumentException("Cannot read scaling factor of symbol");
+                }
+                localdictionary.Add(sfString[0], sf);
             }
-            var sfString = symbol.ToString().Split(",");
-            decimal sf;
-            if (!decimal.TryParse(sfString[1], out sf))
-            {
-                throw new ArgumentException("Cannot read scaling factor of symbol");
-            }
-            localdictionary.Add(sfString[0], sf);
+            return localdictionary;
         }
-        return localdictionary;
     }
 
     public decimal GetScalingFactor(string symbol)
     {
         var scalingFactor = 0m;
-        var output = scalingFactorDictionary.TryGetValue(symbol, out scalingFactor);
+        var output = this.scalingFactorDictionary.TryGetValue(symbol, out scalingFactor);
 
         if (!output)
         {

@@ -13,6 +13,7 @@ using backtesting_engine.analysis;
 using backtesting_engine.interfaces;
 using backtesting_engine_ingest;
 using backtesting_engine_models;
+using backtesting_engine_operations;
 using Elasticsearch.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -27,7 +28,6 @@ namespace Tests;
 public class ReportingTests
 {
 
-    private static string symbolName="TestEnvironmentSetup";
 
     [Fact]
     public async Task TestElasticSearchFinalReport(){
@@ -148,107 +148,46 @@ public class ReportingTests
             CallBase = true
         };
 
-        // Force an trigger of the bulk update method as more than {x} seconds have passed
-        reportingMock.Object.lastPostTime = DateTime.Now.Subtract(TimeSpan.FromDays(1));
+        string symbolName="TestEnvironmentSetup";
 
-        // Act
+        //
+        // Act 1 - Should have 1 trade to update elastic with
+        ///
+
+        recordsToBulkIndex=0;
+        bulkAsyncCalled=false;
+        index=string.Empty;
+
+        reportingMock.Object.lastPostTime = DateTime.Now.Subtract(TimeSpan.FromDays(1));
         await reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10);
 
         // Assert
         Assert.Equal(1, recordsToBulkIndex); // one record has been added
         Assert.True(bulkAsyncCalled); // Confirm that the indexAsync was called
         Assert.Equal("trades", index); // check it's the right index
-    }
 
-    [Fact(Skip = "WIP")]
-    public async Task ComplexTradeUpdateAndReport(){
+        //
+        // Act 2 - Should have 4 trades to update elastic with
+        //
 
-        // Arrange Environment Variables
-        var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
-        environmentMock.SetupGet<bool>(x=>x.reportingEnabled).Returns(true);
-        var environmentObj = environmentMock.Object;
+        // Reset variables
+        recordsToBulkIndex=0;
+        bulkAsyncCalled=false;
+        index=string.Empty;
 
-        // Arrange local variables
-        bool bulkAsyncCalled=false;
-        int recordsToBulkIndex=0;
-        IndexName index=string.Empty;
+        await reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10);
+        await reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10);
+        await reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10);
 
-        // Setup local dependency provider
-        var provider = new ServiceCollection()
-            .AddSingleton<IEnvironmentVariables>(environmentObj)
-            .AddSingleton<ITradingObjects, TradingObjects>()
-            .AddSingleton<ISystemObjects, SystemObjects>()
-            .BuildServiceProvider(true);
-
-        // Pull the trading objects from the service provider
-        var tradingObject = provider.GetService<ITradingObjects>();
-        Assert.NotNull(tradingObject);
-
-        // Act
-        // Generate from price events
-
-        // Inital price event
-        // var priceObj = new PriceObj(){
-        //     date=DateTime.Now,
-        //     symbol=symbolName,
-        //     bid=100,
-        //     ask=120
-        // };
-
-        // // Create a trade request object to open a trade
-        // var reqObj = new RequestObject(priceObj)
-        // {
-        //     direction = TradeDirection.BUY,
-        //     size = 1,
-        //     stopDistancePips = 20,
-        //     limitDistancePips = 20,
-        // };
-
-        // // Add it to the concurrent dictionary
-        // tradingObject?.openTrades.TryAdd(reqObj.key, reqObj);
-
-
-        // // Create a new price event
-        // var priceObjNext = new PriceObj(){
-        //     date=DateTime.Now,
-        //     symbol=symbolName,
-        //     bid=120,
-        //     ask=140
-        // };
-        
-        // // Update the close price on the open trade which updates the account pnl
-        // tradingObject?.openTrades.Where(x=>x.Key == reqObj.key)
-        //                             .First()
-        //                             .Value
-        //                             .UpdateClose(priceObjNext, environmentMock.Object.GetScalingFactor(priceObj.symbol));
-
-        // Setup the elasticClient to mock the BulkAsync Method
-        var elasticClient = new Mock<IElasticClient>();
-        elasticClient.Setup(c => c.BulkAsync(It.IsAny<Func<BulkDescriptor,IBulkRequest>>(),It.IsAny<CancellationToken>()))
-                        .ReturnsAsync((Func<BulkDescriptor,IBulkRequest> bulkDescriptor, CancellationToken ct) => {
-                                var bulkDesc = new BulkDescriptor().IndexMany<ReportTradeObj>(new List<ReportTradeObj>());
-                                var operations = bulkDescriptor.Invoke(bulkDesc).Operations;
-                                index = operations.First().Index;
-                                recordsToBulkIndex= operations.Count;
-                                return new Mock<BulkResponse>().Object;
-                        })
-                        .Callback(()=>{
-                            bulkAsyncCalled=true;
-                        });     
-
-        var reportingMock = new Mock<Reporting>(provider, elasticClient.Object, environmentMock.Object){
-            CallBase = true
-        };
-
-        // Force an trigger of the bulk update method as more than {x} seconds have passed
+        // Must update the time prior to the last update so the batch update is triggered
         reportingMock.Object.lastPostTime = DateTime.Now.Subtract(TimeSpan.FromDays(1));
-
-        // Act
         await reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10);
 
         // Assert
-        Assert.Equal(1, recordsToBulkIndex); // one record has been added
+        Assert.Equal(4, recordsToBulkIndex); // one record has been added
         Assert.True(bulkAsyncCalled); // Confirm that the indexAsync was called
         Assert.Equal("trades", index); // check it's the right index
     }
+
+
 }

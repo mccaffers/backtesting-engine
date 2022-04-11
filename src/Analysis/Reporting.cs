@@ -14,7 +14,7 @@ public interface IReporting
     List<ReportTradeObj> tradeUpdateArray { get; init; }
 
     Task BatchTradeUpdate();
-    Task<bool> EndOfRunReport(string reason = "");
+    Task EndOfRunReport(string reason = "");
     Task SendBatchedObjects(List<ReportTradeObj> localClone);
     Task SendStack(TradingException message);
     Task TradeUpdate(DateTime date, string symbol, decimal profit);
@@ -36,12 +36,11 @@ public class Reporting : TradingBase, IReporting
         this.envVariables = envVariables;
     }
 
-    public async Task<bool> EndOfRunReport(string reason = "")
+    public async Task EndOfRunReport(string reason = "")
     {
         if (!envVariables.reportingEnabled || switchHasSentFinalReport)
         {
-            System.Console.WriteLine("reporting off");
-            return true;
+            return;
         }
 
         switchHasSentFinalReport = true;
@@ -89,14 +88,12 @@ public class Reporting : TradingBase, IReporting
         // Give the requests enough time to clean up, probably 
         // not necessary with the above await operators
         System.Threading.Thread.Sleep(5000);
-        return true;
     }
 
     public async Task SendStack(TradingException message)
     {
         if (!envVariables.reportingEnabled)
         {
-            System.Console.WriteLine("reporting disabled");
             return;
         }
 
