@@ -125,7 +125,7 @@ public class Ingest : IIngest
     // Expecting data in the following format
     //  UTC,AskPrice,BidPrice,AskVolume,BidVolume
     //  2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75
-    protected virtual void PopulateLocalBuffer(string fileName, string line)
+    public virtual void PopulateLocalBuffer(string fileName, string line)
     {
         string[] values = line.Split(StringFormats.sep);
 
@@ -153,7 +153,7 @@ public class Ingest : IIngest
     }
 
     // Send the oldest line to the Ingest Buffer
-    async Task GetOldestItemOffBuffer(BufferBlock<PriceObj> buffer)
+    public async Task GetOldestItemOffBuffer(BufferBlock<PriceObj> buffer)
     {
         if (!localInputBuffer.Any())
             return;

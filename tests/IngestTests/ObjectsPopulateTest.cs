@@ -25,9 +25,9 @@ public class ObjectsPopulateTest
     public async void CheckStreamDictionaryContainsAllFiles(params string[] fileNames)
     {
         // Arrange
-        TestEnvironment.SetEnvironmentVariables(); 
+        var envMock = TestEnvironment.SetEnvironmentVariables(); 
 
-        var inputMock = new Mock<Ingest>(new EnvironmentVariables());
+        var inputMock = new Mock<Ingest>(envMock.Object);
 
         // stub out the CoordinatedFileRead so the method doesn't try to read from file
         inputMock.Protected()

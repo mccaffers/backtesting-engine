@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Moq;
 using Moq.Protected;
 using Tests;
@@ -22,6 +23,7 @@ class TestEnvironment {
         environmentMock.SetupGet<string>(x=>x.runID).Returns("debug");
         environmentMock.SetupGet<string>(x=>x.elasticUser).Returns("debug");
         environmentMock.SetupGet<string>(x=>x.elasticPassword).Returns("debug");
+        environmentMock.SetupGet<string>(x=>x.tickDataFolder).Returns(Path.Combine(Path.GetFullPath("./" + "Resources")));
         environmentMock.SetupGet<string>(x=>x.elasticCloudID).Returns("my-deployment:bG9jYWxob3N0JDE3OTIwMDJkLTU0YjQ0NTZhYTNhNTg0M2QwZjgxNWM3OSQ1NGI0NDU2YWEzYTU4NDNkMGY4MTVjNzk=");
         environmentMock.SetupGet<string>(x=>x.accountEquity).Returns("100");
         environmentMock.SetupGet<string>(x=>x.stopDistanceInPips).Returns("100");

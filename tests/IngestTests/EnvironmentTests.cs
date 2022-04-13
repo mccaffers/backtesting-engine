@@ -16,20 +16,17 @@ public class IngestEnvironmentTests
     [Fact]
     public void TestFilePath(){
 
-        TestEnvironment.SetEnvironmentVariables(); 
-
-        var envVariables = new EnvironmentVariables();
-
-        var inputMock = new Mock<Ingest>(envVariables){
+        var envMock = TestEnvironment.SetEnvironmentVariables(); 
+        var ingestMock = new Mock<Ingest>(envMock.Object){
             CallBase = true
         };
 
-        Environment.SetEnvironmentVariable("folderPath", PathUtil.GetTestPath(""));
+        // Environment.SetEnvironmentVariable("folderPath", PathUtil.GetTestPath(""));
 
-        inputMock.Object.EnvironmentSetup();
+        ingestMock.Object.EnvironmentSetup();
 
-        Assert.True(inputMock.Object.fileNames.All(x=>x.Contains(TestEnvironment.folderPath)));
-        Assert.True(inputMock.Object.fileNames.Count == TestEnvironment.fileNames.Length);
+        Assert.True(ingestMock.Object.fileNames.All(x=>x.Contains(TestEnvironment.folderPath)));
+        Assert.True(ingestMock.Object.fileNames.Count == TestEnvironment.fileNames.Length);
     }  
 
 }
