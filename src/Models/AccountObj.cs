@@ -11,7 +11,7 @@ public class AccountObj
     readonly ConcurrentDictionary<string, TradeHistoryObject> tradeHistory;
 
     public decimal openingEquity { get; init; } 
-    public decimal maximumDrawndownPercentage { get; set; }
+    public decimal maximumDrawndownPercentage { get; init; }
 
     readonly IEnvironmentVariables envVariables;
 

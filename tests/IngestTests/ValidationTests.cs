@@ -5,7 +5,6 @@ namespace Tests;
 public class IngestValidationTests
 {
 
-    
     [Theory]
     [InlineData(true, new string[] { "2018-01-01T22:52:26.862+00:00", "1.20146", "1.20138","1.2","1.3"})]
     [InlineData(false, new string[] {})]

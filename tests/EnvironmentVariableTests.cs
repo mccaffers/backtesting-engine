@@ -37,7 +37,7 @@ public class EnvironmentVariableTests
 
         // Assert
         Assert.Equal(1, scalingFactor);
-        Assert.Equal(localdictionary, environmentMock.Object.scalingFactorDictionary);
+        Assert.Equal(localdictionary, environmentMock.Object.getScalingFactorDictionary());
 
     }
 

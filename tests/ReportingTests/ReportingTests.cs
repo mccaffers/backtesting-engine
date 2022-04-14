@@ -24,10 +24,8 @@ using Xunit;
 
 namespace Tests;
 
-[Collection("Sequential")]
 public class ReportingTests
 {
-
 
     [Fact]
     public async Task TestElasticSearchFinalReport(){

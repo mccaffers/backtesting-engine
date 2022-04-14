@@ -22,7 +22,7 @@ public class PositionTests
         
     static string symbolName="TestEnvironmentSetup";
 
-    public ServiceProvider Setup(decimal accountEquity)
+    public static ServiceProvider Setup(decimal accountEquity)
     {
         // Arrange Environment Variables
         var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
@@ -49,7 +49,7 @@ public class PositionTests
     public static IEnumerable<object[]> Data =>
     new List<object[]>
     {
-        // ask, bid, account equity
+        // fields: ask, bid, account equity, direction
         new object[] {120m, 150m, 100m, "BUY"}, // positive test
         new object[] {100m, 50m, 200m, "BUY"}, // different account opening
         new object[] {100m, 20m, 1000m, "BUY"}, // large initial account

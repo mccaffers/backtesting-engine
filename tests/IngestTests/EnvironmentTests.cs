@@ -10,7 +10,6 @@ using Xunit;
 
 namespace Tests;
 
-[Collection("Sequential")]
 public class IngestEnvironmentTests
 {
     [Fact]

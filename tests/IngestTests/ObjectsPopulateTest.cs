@@ -17,7 +17,6 @@ namespace Tests;
 public class ObjectsPopulateTest
 {
 
-
     [Theory]
     [InlineData("FileName1")]
     [InlineData("FileName1", "FileName2")]

@@ -8,21 +8,18 @@ namespace backtesting_engine;
 public class SystemSetup : ISystemSetup
 {
     readonly IEnvironmentVariables envVariables;
-    readonly ITaskManager main;
     readonly IReporting elastic;
-
 
     public SystemSetup(ITaskManager main, IReporting elastic, IEnvironmentVariables envVariables)
     {
         this.envVariables = envVariables;
         this.elastic = elastic;
-        this.main = main;
 
         Task<string>.Run(async () =>
         {
             try
             {
-                await StartEngine(main, envVariables);
+                return await StartEngine(main, envVariables);
             }
             catch (TradingException tradingException)
             {
@@ -30,17 +27,23 @@ public class SystemSetup : ISystemSetup
             }
             catch (Exception ex)
             {
-                await elastic.SendStack(new TradingException(ex.Message)); // report error to elastic for review
-                return ex.Message;
+                return await SendStackException(ex.Message);
             }
-            return string.Empty;
+
         }).ContinueWith(async taskOutput =>
         {
             await elastic.EndOfRunReport(taskOutput.Result);
         }).Wait();
     }
 
-    public virtual async Task StartEngine(ITaskManager main, IEnvironmentVariables envVariables)
+    public virtual async Task<string> SendStackException(string message)
+    {
+        await elastic.SendStack(new TradingException(message)); // report error to elastic for review
+        return message;
+    }
+
+
+    public virtual async Task<string> StartEngine(ITaskManager main, IEnvironmentVariables envVariables)
     {
         foreach (var year in envVariables.years)
         {
@@ -63,6 +66,7 @@ public class SystemSetup : ISystemSetup
             // Clean up
             await CleanSymbolFolder(envVariables.tickDataFolder);
         }
+        return string.Empty;
     }
 
     private static async Task Decompress(string symbol)

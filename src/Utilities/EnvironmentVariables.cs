@@ -23,8 +23,8 @@ public interface IEnvironmentVariables
     bool reportingEnabled { get; init; }
     string[] symbols { get; init; }
     int[] years { get; init; }
-    Dictionary<string, decimal> scalingFactorDictionary { get; }
-
+    
+    Dictionary<string, decimal> getScalingFactorDictionary();
     decimal GetScalingFactor(string symbol);
 }
 
@@ -60,72 +60,66 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.scalingFactor = Get("scalingFactor");
     }
 
-    protected string Get(string envName)
+    static string Get(string envName)
     {
         var output = Environment.GetEnvironmentVariable(envName);
         if (string.IsNullOrEmpty(output))
         {
             throw new ArgumentException("Missing environment variable " + envName);
         }
-        return output ?? "";
+        return output;
     }
 
-    public virtual string strategy { get; init; }
-    public virtual string runID { get; init; }
-    public virtual string symbolFolder { get; init; }
-    public virtual string stopDistanceInPips { get; init; }
-    public virtual string limitDistanceInPips { get; init; }
-    public virtual string elasticPassword { get; init; }
-    public virtual string elasticUser { get; init; }
-    public virtual string elasticCloudID { get; init; }
-    public virtual string accountEquity { get; init; }
-    public virtual string maximumDrawndownPercentage { get; init; }
-    public virtual string s3Bucket { get; init; }
-    public virtual string s3Path { get; init; }
-    public virtual string hostname { get; init; }
-    public virtual string runIteration { get; init; }
-    public virtual string scalingFactor { get; init; }
+    public virtual string strategy { get; init; } = string.Empty;
+    public virtual string runID { get; init; } = string.Empty;
+    public virtual string symbolFolder { get; init; } = string.Empty;
+    public virtual string stopDistanceInPips { get; init; } = string.Empty;
+    public virtual string limitDistanceInPips { get; init; } = string.Empty;
+    public virtual string elasticPassword { get; init; } = string.Empty;
+    public virtual string elasticUser { get; init; } = string.Empty;
+    public virtual string elasticCloudID { get; init; } = string.Empty;
+    public virtual string accountEquity { get; init; } = string.Empty;
+    public virtual string maximumDrawndownPercentage { get; init; } = string.Empty;
+    public virtual string s3Bucket { get; init; } = string.Empty;
+    public virtual string s3Path { get; init; } = string.Empty;
+    public virtual string hostname { get; init; } = string.Empty;
+    public virtual string runIteration { get; init; } = string.Empty;
+    public virtual string scalingFactor { get; init; } = string.Empty;
 
     // Custom environment variables
-    public virtual string tickDataFolder { get; init; }
-    public virtual bool reportingEnabled { get; init; }
-    public virtual string[] symbols { get; init; }
-    public virtual int[] years { get; init; }
+    public virtual string tickDataFolder { get; init; } = string.Empty;
+    public virtual bool reportingEnabled { get; init; } = false;
+    public virtual string[] symbols { get; init; } = new string[] { string.Empty };
+    public virtual int[] years { get; init; } = new int[] {0};
 
-    public Dictionary<string, decimal> scalingFactorDictionary
+    public Dictionary<string, decimal> getScalingFactorDictionary()
     {
-        get
+        var localdictionary = new Dictionary<string, decimal>();
+        foreach (var symbol in this.scalingFactor.Split(";"))
         {
-            Dictionary<string, decimal> localdictionary = new Dictionary<string, decimal>();
-
-            foreach (var symbol in this.scalingFactor.Split(";"))
-            {
-                if (string.IsNullOrEmpty(symbol))
-                {
-                    continue;
-                }
-                var sfString = symbol.ToString().Split(",");
-                decimal sf;
-                if (!decimal.TryParse(sfString[1], out sf))
-                {
-                    throw new ArgumentException("Cannot read scaling factor of symbol");
-                }
-                localdictionary.Add(sfString[0], sf);
+            if (string.IsNullOrEmpty(symbol)) {
+                continue;
             }
-            return localdictionary;
+
+            var scalingFactorArray = symbol.ToString().Split(",");
+            decimal sf;
+            if (!decimal.TryParse(scalingFactorArray[1], out sf))
+            {
+                throw new ArgumentException("Cannot read scaling factor of symbol");
+            }
+            localdictionary.Add(scalingFactorArray[0], sf);
         }
+        return localdictionary;
     }
 
     public decimal GetScalingFactor(string symbol)
     {
-        var scalingFactor = 0m;
-        var output = this.scalingFactorDictionary.TryGetValue(symbol, out scalingFactor);
-
-        if (!output)
+        var output = 0m;
+        if (!getScalingFactorDictionary().TryGetValue(symbol, out output))
         {
             throw new ArgumentException("Missing scaling factor");
         }
-        return scalingFactor;
+        return output;
     }
 
 }

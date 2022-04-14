@@ -26,8 +26,8 @@ public class Reporting : TradingBase, IReporting
     public List<ReportTradeObj> tradeUpdateArray { get; init; }
     public bool switchHasSentFinalReport { get; set; }
 
-    private IElasticClient elasticClient;
-    readonly IEnvironmentVariables envVariables;
+    private readonly IElasticClient elasticClient;
+    private readonly IEnvironmentVariables envVariables;
 
     public Reporting(IServiceProvider provider, IElasticClient elasticClient, IEnvironmentVariables envVariables) : base(provider)
     {
@@ -90,7 +90,7 @@ public class Reporting : TradingBase, IReporting
         System.Threading.Thread.Sleep(5000);
     }
 
-    public async Task SendStack(TradingException message)
+    public virtual async Task SendStack(TradingException message)
     {
         if (!envVariables.reportingEnabled)
         {
