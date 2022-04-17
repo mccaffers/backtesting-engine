@@ -12,7 +12,7 @@ namespace Tests;
 public class AccountObjTests
 {
 
-    public ServiceProvider Setup(int maximumDrawndownPercentage){
+    public static ServiceProvider Setup(int maximumDrawndownPercentage){
         var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
         environmentMock.SetupGet<string>(x=>x.accountEquity).Returns("500");
         environmentMock.SetupGet<string>(x=>x.scalingFactor).Returns("TestEnvironmentSetup,1;");

@@ -36,7 +36,7 @@ public class Reporting : TradingBase, IReporting
         this.envVariables = envVariables;
     }
 
-    public async Task EndOfRunReport(string reason = "")
+    public virtual async Task EndOfRunReport(string reason = "")
     {
         if (!envVariables.reportingEnabled || switchHasSentFinalReport)
         {
