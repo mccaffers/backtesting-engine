@@ -14,10 +14,14 @@ public static class ServiceExtension {
             }
         }
 
-       if (!services.Any(x => x.ServiceType == typeof(IStrategy))){
-           throw new ArgumentException("No Strategies defined");
-       }
+        CheckStrategyExistsAndAreOfTypeIStragey(services);
 
         return services;
+    }
+
+    private static void CheckStrategyExistsAndAreOfTypeIStragey(IServiceCollection services){
+        if (!services.Any(x => x.ServiceType == typeof(IStrategy))){
+           throw new ArgumentException("No Strategies defined");
+        }
     }
 }
