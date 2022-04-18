@@ -19,7 +19,7 @@ public class SystemTests
 {
 
     [Fact]
-    public async Task TestException(){
+    public void TestException(){
 
         var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
         var environmentObj = environmentMock.Object;
@@ -27,12 +27,7 @@ public class SystemTests
         var provider = new ServiceCollection()
             .AddSingleton<IEnvironmentVariables>(environmentObj)
             .AddSingleton<ITradingObjects, TradingObjects>()
-            .AddSingleton<IConsumer, Consumer>()
-            .AddSingleton<ICloseOrder, CloseOrder>()
             .AddSingleton<IElasticClient, ElasticClient>()
-            .AddSingleton<IOpenOrder, OpenOrder>()
-            .AddSingleton<IPositions, Positions>()
-            .AddSingleton<IIngest, backtesting_engine_ingest.Ingest>()
             .AddSingleton<ISystemObjects, SystemObjects>()
             .BuildServiceProvider();
 
