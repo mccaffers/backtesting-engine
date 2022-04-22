@@ -18,10 +18,12 @@ public interface IStrategy
 public class RandomStrategy : IStrategy
 {
     readonly IRequestOpenTrade requestOpenTrade;
+    readonly IEnvironmentVariables envVariables;
 
-    public RandomStrategy(IRequestOpenTrade requestOpenTrade)
+    public RandomStrategy(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables)
     {
         this.requestOpenTrade = requestOpenTrade;
+        this.envVariables = envVariables;
     }
 
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
@@ -39,9 +41,9 @@ public class RandomStrategy : IStrategy
         var openOrderRequest = new RequestObject(priceObj)
         {
             direction = direction,
-            size = 1,
-            stopDistancePips = 20,
-            limitDistancePips = 20,
+            size = decimal.Parse(envVariables.tradingSize),
+            stopDistancePips = decimal.Parse(envVariables.stopDistanceInPips),
+            limitDistancePips = decimal.Parse(envVariables.limitDistanceInPips),
         };
 
         this.requestOpenTrade.Request(openOrderRequest);

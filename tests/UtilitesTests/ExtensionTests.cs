@@ -21,7 +21,6 @@ public class ExtensionTests
         };
 
         var output = DictionaryKeyStrings.OpenTrade(priceObj);
-
         Assert.Equal(priceObj.symbol + "-" + priceObj.date, output);
     }
 

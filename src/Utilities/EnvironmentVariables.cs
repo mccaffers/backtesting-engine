@@ -20,6 +20,7 @@ public interface IEnvironmentVariables
     string runIteration { get; init; }
     string scalingFactor { get; init; }
     string tickDataFolder { get; init; }
+    string tradingSize { get; init; }
     bool reportingEnabled { get; init; }
     string[] symbols { get; init; }
     int[] years { get; init; }
@@ -58,6 +59,7 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.symbols = Get("symbols").Split(",");
         this.years = Get("years").Split(',').Select(n => Convert.ToInt32(n)).ToArray();
         this.scalingFactor = Get("scalingFactor");
+        this.tradingSize = Get("tradingSize");
     }
 
     static string Get(string envName)
@@ -85,6 +87,7 @@ public class EnvironmentVariables : IEnvironmentVariables
     public virtual string hostname { get; init; } = string.Empty;
     public virtual string runIteration { get; init; } = string.Empty;
     public virtual string scalingFactor { get; init; } = string.Empty;
+    public virtual string tradingSize { get; init; } = string.Empty;
 
     // Custom environment variables
     public virtual string tickDataFolder { get; init; } = string.Empty;
