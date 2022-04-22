@@ -36,7 +36,7 @@ public class SystemSetup : ISystemSetup
         }).Wait();
     }
 
-    public virtual async Task<string> SendStackException(string message)
+    public async Task<string> SendStackException(string message)
     {
         await elastic.SendStack(new TradingException(message)); // report error to elastic for review
         return message;
