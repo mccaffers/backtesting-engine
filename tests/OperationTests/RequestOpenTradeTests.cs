@@ -32,7 +32,7 @@ public class RequestOpenTradesTests
             receivedReqObj=callbackReq;
         }); // Stubbed out call, so the request doesn't go anywhere
 
-        var requestOpenTradeMock = new Mock<RequestOpenTrade>(openOrderMock.Object, environmentMock.Object );
+        var requestOpenTradeMock = new Mock<RequestOpenTrade>(openOrderMock.Object);
         
         // Create a trade request object to open a trade
         var reqObj = new RequestObject(priceObj, TradeDirection.BUY, environmentMock.Object) {
@@ -66,7 +66,7 @@ public class RequestOpenTradesTests
             receivedReqObj=callbackReq;
         }); // Stubbed out call, so the request doesn't go anywhere
 
-        var requestOpenTradeMock = new Mock<RequestOpenTrade>(openOrderMock.Object, environmentMock.Object );
+        var requestOpenTradeMock = new Mock<RequestOpenTrade>(openOrderMock.Object );
 
         // Create a trade request object to open a trade
         var reqObj = new RequestObject(priceObj, TradeDirection.BUY, environmentMock.Object) {
@@ -107,7 +107,7 @@ public class RequestOpenTradesTests
             receivedReqObj=callbackReq;
         }); // Stubbed out call, so the request doesn't go anywhere
 
-        var requestOpenTradeMock = new Mock<RequestOpenTrade>(openOrderMock.Object, environmentMock.Object );
+        var requestOpenTradeMock = new Mock<RequestOpenTrade>(openOrderMock.Object);
 
         // Create a trade request object to open a trade
         var reqObj = new RequestObject(priceObj, TradeDirection.BUY, environmentMock.Object) {
