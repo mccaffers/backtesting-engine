@@ -51,7 +51,7 @@ public class ReportingTests
         };
 
         await reportingMock.Object.EndOfRunReport("");
-        System.Console.WriteLine(reportingMock.Object.switchHasSentFinalReport);
+        ConsoleLogger.Log(reportingMock.Object.switchHasSentFinalReport.ToString());
         Assert.True(reportingMock.Object.switchHasSentFinalReport);
     }
 

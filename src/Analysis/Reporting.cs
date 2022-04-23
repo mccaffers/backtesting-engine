@@ -66,6 +66,8 @@ public class Reporting : TradingBase, IReporting
             negativeTradeCount = this.tradingObjects.tradeHistory.Count(x => x.Value.profit < 0),
             positivePercentage = positivePercentage,
             systemRunTimeInMinutes = DateTime.Now.Subtract(this.systemObjects.systemStartTime).TotalMinutes,
+            systemMessage = this.systemObjects.systemMessage,
+
         };
 
         if (!this.tradingObjects.tradeHistory.IsEmpty)
@@ -82,8 +84,7 @@ public class Reporting : TradingBase, IReporting
         // Make sure we send all of the trading objects
         await SendBatchedObjects(tradeUpdateArray);
 
-        var response = await elasticClient.IndexAsync(report, b => b.Index("report"));
-        System.Console.WriteLine(response);
+        await elasticClient.IndexAsync(report, b => b.Index("report"));
 
         // Give the requests enough time to clean up, probably 
         // not necessary with the above await operators

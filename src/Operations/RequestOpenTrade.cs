@@ -25,31 +25,30 @@ public class RequestOpenTrade : IRequestOpenTrade
     public void Request(RequestObject reqObj)
     {
 
-        decimal stopLevel = 0m;
-        decimal limitLevel = 0m;
-        decimal scalingFactor = envVariables.GetScalingFactor(reqObj.symbol);
+        // decimal stopLevel = 0m;
+        // decimal limitLevel = 0m;
+        // decimal scalingFactor = envVariables.GetScalingFactor(reqObj.symbol);
 
-        decimal slippage = 1m / scalingFactor;
-        reqObj.UpdateLevelWithSlippage(slippage);
+        
 
-        if (reqObj.stopDistancePips != 0 && reqObj.limitDistancePips != 0)
-        {
+        // if (reqObj.stopDistancePips != 0 && reqObj.limitDistancePips != 0)
+        // {
 
-            if (reqObj.direction == TradeDirection.SELL)
-            {
-                stopLevel = reqObj.level + (reqObj.stopDistancePips / scalingFactor);
-                limitLevel = reqObj.level - (reqObj.limitDistancePips / scalingFactor);
+        //     if (reqObj.direction == TradeDirection.SELL)
+        //     {
+        //         stopLevel = reqObj.level + (reqObj.stopDistancePips / scalingFactor);
+        //         limitLevel = reqObj.level - (reqObj.limitDistancePips / scalingFactor);
 
-            }
-            else if (reqObj.direction == TradeDirection.BUY)
-            {
-                stopLevel = reqObj.level - (reqObj.stopDistancePips / scalingFactor);
-                limitLevel = reqObj.level + (reqObj.limitDistancePips / scalingFactor);
-            }
-        }
+        //     }
+        //     else if (reqObj.direction == TradeDirection.BUY)
+        //     {
+        //         stopLevel = reqObj.level - (reqObj.stopDistancePips / scalingFactor);
+        //         limitLevel = reqObj.level + (reqObj.limitDistancePips / scalingFactor);
+        //     }
+        // }
 
-        reqObj.stopLevel = stopLevel;
-        reqObj.limitLevel = limitLevel;
+        // reqObj.stopLevel = stopLevel;
+        // reqObj.limitLevel = limitLevel;
 
         this.openOrder.Request(reqObj);
     }

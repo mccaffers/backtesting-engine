@@ -38,9 +38,8 @@ public class RandomStrategy : IStrategy
             direction = TradeDirection.SELL;
         }
 
-        var openOrderRequest = new RequestObject(priceObj)
+        var openOrderRequest = new RequestObject(priceObj, direction, envVariables)
         {
-            direction = direction,
             size = decimal.Parse(envVariables.tradingSize),
             stopDistancePips = decimal.Parse(envVariables.stopDistanceInPips),
             limitDistancePips = decimal.Parse(envVariables.limitDistanceInPips),

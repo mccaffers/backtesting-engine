@@ -8,6 +8,7 @@ public class ReportFinalObj {
     public string? hostname {get;set;}
     public double systemRunTimeInMinutes {get;set;}
     public int runIteration {get;set;}
+    public string? systemMessage {get;set;}
 
     // Engine Information
     public string[]? symbols { get;set; }

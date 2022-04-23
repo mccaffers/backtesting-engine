@@ -17,24 +17,5 @@ public class TradingException : ArgumentException {
         date = DateTime.Now;
     }
 
-    public TradingException(string? message, Exception? innerException) : base(message, innerException) {
-        date = DateTime.Now;
-    }
 
-    protected TradingException(SerializationInfo info, StreamingContext context) : base(info, context) {
-        date = DateTime.Now;
-    }
-
-    public TradingException(string? message, string? paramName) : base(message, paramName) {
-        date = DateTime.Now;
-    }
-
-    public TradingException(string? message, string? paramName, Exception? innerException) : base(message, paramName, innerException) {
-        date = DateTime.Now;
-    }
-
-    public override void GetObjectData(SerializationInfo info, StreamingContext context) {
-        base.GetObjectData(info, context);
-        info.AddValue("TradingException.Date", this.date);
-    }
 }

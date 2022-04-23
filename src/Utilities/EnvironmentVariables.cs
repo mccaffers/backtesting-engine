@@ -62,10 +62,10 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.tradingSize = Get("tradingSize");
     }
 
-    static string Get(string envName)
+    public static string Get(string envName, bool optional = false)
     {
-        var output = Environment.GetEnvironmentVariable(envName);
-        if (string.IsNullOrEmpty(output))
+        var output = Environment.GetEnvironmentVariable(envName) ?? "";
+        if (string.IsNullOrEmpty(output) && !optional)
         {
             throw new ArgumentException("Missing environment variable " + envName);
         }

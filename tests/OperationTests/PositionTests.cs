@@ -62,12 +62,14 @@ public class PositionTests
     [MemberData(nameof(Data))]
     public void BuyCalculationsTest(decimal ask, decimal bid, decimal accountEquity, string direction) {
 
-        TradeDirection tradeDirction = (TradeDirection)Enum.Parse(typeof(TradeDirection), direction);
+        TradeDirection tradeDirection = (TradeDirection)Enum.Parse(typeof(TradeDirection), direction);
 
         var provider = Setup(accountEquity);
         var tradingObject = provider.GetService<ITradingObjects>();
         var positions = provider.GetService<IPositions>();
+        var envVariables = provider.GetService<IEnvironmentVariables>();
         var openOrder = provider.GetService<IOpenOrder>();
+
 
         // Act
         // Inital price event
@@ -78,8 +80,9 @@ public class PositionTests
         };
 
         // Create a trade request object to open a trade
-        openOrder?.Request(new RequestObject(priceObj) {
-            direction = tradeDirction,
+        openOrder?.Request(new RequestObject(priceObj,
+                                             tradeDirection,
+                                             envVariables) {
             size = 1,
         });
 
@@ -92,9 +95,11 @@ public class PositionTests
 
         positions?.Review(priceObjNext);
 
-        var expectedPnL = accountEquity - (ask-bid);
-        if(tradeDirction == TradeDirection.SELL){
-            expectedPnL = (bid-ask) + accountEquity;
+        var slippage = 1m / envVariables?.GetScalingFactor(symbolName);
+
+        var expectedPnL = accountEquity - ( (ask - slippage) - bid);
+        if(tradeDirection == TradeDirection.SELL){
+            expectedPnL = ( (bid+slippage) - ask ) + accountEquity;
         }
 
         // Assert

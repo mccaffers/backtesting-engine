@@ -5,5 +5,5 @@ namespace backtesting_engine;
 public class SystemObjects : ISystemObjects
 {
     public DateTime systemStartTime { get; } = DateTime.Now;
-    public static string systemMessage { get; set; } = "";
+    public string systemMessage { get; set; } = "";
 }

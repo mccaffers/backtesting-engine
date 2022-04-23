@@ -22,7 +22,13 @@ public class RandomStrategyTests
 
         var requestOpenTradeMock = new Mock<IRequestOpenTrade>();
 
-        RequestObject output = new Mock<RequestObject>(new Mock<PriceObj>().Object).Object;
+         var priceObjNext = new PriceObj(){
+            symbol="TestEnvironmentSetup",
+            bid=100,
+            ask=120
+        };
+        
+        RequestObject? output = null;
 
         requestOpenTradeMock.Setup(x=>x.Request(It.IsAny<RequestObject>())).Callback( ( RequestObject incomingObject) => {
             output=incomingObject;
@@ -32,18 +38,12 @@ public class RandomStrategyTests
             CallBase = true
         };
 
-        var priceObjNext = new PriceObj(){
-            symbol="Test",
-            bid=100,
-            ask=120
-        };
-
         randomStrategyMock.Object.Invoke(priceObjNext);
 
-        Assert.Equal(priceObjNext.bid, output.priceObj.bid);
-        Assert.Equal(tradingSize, output.size);
-        Assert.Equal(stopDistanceInPips, output.stopDistancePips);
-        Assert.Equal(limitDistanceInPips, output.limitDistancePips);
-        Assert.NotEmpty(output.key);
+        Assert.Equal(priceObjNext.bid, output?.priceObj.bid);
+        Assert.Equal(tradingSize, output?.size);
+        Assert.Equal(stopDistanceInPips, output?.stopDistancePips);
+        Assert.Equal(limitDistanceInPips, output?.limitDistancePips);
+        Assert.NotEmpty(output?.key);
     }
 }

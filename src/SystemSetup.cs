@@ -71,14 +71,14 @@ public class SystemSetup : ISystemSetup
 
     private static async Task Decompress(string symbol)
     {
-        System.Console.WriteLine("Decompressing - " + symbol);
+        ConsoleLogger.Log("Decompressing - " + symbol);
         var command = "zstd -d -f --rm ./tickdata/" + symbol + "/*.zst";
         await ShellHelper.Bash(command);
     }
 
     private async Task PullFromS3(string symbolFolder, string symbol, int year)
     {
-        System.Console.WriteLine("Pulling tick data from S3 - " + symbol);
+        ConsoleLogger.Log("Pulling tick data from S3 - " + symbol);
 
         var s3Path = envVariables.s3Path;
         var s3bucket = envVariables.s3Bucket;

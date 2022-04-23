@@ -4,12 +4,18 @@ using Utilities;
 namespace backtesting_engine_models;
 
 public class RequestObject {
-    public RequestObject(PriceObj priceObj)
+    private IEnvironmentVariables env;
+
+    public RequestObject(PriceObj priceObj, TradeDirection direction, IEnvironmentVariables env)
     {
         this.priceObj = priceObj;
+        this.direction = direction;
         this.openDate = priceObj.date;
         this.key = DictionaryKeyStrings.OpenTrade(priceObj);
         this.symbol = priceObj.symbol;
+        this.env = env;
+
+        UpdateLevelWithSlippage(1m / env.GetScalingFactor(this.symbol));
     }
 
     // When setting the direction, set the current level (ASK/BID)
@@ -18,14 +24,70 @@ public class RequestObject {
         get {
             return _direction;
         }
-        set {
+        init {
             _direction = value;
             this.level = _direction == TradeDirection.BUY ? this.priceObj.ask : this.priceObj.bid;
         }
     }
 
-    public decimal stopDistancePips {get; init;}
-    public decimal limitDistancePips {get; init;}
+    private decimal _stopDistancePips;
+    public decimal stopDistancePips {
+        get{
+            return _stopDistancePips;
+        }
+        set {
+            this._stopDistancePips = value;
+
+            if (this.direction == TradeDirection.SELL)
+            {
+                this._stopLevel = this.level + (this._stopDistancePips / env.GetScalingFactor(this.symbol));
+
+            } else if (this.direction == TradeDirection.BUY)
+            {
+                this._stopLevel = this.level - (this._stopDistancePips / env.GetScalingFactor(this.symbol));
+            }
+        }
+    }
+
+    private decimal _limitDistancePips;
+    public decimal limitDistancePips { 
+        get {
+            return this._limitDistancePips;
+        }
+        set {
+            this._limitDistancePips = value;
+
+            if (this.direction == TradeDirection.SELL)
+            {
+                this._limitLevel = this.level - (this.limitDistancePips / env.GetScalingFactor(this.symbol));
+
+            }
+            else if (this.direction == TradeDirection.BUY)
+            {
+                this._limitLevel = this.level + (this.limitDistancePips / env.GetScalingFactor(this.symbol));
+            }
+        }   
+    }
+
+    private decimal _stopLevel;
+    public decimal stopLevel { 
+        get {
+            return this._stopLevel;
+        }
+        set {
+            this._stopLevel = value;
+        }
+    }
+    
+    private decimal _limitLevel;
+    public decimal limitLevel { 
+        get {
+            return this._limitLevel;
+        }
+        set {
+            this._limitLevel = value;
+        }
+    }
     
     // Read only properties, defined in the constructor
     public string key {get;}
@@ -42,9 +104,6 @@ public class RequestObject {
     // Can only be set in the initialisation of the object
     public decimal size {get;init;}
 
-    // Public propertises, for adjustments
-    public decimal stopLevel {get; set;}
-    public decimal limitLevel {get; set;}
 
     public void UpdateClose(PriceObj priceObj, decimal scalingFactor){
 

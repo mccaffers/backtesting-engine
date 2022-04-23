@@ -37,7 +37,7 @@ static class Program
             .CreateScope()
             .ServiceProvider.GetRequiredService<ISystemSetup>())
         .ContinueWith(task=>{
-            System.Console.WriteLine("Finished");
+            ConsoleLogger.Log("Finished");
         });
 }
 

@@ -99,24 +99,42 @@ public class AccountObjTests
         var provider = Setup(maximumDrawndownPercentage: 10);
 
         var tradingObject = provider.GetService<ITradingObjects>();
+        var envVariables = provider.GetService<IEnvironmentVariables>();
 
         // Test a BUY
-        // Entry at 120 (ASK), current level 100 (BID) = -20 profit
-        var currentLevel = 100m;
+        // Entry at 120 (ASK), current level 100 (BID) = -19 profit (as slippage made the price lower)
+        var currentLevel = 80m;
         var priceObj = new PriceObj() {
             symbol="TestEnvironmentSetup",
-            ask=120,
+            ask=100,
         };
 
         // Create a trade request object to open a trade
-        var request = new RequestObject(priceObj) {
-            direction = TradeDirection.BUY,
+        var request = new RequestObject(priceObj, TradeDirection.BUY, envVariables) {
             size = 1
         };
 
         var output = tradingObject?.accountObj.CalculateProfit(currentLevel, request);
 
-        Assert.Equal(-20,output);
+        Assert.Equal(-19,output);
+
+
+        // Test a BUY
+        // Entry at 100 (ASK), current level 120 (BID) = 20 profit
+        currentLevel = 120m;
+        priceObj = new PriceObj() {
+            symbol="TestEnvironmentSetup",
+            ask=100,
+        };
+
+        // Create a trade request object to open a trade
+        request = new RequestObject(priceObj, TradeDirection.BUY, envVariables) {
+            size = 1
+        };
+
+        output = tradingObject?.accountObj.CalculateProfit(currentLevel, request);
+
+        Assert.Equal(21,output);
 
     }
 
@@ -124,8 +142,11 @@ public class AccountObjTests
     public void TestCalculateProfitSELL(){
 
         var provider = Setup(maximumDrawndownPercentage: 10);
+        
 
         var tradingObject = provider.GetService<ITradingObjects>();
+        var envVariables = provider.GetService<IEnvironmentVariables>();
+
 
         // Test a BUY
         // Entry at 120 (bid), current level 100 (ask) = 20 profit
@@ -136,14 +157,13 @@ public class AccountObjTests
         };
 
         // Create a trade request object to open a trade
-        var request = new RequestObject(priceObj) {
-            direction = TradeDirection.SELL,
+        var request = new RequestObject(priceObj, TradeDirection.SELL, envVariables) {
             size = 1
         };
 
         var output = tradingObject?.accountObj.CalculateProfit(currentLevel, request);
 
-        Assert.Equal(20,output);
+        Assert.Equal(21, output);
 
     }
 }
