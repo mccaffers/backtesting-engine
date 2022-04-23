@@ -37,7 +37,7 @@ static class Program
             .CreateScope()
             .ServiceProvider.GetRequiredService<ISystemSetup>())
         .ContinueWith(task=>{
-            ConsoleLogger.Log("Finished");
+            ConsoleLogger.Log("Trading run finished");
         });
 }
 
