@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using backtesting_engine.analysis;
 using backtesting_engine.interfaces;
 using trading_exception;
