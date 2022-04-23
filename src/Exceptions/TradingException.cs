@@ -3,11 +3,7 @@ using System.Security.Permissions;
 
 namespace trading_exception;
 
-[Serializable]
-// Important: This attribute is NOT inherited from Exception, and MUST be specified 
-// otherwise serialization will fail with a SerializationException stating that
-// "Type X in Assembly Y is not marked as serializable."
-public class TradingException : ArgumentException {
+public class TradingException : Exception {
 
     public DateTime date {get;set;}
 

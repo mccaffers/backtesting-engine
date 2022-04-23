@@ -67,7 +67,7 @@ public class PositionTests
         var provider = Setup(accountEquity);
         var tradingObject = provider.GetService<ITradingObjects>();
         var positions = provider.GetService<IPositions>();
-        var envVariables = provider.GetService<IEnvironmentVariables>();
+        var envVariables = provider.GetService<IEnvironmentVariables>() ?? new EnvironmentVariables();
         var openOrder = provider.GetService<IOpenOrder>();
 
 

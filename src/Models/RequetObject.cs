@@ -4,7 +4,8 @@ using Utilities;
 namespace backtesting_engine_models;
 
 public class RequestObject {
-    private IEnvironmentVariables env;
+    
+    private readonly IEnvironmentVariables env;
 
     public RequestObject(PriceObj priceObj, TradeDirection direction, IEnvironmentVariables env)
     {
@@ -40,11 +41,11 @@ public class RequestObject {
 
             if (this.direction == TradeDirection.SELL)
             {
-                this._stopLevel = this.level + (this._stopDistancePips / env.GetScalingFactor(this.symbol));
+                this.stopLevel = this.level + (this._stopDistancePips / env.GetScalingFactor(this.symbol));
 
             } else if (this.direction == TradeDirection.BUY)
             {
-                this._stopLevel = this.level - (this._stopDistancePips / env.GetScalingFactor(this.symbol));
+                this.stopLevel = this.level - (this._stopDistancePips / env.GetScalingFactor(this.symbol));
             }
         }
     }
@@ -59,35 +60,18 @@ public class RequestObject {
 
             if (this.direction == TradeDirection.SELL)
             {
-                this._limitLevel = this.level - (this.limitDistancePips / env.GetScalingFactor(this.symbol));
+                this.limitLevel = this.level - (this.limitDistancePips / env.GetScalingFactor(this.symbol));
 
             }
             else if (this.direction == TradeDirection.BUY)
             {
-                this._limitLevel = this.level + (this.limitDistancePips / env.GetScalingFactor(this.symbol));
+                this.limitLevel = this.level + (this.limitDistancePips / env.GetScalingFactor(this.symbol));
             }
         }   
     }
 
-    private decimal _stopLevel;
-    public decimal stopLevel { 
-        get {
-            return this._stopLevel;
-        }
-        set {
-            this._stopLevel = value;
-        }
-    }
-    
-    private decimal _limitLevel;
-    public decimal limitLevel { 
-        get {
-            return this._limitLevel;
-        }
-        set {
-            this._limitLevel = value;
-        }
-    }
+    public decimal stopLevel { get; set; }
+    public decimal limitLevel { get; set; }
     
     // Read only properties, defined in the constructor
     public string key {get;}

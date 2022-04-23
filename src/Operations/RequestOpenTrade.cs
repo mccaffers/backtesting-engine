@@ -13,42 +13,18 @@ public class RequestOpenTrade : IRequestOpenTrade
 {
 
     readonly IOpenOrder openOrder;
-    readonly IEnvironmentVariables envVariables;
 
-    public RequestOpenTrade(IOpenOrder openOrder, IEnvironmentVariables envVariables)
+    public RequestOpenTrade(IOpenOrder openOrder)
     {
         this.openOrder = openOrder;
-        this.envVariables = envVariables;
     }
 
-    // Validation on opening a trade
     public void Request(RequestObject reqObj)
     {
 
-        // decimal stopLevel = 0m;
-        // decimal limitLevel = 0m;
-        // decimal scalingFactor = envVariables.GetScalingFactor(reqObj.symbol);
-
-        
-
-        // if (reqObj.stopDistancePips != 0 && reqObj.limitDistancePips != 0)
-        // {
-
-        //     if (reqObj.direction == TradeDirection.SELL)
-        //     {
-        //         stopLevel = reqObj.level + (reqObj.stopDistancePips / scalingFactor);
-        //         limitLevel = reqObj.level - (reqObj.limitDistancePips / scalingFactor);
-
-        //     }
-        //     else if (reqObj.direction == TradeDirection.BUY)
-        //     {
-        //         stopLevel = reqObj.level - (reqObj.stopDistancePips / scalingFactor);
-        //         limitLevel = reqObj.level + (reqObj.limitDistancePips / scalingFactor);
-        //     }
-        // }
-
-        // reqObj.stopLevel = stopLevel;
-        // reqObj.limitLevel = limitLevel;
+        // Open trade validation
+        // If hours are between
+        // If X amount of trades are open
 
         this.openOrder.Request(reqObj);
     }

@@ -99,7 +99,7 @@ public class AccountObjTests
         var provider = Setup(maximumDrawndownPercentage: 10);
 
         var tradingObject = provider.GetService<ITradingObjects>();
-        var envVariables = provider.GetService<IEnvironmentVariables>();
+        var envVariables = provider.GetService<IEnvironmentVariables>() ?? new EnvironmentVariables();
 
         // Test a BUY
         // Entry at 120 (ASK), current level 100 (BID) = -19 profit (as slippage made the price lower)
@@ -145,7 +145,7 @@ public class AccountObjTests
         
 
         var tradingObject = provider.GetService<ITradingObjects>();
-        var envVariables = provider.GetService<IEnvironmentVariables>();
+        var envVariables = provider.GetService<IEnvironmentVariables>() ?? new EnvironmentVariables();
 
 
         // Test a BUY
