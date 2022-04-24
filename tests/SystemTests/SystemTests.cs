@@ -42,9 +42,8 @@ public class SystemTests
 
         var output = "";
         reportingMock.Setup(x=>x.SendStack(It.IsAny<TradingException>())).Returns(Task.FromResult(true));
-        reportingMock.Setup(x=>x.EndOfRunReport(It.IsAny<string>())).Returns((string message) => {
+        reportingMock.Setup(x=>x.EndOfRunReport(It.IsAny<string>())).Callback((string message) => {
             output=message;
-            return Task.FromResult(message);
         });
 
         var x = systemMock.Object; // Call System Constructor
@@ -77,9 +76,8 @@ public class SystemTests
                         
         var output = "";
         reportingMock.Setup(x=>x.SendStack(It.IsAny<TradingException>())).Returns(Task.FromResult(true));
-        reportingMock.Setup(x=>x.EndOfRunReport(It.IsAny<string>())).Returns((string message) => {
+        reportingMock.Setup(x=>x.EndOfRunReport(It.IsAny<string>())).Callback((string message) => {
             output=message;
-            return Task.FromResult(message);
         });
 
         var x = systemMock.Object; // Call System Constructor

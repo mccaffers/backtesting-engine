@@ -50,7 +50,7 @@ public class ReportingTests
             CallBase = true
         };
 
-        await reportingMock.Object.EndOfRunReport("");
+        reportingMock.Object.EndOfRunReport("");
         ConsoleLogger.Log(reportingMock.Object.switchHasSentFinalReport.ToString());
         Assert.True(reportingMock.Object.switchHasSentFinalReport);
     }
