@@ -13,6 +13,8 @@ class TestEnvironment {
 
     public static Mock<EnvironmentVariables> SetEnvironmentVariables(){
 
+        Environment.SetEnvironmentVariable("consoleLog", "false");
+
         var environmentMock = new Mock<EnvironmentVariables>();
         environmentMock.SetupGet<bool>(x=>x.loadFromEnvironmnet).Returns(false);
 
@@ -34,6 +36,7 @@ class TestEnvironment {
         environmentMock.SetupGet<int[]>(x=>x.years).Returns(new int[]{2006});
         environmentMock.SetupGet<bool>(x=>x.reportingEnabled).Returns(false);
         environmentMock.SetupGet<string>(x=>x.runIteration).Returns("0");
+
 
         return environmentMock;
     }

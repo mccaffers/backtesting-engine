@@ -31,9 +31,9 @@ public class SystemSetup : ISystemSetup
                 return await SendStackException(ex.Message);
             }
 
-        }).ContinueWith(async taskOutput => {
+        }).ContinueWith(taskOutput => {
             ConsoleLogger.Log(taskOutput.Result);
-            await elastic.EndOfRunReport(taskOutput.Result);
+            elastic.EndOfRunReport(taskOutput.Result);
         }).Wait();
     }
 

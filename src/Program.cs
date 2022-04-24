@@ -20,6 +20,13 @@ static class Program
         await Task.FromResult(
             new ServiceCollection()
             .RegisterStrategies(variables)
+             .AddSingleton<IElasticClient>( (IServiceProvider provider) => { 
+                var esClient = new ElasticClient(settings);
+                if(!esClient.Ping().IsValid){
+                    throw new ArgumentException("ElasticSearch settings are not valid");
+                }
+                return esClient;
+            })
             .AddSingleton<IOpenOrder, OpenOrder>()
             .AddSingleton<ICloseOrder, CloseOrder>()
             .AddSingleton<IIngest, backtesting_engine_ingest.Ingest>()
@@ -27,12 +34,11 @@ static class Program
             .AddSingleton<IPositions, Positions>()
             .AddSingleton<ITaskManager, TaskManager>()
             .AddSingleton<ISystemSetup, SystemSetup>()
-            .AddSingleton<IReporting,Reporting>()
+            .AddSingleton<IReporting, Reporting>()
             .AddSingleton<ITradingObjects, TradingObjects>()
             .AddSingleton<ISystemObjects, SystemObjects>()
             .AddSingleton<IEnvironmentVariables>(variables)
             .AddSingleton<IRequestOpenTrade, RequestOpenTrade>()
-            .AddSingleton<IElasticClient>(provider => new ElasticClient(settings))
             .BuildServiceProvider(true)
             .CreateScope()
             .ServiceProvider.GetRequiredService<ISystemSetup>())

@@ -14,10 +14,10 @@ public interface IReporting
     List<ReportTradeObj> tradeUpdateArray { get; init; }
 
     Task BatchTradeUpdate();
-    Task EndOfRunReport(string reason = "");
+    void EndOfRunReport(string reason = "");
     Task SendBatchedObjects(List<ReportTradeObj> localClone);
     Task SendStack(TradingException message);
-    Task TradeUpdate(DateTime date, string symbol, decimal profit);
+    void TradeUpdate(DateTime date, string symbol, decimal profit);
 }
 
 public class Reporting : TradingBase, IReporting
@@ -36,7 +36,7 @@ public class Reporting : TradingBase, IReporting
         this.envVariables = envVariables;
     }
 
-    public virtual async Task EndOfRunReport(string reason = "")
+    public void EndOfRunReport(string reason = "")
     {
         if (!envVariables.reportingEnabled || switchHasSentFinalReport)
         {
@@ -82,9 +82,10 @@ public class Reporting : TradingBase, IReporting
         }
 
         // Make sure we send all of the trading objects
-        await SendBatchedObjects(tradeUpdateArray);
-
-        await elasticClient.IndexAsync(report, b => b.Index("report"));
+        List<ReportTradeObj> localClone = new List<ReportTradeObj>(tradeUpdateArray);
+        
+        elasticClient.IndexMany(localClone, "trades");
+        elasticClient.Index(report, b => b.Index("report"));
 
         // Give the requests enough time to clean up, probably 
         // not necessary with the above await operators
@@ -102,7 +103,7 @@ public class Reporting : TradingBase, IReporting
         System.Threading.Thread.Sleep(5000);
     }
 
-    public async Task TradeUpdate(DateTime date, string symbol, decimal profit)
+    public void TradeUpdate(DateTime date, string symbol, decimal profit)
     {
         tradeUpdateArray.Add(new ReportTradeObj()
         {
@@ -113,7 +114,7 @@ public class Reporting : TradingBase, IReporting
             runIteration = int.Parse(envVariables.runIteration),
             tradeProfit = profit
         });
-        await BatchTradeUpdate();
+        _ = BatchTradeUpdate();
     }
 
     public async Task BatchTradeUpdate()
@@ -135,9 +136,16 @@ public class Reporting : TradingBase, IReporting
 
     public async Task SendBatchedObjects(List<ReportTradeObj> localClone)
     {
-        // Upload the trade results
-        await elasticClient.BulkAsync(bd => bd.IndexMany(localClone, (descriptor, s) => descriptor.Index("trades")));
 
+        switch (localClone.Count) {
+            case 1:
+                await elasticClient.IndexAsync(localClone.First(), b => b.Index("trades"));
+            break;
+            case >1:
+                await elasticClient.IndexManyAsync(localClone, "trades");
+            break;
+        }
+            
         // Clear the history
         tradeUpdateArray.RemoveAll(x => localClone.Any(y => y.id == x.id));
     }

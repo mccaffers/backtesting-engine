@@ -31,7 +31,7 @@ public class SystemTests
             .AddSingleton<ISystemObjects, SystemObjects>()
             .BuildServiceProvider();
 
-        var reportingMock = new Mock<Reporting>(provider, new Mock<IElasticClient>().Object, environmentObj);
+        var reportingMock = new Mock<IReporting>();
 
         var taskManager = provider.GetService<ITaskManager>();
         var environmentVariables = provider.GetService<IEnvironmentVariables>();
@@ -66,7 +66,7 @@ public class SystemTests
             .AddSingleton<ISystemObjects, SystemObjects>()
             .BuildServiceProvider();
 
-        var reportingMock = new Mock<Reporting>(provider, new Mock<IElasticClient>().Object, environmentObj);
+        var reportingMock = new Mock<IReporting>();
 
         var taskManager = provider.GetService<ITaskManager>();
         var environmentVariables = provider.GetService<IEnvironmentVariables>();
