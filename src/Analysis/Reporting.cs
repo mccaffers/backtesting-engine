@@ -83,8 +83,9 @@ public class Reporting : TradingBase, IReporting
 
         // Make sure we send all of the trading objects
         List<ReportTradeObj> localClone = new List<ReportTradeObj>(tradeUpdateArray);
-        
-        elasticClient.IndexMany(localClone, "trades");
+        if(localClone.Count > 0){
+            elasticClient.IndexMany(localClone, "trades");
+        }
         elasticClient.Index(report, b => b.Index("report"));
 
         // Give the requests enough time to clean up, probably 

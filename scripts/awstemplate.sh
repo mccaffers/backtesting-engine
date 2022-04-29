@@ -18,6 +18,7 @@ export elasticPassword="${elasticPassword}"
 export elasticEndpoint="${elasticEndpoint}"
 export elasticCloudID="${elasticCloudID}"
 export runIteration=${runIteration}
+export tradingSize=${tradingSize}
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
@@ -41,5 +42,5 @@ rm -rf ./files.zip
 dotnet build /home/ec2-user/project -v q
 dotnet run --project /home/ec2-user/project/src
 
-poweroff
+# poweroff
 }  &> /home/ec2-user/output.txt 

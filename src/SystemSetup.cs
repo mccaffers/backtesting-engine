@@ -10,17 +10,19 @@ public class SystemSetup : ISystemSetup
 {
     readonly IEnvironmentVariables envVariables;
     readonly IReporting elastic;
+    readonly IServiceProvider provider;
 
-    public SystemSetup(ITaskManager main, IReporting elastic, IEnvironmentVariables envVariables)
+    public SystemSetup(IServiceProvider provider, ITaskManager main, IReporting elastic, IEnvironmentVariables envVariables)
     {
         this.envVariables = envVariables;
         this.elastic = elastic;
+        this.provider = provider;
 
         Task<string>.Run(async () =>
         {
             try
             {
-                return await StartEngine(main, envVariables);
+                return await StartEngine();
             }
             catch (TradingException tradingException)
             {
@@ -44,7 +46,7 @@ public class SystemSetup : ISystemSetup
     }
 
 
-    public virtual async Task<string> StartEngine(ITaskManager main, IEnvironmentVariables envVariables)
+    public virtual async Task<string> StartEngine()
     {
         foreach (var year in envVariables.years)
         {
@@ -61,8 +63,13 @@ public class SystemSetup : ISystemSetup
                     await Decompress(symbol);
                 }
             }
-            // Start Backtesting Engine
-            await main.IngestAndConsume();
+
+            // Start Backtesting Engine, on demand
+            Object? taskService = this.provider.GetService(typeof(ITaskManager));
+            if(taskService is ITaskManager taskManager){
+                await taskManager.IngestAndConsume();
+            } 
+
 
             // Clean up
             await CleanSymbolFolder(envVariables.tickDataFolder);

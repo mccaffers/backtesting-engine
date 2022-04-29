@@ -6,6 +6,7 @@ using backtesting_engine.interfaces;
 using Nest;
 using Elasticsearch.Net;
 using backtesting_engine.analysis;
+using System.Net;
 
 namespace backtesting_engine;
 
@@ -22,23 +23,23 @@ static class Program
             .RegisterStrategies(variables)
              .AddSingleton<IElasticClient>( (IServiceProvider provider) => { 
                 var esClient = new ElasticClient(settings);
-                if(!esClient.Ping().IsValid){
+                if(!esClient.Ping().IsValid && !Dns.GetHostName().Contains(".local")){
                     throw new ArgumentException("ElasticSearch settings are not valid");
                 }
                 return esClient;
             })
-            .AddSingleton<IOpenOrder, OpenOrder>()
-            .AddSingleton<ICloseOrder, CloseOrder>()
-            .AddSingleton<IIngest, backtesting_engine_ingest.Ingest>()
-            .AddSingleton<IConsumer, Consumer>()
-            .AddSingleton<IPositions, Positions>()
-            .AddSingleton<ITaskManager, TaskManager>()
-            .AddSingleton<ISystemSetup, SystemSetup>()
-            .AddSingleton<IReporting, Reporting>()
+            .AddTransient<IOpenOrder, OpenOrder>()
+            .AddTransient<ICloseOrder, CloseOrder>()
+            .AddTransient<IIngest, backtesting_engine_ingest.Ingest>()
+            .AddTransient<IConsumer, Consumer>()
+            .AddTransient<IPositions, Positions>()
+            .AddTransient<ITaskManager, TaskManager>()
+            .AddTransient<ISystemSetup, SystemSetup>()
+            .AddTransient<IReporting, Reporting>()
+            .AddTransient<IRequestOpenTrade, RequestOpenTrade>()
             .AddSingleton<ITradingObjects, TradingObjects>()
             .AddSingleton<ISystemObjects, SystemObjects>()
             .AddSingleton<IEnvironmentVariables>(variables)
-            .AddSingleton<IRequestOpenTrade, RequestOpenTrade>()
             .BuildServiceProvider(true)
             .CreateScope()
             .ServiceProvider.GetRequiredService<ISystemSetup>())

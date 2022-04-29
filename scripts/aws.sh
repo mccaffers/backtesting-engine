@@ -18,9 +18,12 @@ main() {
     # Trading Variables
     declare -a strategies=("RandomStrategy") 
     declare -a symbolsArray=("EURUSD") #, "GBPUSD")
+
     stopLossInPipsRange="30 10 30"
     limitInPipsRange="30 10 30"
     iterationRange="1 1 1"
+    years="2004,2005,2006"
+    maximumDrawndownPercentage=0
 
     # Remove binary files
     rm -rf ./src/bin/ ./src/obj/ ./tests/bin/ ./tests/obj/
@@ -38,6 +41,7 @@ main() {
     --tagging '{"TagSet": [{ "Key": "temp", "Value": "true" }]}'
 
     export reportingEnabled=true
+
 
     # Start the loop of the variables
     strategiesFunc

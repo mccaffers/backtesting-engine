@@ -6,5 +6,5 @@ namespace backtesting_engine.interfaces;
 public interface ISystemSetup
 {
     Task<string> SendStackException(string message);
-    Task<string> StartEngine(ITaskManager main, IEnvironmentVariables envVariables);
+    Task<string> StartEngine();
 }
