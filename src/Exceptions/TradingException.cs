@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using Utilities;
 
 namespace trading_exception;
 
@@ -8,12 +9,17 @@ namespace trading_exception;
 public class TradingException : Exception {
 
     public DateTime date {get;set;}
+    public string hostname {get;set;}
+    public string symbols {get;set;}
+    public string runID {get;set;}
+    public string runIteration {get;set;}
 
-    public TradingException(){}
-
-    public TradingException(string? message) : base(message) {
+    public TradingException(string? message, IEnvironmentVariables envVariables) : base(message) {
         date = DateTime.Now;
+        hostname = envVariables.hostname;
+        symbols = envVariables.symbols.ToString() ?? "";
+        runID = envVariables.runID;
+        runIteration = envVariables.runIteration;
     }
-
 
 }

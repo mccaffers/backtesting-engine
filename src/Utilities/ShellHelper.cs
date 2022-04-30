@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Utilities;
 
@@ -15,10 +16,9 @@ public static class ShellHelper
                 {
                     FileName = "/bin/bash",
                     Arguments = $"-c \"{escapedArgs}\"",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
+                    // RedirectStandardOutput = false,
+                    // RedirectStandardError = true,
+                    UseShellExecute = true
                 },
                 EnableRaisingEvents = true
         };

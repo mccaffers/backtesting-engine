@@ -15,15 +15,20 @@ main() {
     source ./.env/local.env
     set +o allexport
 
+    ######
     # Trading Variables
+
     declare -a strategies=("RandomStrategy") 
-    declare -a symbolsArray=("EURUSD") #, "GBPUSD")
+    declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
 
     stopLossInPipsRange="30 10 30"
     limitInPipsRange="30 10 30"
     iterationRange="1 1 1"
-    years="2004,2005,2006"
+    yearsStart="2004"
+    yearsEnd="2021"
     maximumDrawndownPercentage=0
+
+    ######
 
     # Remove binary files
     rm -rf ./src/bin/ ./src/obj/ ./tests/bin/ ./tests/obj/
@@ -41,7 +46,6 @@ main() {
     --tagging '{"TagSet": [{ "Key": "temp", "Value": "true" }]}'
 
     export reportingEnabled=true
-
 
     # Start the loop of the variables
     strategiesFunc
@@ -70,8 +74,6 @@ iterationsFunc(){
     for runIteration in `seq $iterationRange`
     do
         stopFunc
-        limitFunc
-        deploy
     done
 }
 
@@ -79,6 +81,7 @@ stopFunc(){
     for pips in `seq $stopLossInPipsRange`
     do
         export stopDistanceInPips=$pips
+        limitFunc
     done
 }
 
@@ -86,12 +89,13 @@ limitFunc(){
     for pips in `seq $limitInPipsRange`
     do
         export limitDistanceInPips=$pips
+        deploy
     done
 }
 
 deploy () {
     
-    envsubst < $SCRIPT_DIR/awstemplate.sh > $SCRIPT_DIR/data.sh
+    envsubst < $SCRIPT_DIR/awstemplate.txt > $SCRIPT_DIR/data.sh
 
     # Deploy
     aws ec2 run-instances   --image-id resolve:ssm:/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-arm64-gp2  \

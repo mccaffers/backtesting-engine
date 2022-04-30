@@ -101,6 +101,10 @@ public class Ingest : IIngest
 
             _cts.ThrowIfCancellationRequested();
 
+            if(buffer.Count>5000){ // To prevent RAM depletion
+                continue;
+            }
+
             foreach (var file in streamDictionary)
             {
 
@@ -117,6 +121,7 @@ public class Ingest : IIngest
                 }
 
             }
+
             await GetOldestItemOffBuffer(buffer);
         }
         buffer.Complete();
@@ -142,6 +147,10 @@ public class Ingest : IIngest
         var ask = decimal.Parse(values[1]);
         var bid = decimal.Parse(values[2]);
         var symbol = this.symbols.First(x => fileName.Contains(x));
+
+        if(dateTime.Year == 2014 && dateTime.Month < 12){
+            return;
+        }
 
         localInputBuffer.Add(fileName, new PriceObj()
         {

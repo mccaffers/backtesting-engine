@@ -25,7 +25,7 @@ public class Consumer : IConsumer
 
             // Get the symbol data off the buffer
             var priceObj = await buffer.ReceiveAsync();
-
+        
             // Invoke all the strategies defined in configuration
             foreach (var i in strategies ?? Array.Empty<IStrategy>())
             {

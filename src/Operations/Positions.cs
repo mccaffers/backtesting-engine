@@ -33,7 +33,7 @@ public class Positions : TradingBase, IPositions
             CloseAll();
 
             // stop any more trades
-            throw new TradingException("Exceeded threshold PL:" + this.tradingObjects.accountObj.pnl);
+            throw new TradingException("Exceeded threshold PL:" + this.tradingObjects.accountObj.pnl, envVaribles);
         }
     }
 

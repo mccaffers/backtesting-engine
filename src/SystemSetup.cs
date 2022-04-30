@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using backtesting_engine.analysis;
 using backtesting_engine.interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using trading_exception;
 using Utilities;
 
@@ -12,7 +13,7 @@ public class SystemSetup : ISystemSetup
     readonly IReporting elastic;
     readonly IServiceProvider provider;
 
-    public SystemSetup(IServiceProvider provider, ITaskManager main, IReporting elastic, IEnvironmentVariables envVariables)
+    public SystemSetup(IServiceProvider provider, IReporting elastic, IEnvironmentVariables envVariables)
     {
         this.envVariables = envVariables;
         this.elastic = elastic;
@@ -41,7 +42,7 @@ public class SystemSetup : ISystemSetup
 
     public async Task<string> SendStackException(string message)
     {
-        await elastic.SendStack(new TradingException(message)); // report error to elastic for review
+        await elastic.SendStack(new TradingException(message, this.envVariables)); // report error to elastic for review
         return message;
     }
 
@@ -65,11 +66,12 @@ public class SystemSetup : ISystemSetup
             }
 
             // Start Backtesting Engine, on demand
-            Object? taskService = this.provider.GetService(typeof(ITaskManager));
-            if(taskService is ITaskManager taskManager){
-                await taskManager.IngestAndConsume();
-            } 
-
+            ;
+            using (var scope = this.provider.CreateScope())
+            {
+                var transientService = scope.ServiceProvider.GetRequiredService<ITaskManager>();
+                await transientService.IngestAndConsume();
+            }
 
             // Clean up
             await CleanSymbolFolder(envVariables.tickDataFolder);

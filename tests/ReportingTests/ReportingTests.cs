@@ -92,7 +92,7 @@ public class ReportingTests
         };
 
         // Act
-        await reportingMock.Object.SendStack(new TradingException("test"));
+        await reportingMock.Object.SendStack(new TradingException("test", environmentObj));
 
         // Assert
         Assert.True(indexAsyncCalled); // Confirm that the indexAsync was called

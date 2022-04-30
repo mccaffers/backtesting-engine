@@ -24,6 +24,8 @@ public interface IEnvironmentVariables
     bool reportingEnabled { get; init; }
     string[] symbols { get; init; }
     int[] years { get; init; }
+    int yearsStart {get; init;}
+    int yearsEnd { get; init; }
     
     Dictionary<string, decimal> getScalingFactorDictionary();
     decimal GetScalingFactor(string symbol);
@@ -57,7 +59,11 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.tickDataFolder = Path.Combine(Path.GetFullPath("./" + this.symbolFolder));
         this.reportingEnabled = bool.Parse(Get("reportingEnabled"));
         this.symbols = Get("symbols").Split(",");
-        this.years = Get("years").Split(',').Select(n => Convert.ToInt32(n)).ToArray();
+
+        this.yearsStart = int.Parse(Get("yearsStart"));
+        this.yearsEnd = int.Parse(Get("yearsEnd"));
+
+        this.years = Enumerable.Range(this.yearsStart, this.yearsEnd - this.yearsStart + 1).ToArray(); 
         this.scalingFactor = Get("scalingFactor");
         this.tradingSize = Get("tradingSize");
     }
@@ -88,6 +94,8 @@ public class EnvironmentVariables : IEnvironmentVariables
     public virtual string runIteration { get; init; } = string.Empty;
     public virtual string scalingFactor { get; init; } = string.Empty;
     public virtual string tradingSize { get; init; } = string.Empty;
+    public virtual int yearsStart { get;init ; }
+    public virtual int yearsEnd { get; init; }
 
     // Custom environment variables
     public virtual string tickDataFolder { get; init; } = string.Empty;
