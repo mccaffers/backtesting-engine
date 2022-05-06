@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 {
 export symbols=${symbols}
 export runID=${runID}
@@ -34,6 +34,11 @@ wget https://dot.net/v1/dotnet-install.sh
 sh dotnet-install.sh -c Current
 ln -s /root/.dotnet/dotnet /usr/bin/dotnet
 
+# Free up some space
+sudo yum clean all -y
+sudo find /var -name "*.log" \( \( -size +50M -mtime +7 \) -o -mtime +30 \) -exec truncate {} --size 0 \;
+sudo rm -rf /var/cache/yum
+
 # Extract project files
 cd /home/ec2-user/
 mkdir /home/ec2-user/project
@@ -43,6 +48,5 @@ rm -rf ./files.zip
 # Run project
 dotnet build /home/ec2-user/project -v q
 dotnet run --project /home/ec2-user/project/src
-
 poweroff
 }  &> /home/ec2-user/output.txt 

@@ -19,12 +19,17 @@ main() {
     # Trading Variables
 
     declare -a strategies=("RandomStrategy") 
-    declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
+
+    # Major Forex Currencies
+    # declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
+
+    # Multiple Indexes
+    declare -a symbolsArray=("JPNIDX225" "SPNIDX35" "FRAIDX40" "DEUIDX40" "AUSIDX200" "USAIDXTECH" "USAIDX500" "USAIDX30" "EURIDX600" "GBRIDX100")
 
     stopLossInPipsRange="30 10 30"
     limitInPipsRange="30 10 30"
     iterationRange="1 1 1"
-    yearsStart="2004"
+    yearsStart="2014"
     yearsEnd="2021"
     maximumDrawndownPercentage=0
 
@@ -106,6 +111,7 @@ deploy () {
                             --security-group-ids ${awsDeploySecurityGroupID} \
                             --user-data file://${SCRIPT_DIR}/data.sh \
                             --iam-instance-profile=${awsDeployIAMEC2Role} \
+                            --block-device-mapping "[ { \"DeviceName\": \"/dev/xvda\", \"Ebs\": { \"VolumeSize\": 10 } } ]" \
                             --instance-initiated-shutdown-behavior terminate \
                             --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='$runID'},{Key=Symbol,Value='$symbols'}]' >> /dev/null
 

@@ -83,7 +83,7 @@ public class SystemSetup : ISystemSetup
     {
         ConsoleLogger.Log("Decompressing - " + symbol);
         var command = "zstd -d -f --rm ./tickdata/" + symbol + "/*.zst";
-        await ShellHelper.Bash(command);
+        ShellHelper.RunCommandWithBash(command);
     }
 
     private async Task PullFromS3(string symbolFolder, string symbol, int year)
@@ -95,16 +95,16 @@ public class SystemSetup : ISystemSetup
 
         // Setup folder space for tick data
         var command = "mkdir -p " + symbolFolder;
-        await ShellHelper.Bash(command);
+        ShellHelper.RunCommandWithBash(command);
 
         command = "aws s3api get-object --bucket " + s3bucket + " --key " + s3Path + "/" + symbol + "/" + year + ".csv.zst " + symbolFolder + "/" + year + ".csv.zst";
-        await ShellHelper.Bash(command);
+        ShellHelper.RunCommandWithBash(command);
     }
 
     private static async Task CleanSymbolFolder(string symbolFolder)
     {
         // Delete procssed data to free up space
         var command = "rm -rf " + symbolFolder + "/*";
-        await ShellHelper.Bash(command);
+        ShellHelper.RunCommandWithBash(command);
     }
 }

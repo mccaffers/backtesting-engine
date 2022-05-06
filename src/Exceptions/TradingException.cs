@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using Newtonsoft.Json;
 using Utilities;
 
 namespace trading_exception;
@@ -17,7 +18,7 @@ public class TradingException : Exception {
     public TradingException(string? message, IEnvironmentVariables envVariables) : base(message) {
         date = DateTime.Now;
         hostname = envVariables.hostname;
-        symbols = envVariables.symbols.ToString() ?? "";
+        symbols = JsonConvert.SerializeObject(envVariables.symbols);
         runID = envVariables.runID;
         runIteration = envVariables.runIteration;
     }

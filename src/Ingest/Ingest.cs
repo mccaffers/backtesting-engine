@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
+using Newtonsoft.Json;
 using Utilities;
 
 namespace backtesting_engine_ingest;
@@ -21,6 +22,7 @@ public class Ingest : IIngest
     private readonly IEnumerable<string> symbols;
 
     public virtual List<string> fileNames { get; } = new List<string>();
+    public Dictionary<string, string> symbolAndFilename { get; }
     public Dictionary<string, StreamReader> streamDictionary { get; }
     public Dictionary<string, PriceObj> localInputBuffer { get; }
     readonly IEnvironmentVariables envVariables;
@@ -132,7 +134,7 @@ public class Ingest : IIngest
     //  2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75
     public virtual void PopulateLocalBuffer(string fileName, string line)
     {
-        string[] values = line.Split(StringFormats.sep);
+        string[] values = line.Split(',');
 
         // Initial scan to confirm the line has the right values
         if (!ArrayHasRightValues(values))
@@ -144,13 +146,10 @@ public class Ingest : IIngest
             return;
 
         var dateTime = dtExtract.datetime;
+
         var ask = decimal.Parse(values[1]);
         var bid = decimal.Parse(values[2]);
         var symbol = this.symbols.First(x => fileName.Contains(x));
-
-        if(dateTime.Year == 2014 && dateTime.Month < 12){
-            return;
-        }
 
         localInputBuffer.Add(fileName, new PriceObj()
         {
@@ -159,6 +158,7 @@ public class Ingest : IIngest
             ask = ask,
             date = dateTime
         });
+
     }
 
     // Send the oldest line to the Ingest Buffer
@@ -177,7 +177,7 @@ public class Ingest : IIngest
     public static bool ArrayHasRightValues(string[] values)
     {
         return values.Length > 4 &&
-            values.Any(x => x.Length > 0) &&
+            values.All(x => x.Length > 0) &&
             values.Skip(1).All(x => decimal.TryParse(x, NumberStyles.Any, CultureInfo.InvariantCulture, out _));
     }
 
@@ -185,8 +185,7 @@ public class Ingest : IIngest
     public static (bool parsed, DateTime datetime) extractDt(string dtString)
     {
         DateTime localDt;
-        if (dtString.Contains('+'))
-        {
+        if (dtString.Contains('+')){
             dtString = dtString.Substring(0, dtString.LastIndexOf("+")); // Stripping everything off before the + sign
         }
         var parsedDt = DateTime.TryParseExact(dtString, StringFormats.dtFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out localDt);

@@ -7,6 +7,26 @@ namespace Utilities;
 
 public static class ShellHelper
 {
+
+    public static string RunCommandWithBash(this string command)
+    {
+        var escapedArgs = command.Replace("\"", "\\\"");
+        var psi = new ProcessStartInfo();
+        psi.FileName = "/bin/bash";
+        psi.Arguments =  $"-c \"{escapedArgs}\"";
+        psi.RedirectStandardOutput = true;
+        psi.UseShellExecute = false;
+        psi.CreateNoWindow = true;
+
+        using var process = Process.Start(psi);
+
+        process.WaitForExit();
+
+        var output = process.StandardOutput.ReadToEnd();
+
+        return output;
+    }
+
     public static Task<int> Bash(this string cmd)
     {
         var source = new TaskCompletionSource<int>();
@@ -16,12 +36,21 @@ public static class ShellHelper
                 {
                     FileName = "/bin/bash",
                     Arguments = $"-c \"{escapedArgs}\"",
-                    // RedirectStandardOutput = false,
-                    // RedirectStandardError = true,
-                    UseShellExecute = true
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false
                 },
                 EnableRaisingEvents = true
         };
+
+        process.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>{
+            System.Console.WriteLine(e.Data);
+        };
+
+        process.ErrorDataReceived += (object sender, DataReceivedEventArgs e) =>{
+            System.Console.WriteLine(e.Data);
+        };
+
         process.Exited += (sender, args) =>
         {
             if (process.ExitCode == 0) {
@@ -34,6 +63,9 @@ public static class ShellHelper
 
         try {
             process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
         } catch (Exception e) {
             source.SetException(e);
         }

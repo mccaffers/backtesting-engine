@@ -15,7 +15,7 @@ static class Program
 
     private static EnvironmentVariables variables = new EnvironmentVariables();
     static CloudConnectionPool pool = new CloudConnectionPool(variables.elasticCloudID, new BasicAuthenticationCredentials(variables.elasticUser, variables.elasticPassword));
-    static ConnectionSettings settings = new ConnectionSettings(pool).RequestTimeout(TimeSpan.FromMinutes(2));
+    static ConnectionSettings settings = new ConnectionSettings(pool).RequestTimeout(TimeSpan.FromMinutes(2)).EnableApiVersioningHeader();
 
     async static Task Main(string[] args) => 
         await Task.FromResult(
@@ -35,7 +35,7 @@ static class Program
             .AddTransient<IPositions, Positions>()
             .AddTransient<ITaskManager, TaskManager>()
             .AddTransient<ISystemSetup, SystemSetup>()
-            .AddTransient<IReporting, Reporting>()
+            .AddSingleton<IReporting, Reporting>()
             .AddTransient<IRequestOpenTrade, RequestOpenTrade>()
             .AddSingleton<ITradingObjects, TradingObjects>()
             .AddSingleton<ISystemObjects, SystemObjects>()

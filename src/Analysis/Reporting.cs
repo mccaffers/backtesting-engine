@@ -15,7 +15,7 @@ public interface IReporting
 
     Task BatchTradeUpdate();
     void EndOfRunReport(string reason = "");
-    Task SendBatchedObjects(List<ReportTradeObj> localClone);
+    Task SendBatchedObjects(List<ReportTradeObj> localClone, int retry=0);
     Task SendStack(TradingException message);
     void TradeUpdate(DateTime date, string symbol, decimal profit);
 }
@@ -82,15 +82,14 @@ public class Reporting : TradingBase, IReporting
         }
 
         // Make sure we send all of the trading objects
-        List<ReportTradeObj> localClone = new List<ReportTradeObj>(tradeUpdateArray);
-        if(localClone.Count > 0){
-            elasticClient.IndexMany(localClone, "trades");
+        if(tradeUpdateArray.Count > 0){
+            elasticClient.IndexMany(tradeUpdateArray, "trades");
         }
         elasticClient.Index(report, b => b.Index("report"));
 
         // Give the requests enough time to clean up, probably 
         // not necessary with the above await operators
-        System.Threading.Thread.Sleep(5000);
+        System.Threading.Thread.Sleep(3000);
     }
 
     public virtual async Task SendStack(TradingException message)
@@ -101,7 +100,7 @@ public class Reporting : TradingBase, IReporting
         }
 
         await elasticClient.IndexAsync(message, b => b.Index("exception"));
-        System.Threading.Thread.Sleep(5000);
+        System.Threading.Thread.Sleep(1000);
     }
 
     public void TradeUpdate(DateTime date, string symbol, decimal profit)
@@ -115,40 +114,44 @@ public class Reporting : TradingBase, IReporting
             runIteration = int.Parse(envVariables.runIteration),
             tradeProfit = profit
         });
-        _ = BatchTradeUpdate();
+
+        _=BatchTradeUpdate();
     }
 
     public async Task BatchTradeUpdate()
     {
-        if (!envVariables.reportingEnabled)
+        if (!envVariables.reportingEnabled || DateTime.Now.Subtract(lastPostTime).TotalSeconds <= 5)
         {
             return;
         }
 
-        if (DateTime.Now.Subtract(lastPostTime).TotalSeconds <= 5)
-        {
-            return;
-        }
-
+        // Record we've posted to elastic
         lastPostTime = DateTime.Now;
+
+        // Create a local copy of the list at this point in time
         List<ReportTradeObj> localClone = new List<ReportTradeObj>(tradeUpdateArray);
-        await SendBatchedObjects(localClone); // don't wait (await) for this, let it process in the background
+
+        // Don't wait (await) for this, let it process in the background
+        await SendBatchedObjects(localClone); 
     }
 
-    public async Task SendBatchedObjects(List<ReportTradeObj> localClone)
+    public async Task SendBatchedObjects(List<ReportTradeObj> localClone, int retry=0)
     {
 
-        switch (localClone.Count) {
-            case 1:
-                await elasticClient.IndexAsync(localClone.First(), b => b.Index("trades"));
-            break;
-            case >1:
-                await elasticClient.IndexManyAsync(localClone, "trades");
-            break;
+        if(retry == 3){
+            return;
         }
-            
+
         // Clear the history
         tradeUpdateArray.RemoveAll(x => localClone.Any(y => y.id == x.id));
+
+        var bulkResponse = await elasticClient.IndexManyAsync(localClone, "trades");
+        if(bulkResponse.IsValid){
+            ConsoleLogger.Log("Success [bulkasync] from ElasticSearch Count:" + localClone.Count + " Retry:" + retry);
+        } else if(!bulkResponse.IsValid){
+            ConsoleLogger.Log("Failure [bulkasync] from ElasticSearch Count:" + localClone.Count + " Retry:" + retry);
+            _ = SendBatchedObjects(localClone, retry+1);
+        } 
     }
 }
 
