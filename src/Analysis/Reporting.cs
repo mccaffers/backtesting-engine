@@ -70,6 +70,7 @@ public class Reporting : TradingBase, IReporting
 
         };
 
+
         if (!this.tradingObjects.tradeHistory.IsEmpty)
         {
             report.tradingTimespanInDays = this.tradingObjects.tradeTime.Subtract(this.tradingObjects.tradeHistory.First().Value.openDate).TotalDays;
@@ -114,7 +115,7 @@ public class Reporting : TradingBase, IReporting
             runIteration = int.Parse(envVariables.runIteration),
             tradeProfit = profit
         });
-
+        
         _=BatchTradeUpdate();
     }
 
@@ -145,11 +146,11 @@ public class Reporting : TradingBase, IReporting
         // Clear the history
         tradeUpdateArray.RemoveAll(x => localClone.Any(y => y.id == x.id));
 
-        var bulkResponse = await elasticClient.IndexManyAsync(localClone, "trades");
+        var bulkResponse = await elasticClient.BulkAsync(bd => bd.IndexMany(localClone, (descriptor, s) => descriptor.Index("trades")));
         if(bulkResponse.IsValid){
-            ConsoleLogger.Log("Success [bulkasync] from ElasticSearch Count:" + localClone.Count + " Retry:" + retry);
+            ConsoleLogger.SystemLog("Success [bulkasync] from ElasticSearch Count:" + localClone.Count + " Retry:" + retry);
         } else if(!bulkResponse.IsValid){
-            ConsoleLogger.Log("Failure [bulkasync] from ElasticSearch Count:" + localClone.Count + " Retry:" + retry);
+            ConsoleLogger.SystemLog("Failure [bulkasync] from ElasticSearch Count:" + localClone.Count + " Retry:" + retry);
             _ = SendBatchedObjects(localClone, retry+1);
         } 
     }

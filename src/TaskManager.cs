@@ -1,8 +1,10 @@
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using backtesting_engine.analysis;
 using backtesting_engine.interfaces;
 using backtesting_engine_ingest;
+using trading_exception;
 using Utilities;
 
 namespace backtesting_engine;
@@ -14,20 +16,24 @@ public class TaskManager : ITaskManager
 
     readonly IConsumer con;
     readonly IIngest ing;
+    readonly IReporting reporting;
+    readonly IEnvironmentVariables envVariables;
 
-    public TaskManager(IConsumer c, IIngest i)
+    public TaskManager(IConsumer c, IIngest i, IReporting reporting, IEnvironmentVariables envVariables)
     {
         this.con = c;
         this.ing = i;
         this.buffer = new BufferBlock<PriceObj>();
+        this.reporting = reporting;
+        this.envVariables = envVariables;
     }
 
     public async Task IngestAndConsume()
     {
         ing.EnvironmentSetup();
 
-        Task taskProduce = ing.ReadLines(buffer, cts.Token).CancelOnFaulted(cts);
-        Task consumer = con.ConsumeAsync(buffer, cts.Token).CancelOnFaulted(cts);
+        Task taskProduce = Task.Run(() => ing.ReadLines(buffer, cts.Token)).CancelOnFaulted(cts);
+        Task consumer =  Task.Run(() => con.ConsumeAsync(buffer, cts.Token)).CancelOnFaulted(cts);
 
         await Task.WhenAll(taskProduce, consumer);
     }

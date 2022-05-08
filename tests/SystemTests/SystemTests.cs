@@ -18,7 +18,7 @@ namespace Tests;
 public class SystemTests
 {
 
-    [Fact (Skip = "To fix")]
+    [Fact]
     public void TestTradeException(){
 
         var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
@@ -27,6 +27,7 @@ public class SystemTests
         var provider = new ServiceCollection()
             .AddSingleton<IEnvironmentVariables>(environmentObj)
             .AddSingleton<ITradingObjects, TradingObjects>()
+            .AddSingleton<ITaskManager>(new Mock<ITaskManager>().Object)
             .AddSingleton<IElasticClient, ElasticClient>()
             .AddSingleton<ISystemObjects, SystemObjects>()
             .BuildServiceProvider();
@@ -36,7 +37,7 @@ public class SystemTests
         var taskManager = provider.GetService<ITaskManager>();
         var environmentVariables = provider.GetService<IEnvironmentVariables>();
 
-        var systemMock = new Mock<SystemSetup>(new Mock<ITaskManager>().Object, reportingMock.Object, environmentObj);
+        var systemMock = new Mock<SystemSetup>(provider, reportingMock.Object, environmentObj);
         systemMock.Setup(x=>x.StartEngine())
                         .Throws(new TradingException(message: "error", environmentObj));
 
@@ -52,7 +53,7 @@ public class SystemTests
 
     }
     
-    [Fact (Skip = "To fix")]
+    [Fact]
     public void TestNormalException(){
 
         var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
@@ -60,6 +61,7 @@ public class SystemTests
 
         var provider = new ServiceCollection()
             .AddSingleton<IEnvironmentVariables>(environmentObj)
+            .AddSingleton<ITaskManager>(new Mock<ITaskManager>().Object)
             .AddSingleton<ITradingObjects, TradingObjects>()
             .AddSingleton<IElasticClient, ElasticClient>()
             .AddSingleton<ISystemObjects, SystemObjects>()
@@ -70,7 +72,7 @@ public class SystemTests
         var taskManager = provider.GetService<ITaskManager>();
         var environmentVariables = provider.GetService<IEnvironmentVariables>();
 
-        var systemMock = new Mock<SystemSetup>(new Mock<ITaskManager>().Object, reportingMock.Object, environmentObj);
+        var systemMock = new Mock<SystemSetup>(provider, reportingMock.Object, environmentObj);
         systemMock.Setup(x=>x.StartEngine())
                         .Throws(new ArgumentException(message: "error"));
                         

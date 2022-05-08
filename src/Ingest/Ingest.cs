@@ -22,7 +22,6 @@ public class Ingest : IIngest
     private readonly IEnumerable<string> symbols;
 
     public virtual List<string> fileNames { get; } = new List<string>();
-    public Dictionary<string, string> symbolAndFilename { get; }
     public Dictionary<string, StreamReader> streamDictionary { get; }
     public Dictionary<string, PriceObj> localInputBuffer { get; }
     readonly IEnvironmentVariables envVariables;
@@ -37,7 +36,6 @@ public class Ingest : IIngest
 
     public virtual void EnvironmentSetup()
     {
-
         // Create a temporary list
         var arrayHolder = new List<string>();
 
@@ -96,7 +94,6 @@ public class Ingest : IIngest
     // 4. Review all the symbols on the buffer, and select the oldest, loop and repeat
     protected async virtual Task LoopStreamDictionaryAndReadLine(Dictionary<string, StreamReader> streamDictionary, BufferBlock<PriceObj> buffer)
     {
-
         // Loop statements if files still have contents to parse
         while (streamDictionary.Any(x => !x.Value.EndOfStream))
         {

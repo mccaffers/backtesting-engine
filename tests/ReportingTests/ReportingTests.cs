@@ -27,8 +27,8 @@ namespace Tests;
 public class ReportingTests
 {
 
-    [Fact (Skip = "To fix")]
-    public async Task TestElasticSearchFinalReport(){
+    [Fact]
+    public void TestElasticSearchFinalReport(){
 
         var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
         environmentMock.SetupGet<bool>(x=>x.reportingEnabled).Returns(true);
@@ -99,8 +99,8 @@ public class ReportingTests
         Assert.Equal("exception", index); // check it's the right index
     }
 
-    [Fact (Skip = "To fix")]
-    public async Task TestElasticTradeUpdatekMethod(){
+    [Fact]
+    public void TestElasticTradeUpdatekMethod(){
 
         // Arrange Environment Variables
         var environmentMock = TestEnvironment.SetEnvironmentVariables(); 

@@ -12,8 +12,12 @@ public class Consumer : IConsumer
     readonly IPositions positions;
 
     public Consumer(IEnumerable<IStrategy> strategies, IPositions positions) {
+
         this.strategies = strategies;
         this.positions = positions;
+
+        System.Console.WriteLine("built consumer");
+
     }
 
     public async Task ConsumeAsync(BufferBlock<PriceObj> buffer, CancellationToken cts)

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
+using backtesting_engine.analysis;
 using backtesting_engine.interfaces;
 using backtesting_engine_ingest;
 using Moq;
@@ -134,6 +135,7 @@ public class DataInputTests
     {
         var envMock = TestEnvironment.SetEnvironmentVariables(); 
         var consumerMock = new Mock<IConsumer>();
+        var reportingMock = new Mock<IReporting>();
         var ingestMock = new Mock<Ingest>(envMock.Object){
             CallBase = true
         };
@@ -142,7 +144,7 @@ public class DataInputTests
         consumerMock.Setup<Task>(x=>x.ConsumeAsync(It.IsAny<BufferBlock<PriceObj>>(), It.IsAny<CancellationToken>()))
                         .Returns(Task.FromResult(0));
 
-        var taskManagerMock = new Mock<TaskManager>(consumerMock.Object, ingestMock.Object); // can't mock program
+        var taskManagerMock = new Mock<TaskManager>(consumerMock.Object, ingestMock.Object, reportingMock.Object, envMock.Object); // can't mock program
 
         ingestMock.Object.fileNames.Add(Path.Combine(PathUtil.GetTestPath("TestEnvironmentSetup"), "testSymbol.csv"));
 

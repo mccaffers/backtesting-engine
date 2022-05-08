@@ -20,11 +20,8 @@ public static class ShellHelper
 
         using var process = Process.Start(psi);
 
-        process.WaitForExit();
-
-        var output = process.StandardOutput.ReadToEnd();
-
-        return output;
+        process?.WaitForExit();
+        return process?.StandardOutput.ReadToEnd() ?? "";
     }
 
     public static Task<int> Bash(this string cmd)

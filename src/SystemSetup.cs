@@ -21,8 +21,7 @@ public class SystemSetup : ISystemSetup
 
         Task<string>.Run(async () =>
         {
-            try
-            {
+            try {
                 return await StartEngine();
             }
             catch (TradingException tradingException)
@@ -60,16 +59,16 @@ public class SystemSetup : ISystemSetup
                 // Check if file already exists
                 if (!File.Exists(csvFile))
                 {
-                    await PullFromS3(symbolFolder, symbol, year);
-                    await Decompress(symbol);
+                    PullFromS3(symbolFolder, symbol, year);
+                    Decompress(symbol);
                 }
             }
 
             // Start Backtesting Engine, on demand
-            ;
             using (var scope = this.provider.CreateScope())
             {
                 var transientService = scope.ServiceProvider.GetRequiredService<ITaskManager>();
+
                 await transientService.IngestAndConsume();
             }
 
@@ -79,14 +78,14 @@ public class SystemSetup : ISystemSetup
         return string.Empty;
     }
 
-    private static async Task Decompress(string symbol)
+    private static void Decompress(string symbol)
     {
         ConsoleLogger.Log("Decompressing - " + symbol);
         var command = "zstd -d -f --rm ./tickdata/" + symbol + "/*.zst";
         ShellHelper.RunCommandWithBash(command);
     }
 
-    private async Task PullFromS3(string symbolFolder, string symbol, int year)
+    private void PullFromS3(string symbolFolder, string symbol, int year)
     {
         ConsoleLogger.Log("Pulling tick data from S3 - " + symbol);
 
