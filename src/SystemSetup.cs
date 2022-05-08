@@ -72,8 +72,9 @@ public class SystemSetup : ISystemSetup
                 await transientService.IngestAndConsume();
             }
 
-            // Clean up
-            await CleanSymbolFolder(envVariables.tickDataFolder);
+            if(envVariables.doNotCleanUpDataFolder){
+                CleanSymbolFolder(envVariables.tickDataFolder);
+            }
         }
         return string.Empty;
     }
@@ -100,7 +101,7 @@ public class SystemSetup : ISystemSetup
         ShellHelper.RunCommandWithBash(command);
     }
 
-    private static async Task CleanSymbolFolder(string symbolFolder)
+    private static void CleanSymbolFolder(string symbolFolder)
     {
         // Delete procssed data to free up space
         var command = "rm -rf " + symbolFolder + "/*";

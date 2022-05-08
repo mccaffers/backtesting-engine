@@ -16,6 +16,7 @@ class InitialReport{
     public string[] symbols {get;set;} = new string[]{};
     public string runID {get;set;} = string.Empty;
     public int runIteration {get;set;}
+    public string strategy {get;set;}
 }
 
 static class Program
@@ -39,6 +40,7 @@ static class Program
                     symbols = variables.symbols,
                     runID = variables.runID,
                     runIteration = int.Parse(variables.runIteration),
+                    strategy = variables.strategy
                 };
                 var response = esClient.Index(initialReport, b => b.Index("init"));
                 System.Console.WriteLine(response);

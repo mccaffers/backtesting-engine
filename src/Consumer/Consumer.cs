@@ -15,9 +15,6 @@ public class Consumer : IConsumer
 
         this.strategies = strategies;
         this.positions = positions;
-
-        System.Console.WriteLine("built consumer");
-
     }
 
     public async Task ConsumeAsync(BufferBlock<PriceObj> buffer, CancellationToken cts)

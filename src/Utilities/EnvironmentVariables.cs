@@ -26,6 +26,7 @@ public interface IEnvironmentVariables
     int[] years { get; init; }
     int yearsStart {get; init;}
     int yearsEnd { get; init; }
+    bool doNotCleanUpDataFolder {get;init;}
     
     Dictionary<string, decimal> getScalingFactorDictionary();
     decimal GetScalingFactor(string symbol);
@@ -66,6 +67,11 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.years = Enumerable.Range(this.yearsStart, this.yearsEnd - this.yearsStart + 1).ToArray(); 
         this.scalingFactor = Get("scalingFactor");
         this.tradingSize = Get("tradingSize");
+
+        if(!string.IsNullOrEmpty(Get("doNotCleanUpDataFolder", true))){
+            this.doNotCleanUpDataFolder = bool.Parse(Get("doNotCleanUpDataFolder", true));
+        }
+
     }
 
     public static string Get(string envName, bool optional = false)
@@ -96,6 +102,7 @@ public class EnvironmentVariables : IEnvironmentVariables
     public virtual string tradingSize { get; init; } = string.Empty;
     public virtual int yearsStart { get;init ; }
     public virtual int yearsEnd { get; init; }
+    public virtual bool doNotCleanUpDataFolder {get;init;}
 
     // Custom environment variables
     public virtual string tickDataFolder { get; init; } = string.Empty;

@@ -24,11 +24,11 @@ main() {
     # declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
 
     # Multiple Indexes
-    declare -a symbolsArray=("EURIDX600") #"JPNIDX225" "SPNIDX35" "FRAIDX40" "DEUIDX40" "AUSIDX200" "USAIDXTECH" "USAIDX500" "USAIDX30" "EURIDX600" "GBRIDX100")
+    declare -a symbolsArray=("JPNIDX225" "SPNIDX35" "FRAIDX40" "DEUIDX40" "AUSIDX200" "USAIDXTECH" "USAIDX500" "USAIDX30" "EURIDX600" "GBRIDX100")
 
     stopLossInPipsRange="30 10 30"
     limitInPipsRange="30 10 30"
-    iterationRange="1 1 10"
+    iterationRange="1 1 1"
     yearsStart="2014"
     yearsEnd="2021"
     maximumDrawndownPercentage=0

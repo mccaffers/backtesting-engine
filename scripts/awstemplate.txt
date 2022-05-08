@@ -20,8 +20,8 @@ export elasticEndpoint="${elasticEndpoint}"
 export elasticCloudID="${elasticCloudID}"
 export runIteration=${runIteration}
 export tradingSize=${tradingSize}
-export consoleLog=true
-
+export consoleLog=false
+export systemLog=false
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 

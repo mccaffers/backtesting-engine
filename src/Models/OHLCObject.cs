@@ -1,6 +1,6 @@
 namespace backtesting_engine;
 
-public class ChartObject {
+public class OHLCObject {
     public DateTime date {get;set;} = DateTime.MinValue;
     public decimal open {get;set;} = Decimal.Zero;
     public decimal close {get;set;} = Decimal.Zero;
