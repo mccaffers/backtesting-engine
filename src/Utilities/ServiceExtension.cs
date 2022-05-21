@@ -15,7 +15,6 @@ public static class ServiceExtension {
         }
 
         CheckStrategyExistsAndAreOfTypeIStragey(services);
-
         return services;
     }
 

@@ -20,7 +20,6 @@ public class OpenOrder : TradingBase, IOpenOrder
     public void Request(RequestObject reqObj)
     {
 
-        
         // One trade open at the moment
         var openTradesCount = this.tradingObjects.openTrades.Count(x => x.Key.Contains(reqObj.priceObj.symbol));
         if (openTradesCount != 0)

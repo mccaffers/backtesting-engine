@@ -12,6 +12,7 @@ public class AccountObj
 
     public decimal openingEquity { get; init; } 
     public decimal maximumDrawndownPercentage { get; init; }
+    public decimal tradeHistorySum { get; set; } = decimal.Zero;
 
     readonly IEnvironmentVariables envVariables;
 
@@ -30,10 +31,9 @@ public class AccountObj
 
     public decimal pnl
     {
-        get
-        {
-            var pl = tradeHistory.Sum(x => x.Value.profit);
-            return this.openingEquity + pl + openTrades.Sum(x => CalculateProfit(x.Value.close, x.Value));
+        get {
+            // var pl = tradeHistory.Sum(x => x.Value.profit);
+            return this.openingEquity + this.tradeHistorySum + openTrades.Sum(x => CalculateProfit(x.Value.close, x.Value));
         }
     }
 
