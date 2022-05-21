@@ -24,8 +24,7 @@ public class SystemSetup : ISystemSetup
             try {
                 return await StartEngine();
             }
-            catch (TradingException tradingException)
-            {
+            catch (TradingException tradingException) {
                 return tradingException.Message;
             }
             catch (Exception ex)
@@ -68,11 +67,11 @@ public class SystemSetup : ISystemSetup
             using (var scope = this.provider.CreateScope())
             {
                 var transientService = scope.ServiceProvider.GetRequiredService<ITaskManager>();
-
                 await transientService.IngestAndConsume();
             }
 
-            if(envVariables.doNotCleanUpDataFolder){
+            // Clean up this year of data
+            if(!envVariables.doNotCleanUpDataFolder){
                 CleanSymbolFolder(envVariables.tickDataFolder);
             }
         }

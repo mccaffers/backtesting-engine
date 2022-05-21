@@ -15,6 +15,7 @@ public class RequestObject {
         this.key = DictionaryKeyStrings.OpenTrade(priceObj);
         this.symbol = priceObj.symbol;
         this.env = env;
+        this.scalingFactor = env.GetScalingFactor(priceObj.symbol);
 
         UpdateLevelWithSlippage(1m / env.GetScalingFactor(this.symbol));
     }
@@ -30,6 +31,8 @@ public class RequestObject {
             this.level = _direction == TradeDirection.BUY ? this.priceObj.ask : this.priceObj.bid;
         }
     }
+
+    private readonly decimal scalingFactor;
 
     private decimal _stopDistancePips;
     public decimal stopDistancePips {
@@ -89,12 +92,12 @@ public class RequestObject {
     public decimal size {get;init;}
 
 
-    public void UpdateClose(PriceObj priceObj, decimal scalingFactor){
+    public void UpdateClose(PriceObj priceObj){
 
-        this.close = this.direction == TradeDirection.BUY? priceObj.bid : priceObj.ask;
+        this.close = this.direction == TradeDirection.BUY ? priceObj.bid : priceObj.ask;
         this.closeDate = priceObj.date;
         this.profit = ((this.direction == TradeDirection.BUY ? this.close - this.level : this.level - this.close) 
-                        * scalingFactor)
+                        * this.scalingFactor)
                             * this.size;
     }
 

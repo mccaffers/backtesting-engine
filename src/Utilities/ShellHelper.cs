@@ -41,11 +41,13 @@ public static class ShellHelper
         };
 
         process.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>{
-            System.Console.WriteLine(e.Data);
+            ConsoleLogger.SystemLog(e.Data ?? "");
         };
 
         process.ErrorDataReceived += (object sender, DataReceivedEventArgs e) =>{
-            System.Console.WriteLine(e.Data);
+            if(!string.IsNullOrEmpty(e.Data)){
+                ConsoleLogger.SystemLog(e.Data);
+            }
         };
 
         process.Exited += (sender, args) =>

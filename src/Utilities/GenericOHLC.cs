@@ -22,7 +22,8 @@ namespace Utilities
             var index = OHLCArray.Count()-1; // Get the last item
 
             // if we hit the minute threshold, build a new OHLC object
-            if((price.date - OHLCArray[index].date).TotalMinutes > duration.TotalMinutes){
+            var diff = price.date.Subtract(OHLCArray[index].date).TotalMinutes;
+            if(diff > duration.TotalMinutes){
                 OHLCArray.Add(new OHLCObject(){
                     date=price.date,
                     open=price.ask,

@@ -18,20 +18,25 @@ main() {
     ######
     # Trading Variables
 
+    # declare -a strategies=("VolatilityCalculator") 
     declare -a strategies=("RandomStrategy") 
 
     # Major Forex Currencies
-    # declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
+    declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
 
     # Multiple Indexes
-    declare -a symbolsArray=("JPNIDX225" "SPNIDX35" "FRAIDX40" "DEUIDX40" "AUSIDX200" "USAIDXTECH" "USAIDX500" "USAIDX30" "EURIDX600" "GBRIDX100")
+    # declare -a symbolsArray=("JPNIDX225" "SPNIDX35" "FRAIDX40" "DEUIDX40" "AUSIDX200" "USAIDXTECH" "USAIDX500" "USAIDX30" "EURIDX600" "GBRIDX100")
+    
+    # Crypto
+    # declare -a symbolsArray=("ETHUSD" "BTCUSD")
 
-    stopLossInPipsRange="30 10 30"
-    limitInPipsRange="30 10 30"
+    stopLossInPipsRange="20 20 100"
+    limitInPipsRange="20 20 100"
     iterationRange="1 1 1"
-    yearsStart="2014"
+    accountEquity=10000
+    yearsStart="2004"
     yearsEnd="2021"
-    maximumDrawndownPercentage=0
+    maximumDrawndownPercentage=50
 
     ######
 
@@ -111,7 +116,7 @@ deploy () {
                             --security-group-ids ${awsDeploySecurityGroupID} \
                             --user-data file://${SCRIPT_DIR}/data.sh \
                             --iam-instance-profile=${awsDeployIAMEC2Role} \
-                            --block-device-mapping "[ { \"DeviceName\": \"/dev/xvda\", \"Ebs\": { \"VolumeSize\": 10 } } ]" \
+                            --block-device-mapping "[ { \"DeviceName\": \"/dev/xvda\", \"Ebs\": { \"VolumeSize\": 12 } } ]" \
                             --instance-initiated-shutdown-behavior terminate \
                             --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='$runID'},{Key=Symbol,Value='$symbols'}]' >> /dev/null
 

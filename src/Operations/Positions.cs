@@ -53,8 +53,7 @@ public class Positions : TradingBase, IPositions
         foreach (var myTradeObj in GetOrderBook(priceObj.symbol))
         {
 
-            var sf =envVaribles.GetScalingFactor(priceObj.symbol);
-            myTradeObj.UpdateClose(priceObj,sf );
+            myTradeObj.UpdateClose(priceObj);
 
             if (myTradeObj.direction == TradeDirection.BUY &&
                     (priceObj.bid <= myTradeObj.stopLevel || priceObj.bid >= myTradeObj.limitLevel))

@@ -10,18 +10,8 @@ using System.Net;
 
 namespace backtesting_engine;
 
-class InitialReport{
-    public string hostname {get;set;} = string.Empty;
-    public DateTime date {get;set;}
-    public string[] symbols {get;set;} = new string[]{};
-    public string runID {get;set;} = string.Empty;
-    public int runIteration {get;set;}
-    public string strategy {get;set;}
-}
-
 static class Program
 {
-
     private static EnvironmentVariables variables = new EnvironmentVariables();
     static CloudConnectionPool pool = new CloudConnectionPool(variables.elasticCloudID, new BasicAuthenticationCredentials(variables.elasticUser, variables.elasticPassword));
     static ConnectionSettings settings = new ConnectionSettings(pool).RequestTimeout(TimeSpan.FromMinutes(2)).EnableApiVersioningHeader();
@@ -32,18 +22,15 @@ static class Program
             .RegisterStrategies(variables)
              .AddSingleton<IElasticClient>( (IServiceProvider provider) => { 
                 var esClient = new ElasticClient(settings);
-                System.Console.WriteLine(esClient.Ping().IsValid);
-          
-                var initialReport = new InitialReport(){
-                    hostname = Dns.GetHostName(),
-                    date = DateTime.Now,
-                    symbols = variables.symbols,
-                    runID = variables.runID,
-                    runIteration = int.Parse(variables.runIteration),
-                    strategy = variables.strategy
-                };
-                var response = esClient.Index(initialReport, b => b.Index("init"));
-                System.Console.WriteLine(response);
+                //Send an initial report to ElasticSearch
+                esClient.Index(new InitialReport() {
+                                hostname = Dns.GetHostName(),
+                                date = DateTime.Now,
+                                symbols = variables.symbols,
+                                runID = variables.runID,
+                                runIteration = int.Parse(variables.runIteration),
+                                strategy = variables.strategy
+                            }, b => b.Index("init"));
                 return esClient;
             })
             .AddTransient<IOpenOrder, OpenOrder>()

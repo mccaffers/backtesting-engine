@@ -69,7 +69,7 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.tradingSize = Get("tradingSize");
 
         if(!string.IsNullOrEmpty(Get("doNotCleanUpDataFolder", true))){
-            this.doNotCleanUpDataFolder = bool.Parse(Get("doNotCleanUpDataFolder", true));
+            this.doNotCleanUpDataFolder = bool.Parse(Get("doNotCleanUpDataFolder"));
         }
 
     }

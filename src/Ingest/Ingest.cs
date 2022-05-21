@@ -65,7 +65,9 @@ public class Ingest : IIngest
         _cts = cts;
         foreach (var file in fileNames)
         {
-            streamDictionary.Add(file, ReadFile(file));
+            // change this file string to 
+            var symbol = this.symbols.First(x => file.Contains(x));
+            streamDictionary.Add(symbol, ReadFile(file));
         }
 
         await LoopStreamDictionaryAndReadLine(streamDictionary, buffer);
@@ -100,21 +102,23 @@ public class Ingest : IIngest
 
             _cts.ThrowIfCancellationRequested();
 
-            if(buffer.Count>5000){ // To prevent RAM depletion
+            if(buffer.Count>10000){ // To prevent RAM depletion
                 continue;
             }
 
             foreach (var file in streamDictionary)
             {
 
+                // Check if any of the files ever finish early
                 if (file.Value.EndOfStream)
-                { // if any of the files ever finish early
+                { 
                     streamDictionary.Remove(file.Key);
                     continue;
                 }
 
+                // Ignore file if it already exists in lineBuffer dictionary
                 if (!localInputBuffer.ContainsKey(file.Key))
-                { //need to ignore file if it already exists in lineBuffer dictionary
+                { 
                     string line = await file.Value.ReadLineAsync() ?? "";
                     PopulateLocalBuffer(file.Key, line);
                 }
@@ -129,7 +133,7 @@ public class Ingest : IIngest
     // Expecting data in the following format
     //  UTC,AskPrice,BidPrice,AskVolume,BidVolume
     //  2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75
-    public virtual void PopulateLocalBuffer(string fileName, string line)
+    public virtual void PopulateLocalBuffer(string key, string line)
     {
         string[] values = line.Split(',');
 
@@ -142,18 +146,15 @@ public class Ingest : IIngest
         if (!dtExtract.parsed)
             return;
 
-        var dateTime = dtExtract.datetime;
+        var ask = DecimalUtil.ParseDecimal(values[1]);
+        var bid = DecimalUtil.ParseDecimal(values[2]);
 
-        var ask = decimal.Parse(values[1]);
-        var bid = decimal.Parse(values[2]);
-        var symbol = this.symbols.First(x => fileName.Contains(x));
-
-        localInputBuffer.Add(fileName, new PriceObj()
+        localInputBuffer.Add(key, new PriceObj()
         {
-            symbol = symbol,
+            symbol = key,
             bid = bid,
             ask = ask,
-            date = dateTime
+            date = dtExtract.datetime
         });
 
     }
@@ -174,8 +175,7 @@ public class Ingest : IIngest
     public static bool ArrayHasRightValues(string[] values)
     {
         return values.Length > 4 &&
-            values.All(x => x.Length > 0) &&
-            values.Skip(1).All(x => decimal.TryParse(x, NumberStyles.Any, CultureInfo.InvariantCulture, out _));
+            values.Skip(1).All(x => char.IsDigit(x.First()));
     }
 
     // Extract the datetime from the string

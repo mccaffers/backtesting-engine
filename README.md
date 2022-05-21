@@ -1,10 +1,7 @@
 <div align="center">
-
 <h3 align="center">C# Backtesting Engine</h3>
-
   <p align="center">
     By McCaffers
-
   </p>
 </div>
 
@@ -18,8 +15,6 @@ This backtesting engine is a personal project of mine, built in C# to explore an
 ### Features
 * Multiple symbol ingest with time synchronisation
 * xUnit testing 
-
-### Roadmap
 * Trade Environment
     * Trade Excution
     * Equity Monitoring
@@ -27,7 +22,7 @@ This backtesting engine is a personal project of mine, built in C# to explore an
 
 ### Built With
 
-* [dotnet](https://nextjs.org/)
+* [dotnet](https://dotnet.com)
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -41,16 +36,6 @@ This backtesting engine is a personal project of mine, built in C# to explore an
     UTC,AskPrice,BidPrice,AskVolume,BidVolume
     2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75
     ```
-
-### Notes
-
-```
-age -p -a -o ./.env/local.env.age ./.env/local.env
-age --decrypt -o ./.env/local.env ./.env/local.env.age
-
-age -p -a -o ./.env/aws.env.age ./.env/aws.env
-age --decrypt -o ./.env/aws.env ./.env/aws.env.age
-```
 
 ### License
 [MIT](https://choosealicense.com/licenses/mit/)

@@ -17,7 +17,10 @@ public class VolatilityObject {
     public string runID {get;set;} = string.Empty;
     public int runIteration {get;set;}
     public string strategy {get;set;} = string.Empty;
+    public decimal dayClose { get;set;}
     public decimal dayRange { get;set;}
+    public decimal totalMovement { get;set;}
+    public decimal distanceBetweenPriceMoves { get;set;}
 }
 
 public class VolatilityCalculator : IStrategy
@@ -36,17 +39,29 @@ public class VolatilityCalculator : IStrategy
     private List<OHLCObject> ohlcList = new List<OHLCObject>();
     private List<VolatilityObject> volatilityList = new List<VolatilityObject>();
     private DateTime lastBatchUpdate = DateTime.Now;
+    private decimal lastPrice = decimal.Zero;
+    private decimal movement = decimal.Zero;
+    private List<decimal> distanceBetweenPriceMoves = new List<decimal>();
 
     public void Invoke(PriceObj priceObj) {
 
         ohlcList = GenericOHLC.CalculateOHLC(priceObj, TimeSpan.FromDays(1), ohlcList);
 
+        if(lastPrice==decimal.Zero){
+            lastPrice=priceObj.ask;
+        } else if(lastPrice!=priceObj.ask){
+            var distance = Math.Abs(lastPrice-priceObj.ask) * envVariables.GetScalingFactor(priceObj.symbol);
+            movement+=distance;
+            distanceBetweenPriceMoves.Add(distance);
+            lastPrice=priceObj.ask;
+        }
+
+        // Will only be higher than one count if there is more than one day in the list
         if(ohlcList.Count > 1){
 
-            var dayRange = ohlcList.First().high = ohlcList.First().low;
+            var dayRange = (ohlcList.First().high - ohlcList.First().low) * envVariables.GetScalingFactor(priceObj.symbol);
+            var dayClose = ohlcList.First().close;
             ohlcList.RemoveAt(0);
-
-            System.Console.WriteLine(dayRange);
 
             var vObject = new VolatilityObject(){
                 date = priceObj.date,
@@ -54,9 +69,14 @@ public class VolatilityCalculator : IStrategy
                 runID = envVariables.runID,
                 runIteration = int.Parse(envVariables.runIteration),
                 strategy = envVariables.strategy,
-                dayRange = dayRange
+                dayRange = dayRange,
+                dayClose = dayClose,
+                totalMovement = movement,
+                distanceBetweenPriceMoves=distanceBetweenPriceMoves.Average()
             };
 
+            distanceBetweenPriceMoves=new List<decimal>();
+            movement=0m;
             volatilityList.Add(vObject);
             BatchUpdate();
         }
@@ -66,8 +86,8 @@ public class VolatilityCalculator : IStrategy
         if(DateTime.Now.Subtract(lastBatchUpdate).TotalSeconds <= 5){
             return;
         }
+
         lastBatchUpdate=DateTime.Now;
-        var response = elasticClient.IndexMany(volatilityList, "volatility");
-        System.Console.WriteLine(response);
+        elasticClient.IndexMany(volatilityList, "volatility");
     }
 }
