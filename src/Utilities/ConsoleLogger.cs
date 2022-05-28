@@ -2,8 +2,8 @@ namespace Utilities;
 
 public static class ConsoleLogger {
 
-    public static bool systemLog = false;
-    public static bool consoleLog = false;
+    private static readonly bool systemLog;
+    private static readonly bool consoleLog;
 
     static ConsoleLogger () {
         _ = bool.TryParse(EnvironmentVariables.Get("systemLog", true), out systemLog);

@@ -30,13 +30,15 @@ main() {
     # Crypto
     # declare -a symbolsArray=("ETHUSD" "BTCUSD")
 
-    stopLossInPipsRange="20 20 100"
-    limitInPipsRange="20 20 100"
+    stopLossInPipsRange="100 1 100"
+    limitInPipsRange="50 1 50"
     iterationRange="1 1 1"
     accountEquity=10000
-    yearsStart="2004"
+    yearsStart="2014"
     yearsEnd="2021"
-    maximumDrawndownPercentage=50
+    maximumDrawndownPercentage=75
+    kineticStopLossRange="50 1 50"
+    kineticLimitRange="0 0 0"
 
     ######
 
@@ -99,11 +101,31 @@ limitFunc(){
     for pips in `seq $limitInPipsRange`
     do
         export limitDistanceInPips=$pips
+        kineticSLFunc
+    done
+}
+
+kineticSLFunc(){
+    for pips in `seq $kineticStopLossRange`
+    do
+        export kineticStopLoss=$pips
+        kineticTPFunc
+    done
+}
+
+kineticTPFunc(){
+    for pips in `seq $kineticLimitRange`
+    do
+        export kineticLimit=$pips
         deploy
     done
 }
 
+instanceCount=0
+
 deploy () {
+
+    let instanceCount=instanceCount+1
     
     envsubst < $SCRIPT_DIR/awstemplate.txt > $SCRIPT_DIR/data.sh
 

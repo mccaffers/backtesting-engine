@@ -14,13 +14,24 @@ public class TradingException : Exception {
     public string symbols {get;set;}
     public string runID {get;set;}
     public string runIteration {get;set;}
+    public string stacktrace {get;set;} = string.Empty;
 
-    public TradingException(string? message, IEnvironmentVariables envVariables) : base(message) {
+    public TradingException(string? message, string? stacktrace, IEnvironmentVariables envVariables) : base(message) {
         date = DateTime.Now;
         hostname = envVariables.hostname;
         symbols = JsonConvert.SerializeObject(envVariables.symbols);
         runID = envVariables.runID;
         runIteration = envVariables.runIteration;
+        stacktrace= stacktrace ?? "empty";
     }
 
+    public TradingException(string? message, Exception? innerException, IEnvironmentVariables envVariables) : base(message, innerException)
+    {
+        date = DateTime.Now;
+        hostname = envVariables.hostname;
+        symbols = JsonConvert.SerializeObject(envVariables.symbols);
+        runID = envVariables.runID;
+        runIteration = envVariables.runIteration;
+        stacktrace= stacktrace ?? "empty";
+    }
 }

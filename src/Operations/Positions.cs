@@ -11,6 +11,7 @@ public interface IPositions
     void CloseAll();
     IEnumerable<RequestObject> GetOrderBook(string symbol);
     void Review(PriceObj priceObj);
+    void KinetStopLimit(PriceObj priceObj);
     void UpdateTradeHistory(RequestObject reqObj);
     void ReviewEquity();
 }
@@ -25,6 +26,35 @@ public class Positions : TradingBase, IPositions
         this.envVaribles = envVaribles;
     }
 
+    public void KinetStopLimit(PriceObj priceObj)
+    {
+        if(envVaribles.kineticStopLoss == 0){
+            return;
+        }
+
+        foreach (var myTradeObj in GetOrderBook(priceObj.symbol))
+        {
+            myTradeObj.UpdateClose(priceObj);
+
+            var distance = envVaribles.kineticStopLoss;
+
+            if(myTradeObj.direction == TradeDirection.BUY){
+                var proposedStoplevel = myTradeObj.close - (distance / envVaribles.GetScalingFactor(priceObj.symbol));
+                if(proposedStoplevel > myTradeObj.stopLevel){
+                    myTradeObj.stopLevel=proposedStoplevel;
+                }
+                // myTradeObj.limitLevel = myTradeObj.close + (distance / envVaribles.GetScalingFactor(priceObj.symbol));
+            } else if(myTradeObj.direction == TradeDirection.SELL){
+                var proposedStoplevel = myTradeObj.close + (distance / envVaribles.GetScalingFactor(priceObj.symbol));
+                if(proposedStoplevel < myTradeObj.stopLevel){
+                    myTradeObj.stopLevel=proposedStoplevel;
+                }
+                // myTradeObj.limitLevel = myTradeObj.close - (distance / envVaribles.GetScalingFactor(priceObj.symbol));
+            }
+        }
+
+    }
+
     public void ReviewEquity()
     {
         
@@ -33,7 +63,7 @@ public class Positions : TradingBase, IPositions
             CloseAll();
 
             // stop any more trades
-            throw new TradingException("Exceeded threshold PL:" + this.tradingObjects.accountObj.pnl, envVaribles);
+            throw new TradingException("Exceeded threshold PL:" + this.tradingObjects.accountObj.pnl, "", envVaribles);
         }
     }
 

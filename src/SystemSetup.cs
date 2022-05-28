@@ -1,7 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using backtesting_engine.analysis;
 using backtesting_engine.interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Nest;
 using trading_exception;
 using Utilities;
 
@@ -11,13 +13,15 @@ public class SystemSetup : ISystemSetup
 {
     readonly IEnvironmentVariables envVariables;
     readonly IReporting elastic;
+    readonly IElasticClient es;
     readonly IServiceProvider provider;
 
-    public SystemSetup(IServiceProvider provider, IReporting elastic, IEnvironmentVariables envVariables)
+    public SystemSetup(IServiceProvider provider, IReporting elastic, IElasticClient es, IEnvironmentVariables envVariables)
     {
         this.envVariables = envVariables;
         this.elastic = elastic;
         this.provider = provider;
+        this.es = es;
 
         Task<string>.Run(async () =>
         {
@@ -29,7 +33,7 @@ public class SystemSetup : ISystemSetup
             }
             catch (Exception ex)
             {
-                return await SendStackException(ex.Message);
+                return await SendStackException(ex);
             }
 
         }).ContinueWith(taskOutput => {
@@ -38,12 +42,11 @@ public class SystemSetup : ISystemSetup
         }).Wait();
     }
 
-    public async Task<string> SendStackException(string message)
+    public async Task<string> SendStackException(Exception ex)
     {
-        await elastic.SendStack(new TradingException(message, this.envVariables)); // report error to elastic for review
-        return message;
+        await elastic.SendStack(new TradingException(ex.Message, ex, this.envVariables)); // report error to elastic for review
+        return ex.Message;
     }
-
 
     public virtual async Task<string> StartEngine()
     {
@@ -74,8 +77,23 @@ public class SystemSetup : ISystemSetup
             if(!envVariables.doNotCleanUpDataFolder){
                 CleanSymbolFolder(envVariables.tickDataFolder);
             }
+            UpdateElastic(year);
         }
         return string.Empty;
+    }
+
+    private void UpdateElastic(int year){
+        //Send an initial report to ElasticSearch
+        es.Index(new YearUpdate() {
+                    hostname = Dns.GetHostName(),
+                    date = DateTime.Now,
+                    symbols = envVariables.symbols,
+                    runID = envVariables.runID,
+                    runIteration = int.Parse(envVariables.runIteration),
+                    strategy = envVariables.strategy,
+                    instanceCount = envVariables.instanceCount,
+                    year = year
+                }, b => b.Index("yearupdate"));
     }
 
     private static void Decompress(string symbol)

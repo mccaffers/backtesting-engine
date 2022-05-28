@@ -39,7 +39,7 @@ public class SystemTests
 
         var systemMock = new Mock<SystemSetup>(provider, reportingMock.Object, environmentObj);
         systemMock.Setup(x=>x.StartEngine())
-                        .Throws(new TradingException(message: "error", environmentObj));
+                        .Throws(new TradingException(message: "error", "", environmentObj));
 
         var output = "";
         reportingMock.Setup(x=>x.SendStack(It.IsAny<TradingException>())).Returns(Task.FromResult(true));

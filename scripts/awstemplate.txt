@@ -20,6 +20,10 @@ export elasticEndpoint="${elasticEndpoint}"
 export elasticCloudID="${elasticCloudID}"
 export runIteration=${runIteration}
 export tradingSize=${tradingSize}
+export instanceCount=${instanceCount}
+export kineticStopLoss=${kineticStopLoss}
+export kineticLimit=${kineticLimit}
+
 export consoleLog=false
 export systemLog=false
 

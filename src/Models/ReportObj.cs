@@ -27,6 +27,11 @@ public class ReportFinalObj {
     public int positiveTradeCount {get;set;}
     public int negativeTradeCount {get;set;}
     public int positivePercentage {get;set;}
+
+    public int stopDistanceInPips {get;set;}
+    public int limitDistanceInPips {get;set;}
+
+    public int instanceCount { get;set; }
 }
 
 public class ReportTradeObj {
@@ -37,4 +42,6 @@ public class ReportTradeObj {
     public string? runID {get;set;}
     public decimal tradeProfit {get;set;}
     public int runIteration {get;set;}
+    public int stopDistanceInPips {get;set;}
+    public int limitDistanceInPips {get;set;}
 }

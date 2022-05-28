@@ -21,11 +21,14 @@ public interface IEnvironmentVariables
     string scalingFactor { get; init; }
     string tickDataFolder { get; init; }
     string tradingSize { get; init; }
+    int instanceCount { get; init;}
     bool reportingEnabled { get; init; }
     string[] symbols { get; init; }
     int[] years { get; init; }
     int yearsStart {get; init;}
     int yearsEnd { get; init; }
+    int kineticStopLoss {get; init;}
+    int kineticLimit {get; init;}
     bool doNotCleanUpDataFolder {get;init;}
     
     Dictionary<string, decimal> getScalingFactorDictionary();
@@ -57,6 +60,7 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.s3Path = Get("s3Path");
         this.hostname = Dns.GetHostName();
         this.runIteration = Get("runIteration");
+        this.instanceCount = int.Parse(Get("instanceCount"));
         this.tickDataFolder = Path.Combine(Path.GetFullPath("./" + this.symbolFolder));
         this.reportingEnabled = bool.Parse(Get("reportingEnabled"));
         this.symbols = Get("symbols").Split(",");
@@ -67,6 +71,8 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.years = Enumerable.Range(this.yearsStart, this.yearsEnd - this.yearsStart + 1).ToArray(); 
         this.scalingFactor = Get("scalingFactor");
         this.tradingSize = Get("tradingSize");
+        this.kineticStopLoss = int.Parse(Get("kineticStopLoss"));
+        this.kineticLimit = int.Parse(Get("kineticLimit"));
 
         if(!string.IsNullOrEmpty(Get("doNotCleanUpDataFolder", true))){
             this.doNotCleanUpDataFolder = bool.Parse(Get("doNotCleanUpDataFolder"));
@@ -103,9 +109,12 @@ public class EnvironmentVariables : IEnvironmentVariables
     public virtual int yearsStart { get;init ; }
     public virtual int yearsEnd { get; init; }
     public virtual bool doNotCleanUpDataFolder {get;init;}
+    public virtual int kineticStopLoss {get;init;}
+    public virtual int kineticLimit {get;init;}
 
     // Custom environment variables
     public virtual string tickDataFolder { get; init; } = string.Empty;
+    public virtual int instanceCount { get; init; } = 0;
     public virtual bool reportingEnabled { get; init; } = false;
     public virtual string[] symbols { get; init; } = new string[] { string.Empty };
     public virtual int[] years { get; init; } = new int[] {0};

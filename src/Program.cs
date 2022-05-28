@@ -29,7 +29,8 @@ static class Program
                                 symbols = variables.symbols,
                                 runID = variables.runID,
                                 runIteration = int.Parse(variables.runIteration),
-                                strategy = variables.strategy
+                                strategy = variables.strategy,
+                                instanceCount = variables.instanceCount
                             }, b => b.Index("init"));
                 return esClient;
             })

@@ -35,6 +35,7 @@ public class Consumer : IConsumer
 
             // Review open positions, check if the new symbol data meets the threshold for LIMI/STOP levels
             this.positions.Review(priceObj);
+            this.positions.KinetStopLimit(priceObj);
             this.positions.ReviewEquity();
         }
 
