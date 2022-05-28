@@ -21,24 +21,25 @@ main() {
     # declare -a strategies=("VolatilityCalculator") 
     declare -a strategies=("RandomStrategy") 
 
-    # Major Forex Currencies
+    ## Major Forex Currencies
     declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
+    yearsStart="2004"
 
-    # Multiple Indexes
+    ## Multiple Indexes
     # declare -a symbolsArray=("JPNIDX225" "SPNIDX35" "FRAIDX40" "DEUIDX40" "AUSIDX200" "USAIDXTECH" "USAIDX500" "USAIDX30" "EURIDX600" "GBRIDX100")
+    # yearsStart="2014"
     
-    # Crypto
+    ## Crypto
     # declare -a symbolsArray=("ETHUSD" "BTCUSD")
 
     stopLossInPipsRange="100 1 100"
     limitInPipsRange="50 1 50"
     iterationRange="1 1 1"
     accountEquity=10000
-    yearsStart="2014"
     yearsEnd="2021"
     maximumDrawndownPercentage=75
     kineticStopLossRange="50 1 50"
-    kineticLimitRange="0 0 0"
+    kineticLimitRange="0 1 1"
 
     ######
 

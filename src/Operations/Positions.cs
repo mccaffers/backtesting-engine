@@ -43,13 +43,26 @@ public class Positions : TradingBase, IPositions
                 if(proposedStoplevel > myTradeObj.stopLevel){
                     myTradeObj.stopLevel=proposedStoplevel;
                 }
-                // myTradeObj.limitLevel = myTradeObj.close + (distance / envVaribles.GetScalingFactor(priceObj.symbol));
+
+                if(envVaribles.kineticLimit !=0){
+                    var proposedLimit = myTradeObj.close + (distance / envVaribles.GetScalingFactor(priceObj.symbol));
+                    if(proposedLimit > myTradeObj.limitLevel){
+                        myTradeObj.limitLevel = proposedLimit;
+                    }
+                }
+                
             } else if(myTradeObj.direction == TradeDirection.SELL){
                 var proposedStoplevel = myTradeObj.close + (distance / envVaribles.GetScalingFactor(priceObj.symbol));
                 if(proposedStoplevel < myTradeObj.stopLevel){
                     myTradeObj.stopLevel=proposedStoplevel;
                 }
-                // myTradeObj.limitLevel = myTradeObj.close - (distance / envVaribles.GetScalingFactor(priceObj.symbol));
+
+                if(envVaribles.kineticLimit !=0){
+                    var proposedLimit = myTradeObj.close - (distance / envVaribles.GetScalingFactor(priceObj.symbol));
+                    if(proposedLimit < myTradeObj.limitLevel){
+                        myTradeObj.limitLevel = proposedLimit;
+                    }
+                }
             }
         }
 

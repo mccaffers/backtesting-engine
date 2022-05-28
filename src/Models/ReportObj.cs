@@ -1,3 +1,5 @@
+using Utilities;
+
 namespace backtesting_engine;
 
 public class ReportFinalObj {
@@ -32,6 +34,8 @@ public class ReportFinalObj {
     public int limitDistanceInPips {get;set;}
 
     public int instanceCount { get;set; }
+
+    public IEnvironmentVariables environmentVariables {get;set;}
 }
 
 public class ReportTradeObj {

@@ -69,7 +69,8 @@ public class Reporting : TradingBase, IReporting
             systemMessage = this.systemObjects.systemMessage,
             stopDistanceInPips =  int.Parse(envVariables.stopDistanceInPips),
             limitDistanceInPips =  int.Parse(envVariables.limitDistanceInPips),
-            instanceCount = envVariables.instanceCount
+            instanceCount = envVariables.instanceCount,
+            environmentVariables=envVariables
         };
 
 
