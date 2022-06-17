@@ -18,28 +18,31 @@ main() {
     ######
     # Trading Variables
 
-    # declare -a strategies=("VolatilityCalculator") 
-    declare -a strategies=("RandomStrategy") 
+    declare -a strategies=("VolatilityCalculator") 
+    # declare -a strategies=("RandomStrategy") 
 
-    ## Major Forex Currencies
-    declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
-    yearsStart="2004"
+    # Major Forex Currencies
+    # declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
+    # yearsStart="2004"
 
     ## Multiple Indexes
     # declare -a symbolsArray=("JPNIDX225" "SPNIDX35" "FRAIDX40" "DEUIDX40" "AUSIDX200" "USAIDXTECH" "USAIDX500" "USAIDX30" "EURIDX600" "GBRIDX100")
     # yearsStart="2014"
     
     ## Crypto
-    # declare -a symbolsArray=("ETHUSD" "BTCUSD")
+    declare -a symbolsArray=("ETHUSD" "BTCUSD")
+    yearsStart="2018"
 
-    stopLossInPipsRange="100 1 100"
-    limitInPipsRange="50 1 50"
+    stopLossInPipsRange="800 1 800"
+    limitInPipsRange="800 1 800"
     iterationRange="1 1 1"
     accountEquity=10000
     yearsEnd="2021"
     maximumDrawndownPercentage=75
-    kineticStopLossRange="50 1 50"
-    kineticLimitRange="0 1 1"
+    
+    kineticStopLossRange="200 200 200"
+    kineticLimitRange=1
+    kineticOn=0 # 1 on, 0 off
 
     ######
 
@@ -57,8 +60,6 @@ main() {
     --bucket ${awsDeployBucket}  \
     --key run/${runID}.zip \
     --tagging '{"TagSet": [{ "Key": "temp", "Value": "true" }]}'
-
-    export reportingEnabled=true
 
     # Start the loop of the variables
     strategiesFunc
@@ -102,7 +103,17 @@ limitFunc(){
     for pips in `seq $limitInPipsRange`
     do
         export limitDistanceInPips=$pips
-        kineticSLFunc
+
+        # If Kinetic has been set
+        if ((kineticOn))
+        then
+            kineticSLFunc
+        
+        else
+            export kineticStopLoss=0
+            deploy
+        fi
+
     done
 }
 
@@ -110,6 +121,7 @@ kineticSLFunc(){
     for pips in `seq $kineticStopLossRange`
     do
         export kineticStopLoss=$pips
+        export stopDistanceInPips=$pips
         kineticTPFunc
     done
 }
@@ -118,6 +130,8 @@ kineticTPFunc(){
     for pips in `seq $kineticLimitRange`
     do
         export kineticLimit=$pips
+        export limitDistanceInPips=$pips
+        
         deploy
     done
 }

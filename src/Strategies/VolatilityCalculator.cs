@@ -21,6 +21,7 @@ public class VolatilityObject {
     public decimal dayRange { get;set;}
     public decimal totalMovement { get;set;}
     public decimal distanceBetweenPriceMoves { get;set;}
+    public decimal dayCloseGap { get;set;}
 }
 
 public class VolatilityCalculator : IStrategy
@@ -52,6 +53,7 @@ public class VolatilityCalculator : IStrategy
         } else if(lastPrice!=priceObj.ask){
             var distance = Math.Abs(lastPrice-priceObj.ask) * envVariables.GetScalingFactor(priceObj.symbol);
             movement+=distance;
+            System.Console.WriteLine(Math.Abs(lastPrice-priceObj.ask) );
             distanceBetweenPriceMoves.Add(distance);
             lastPrice=priceObj.ask;
         }
@@ -60,6 +62,7 @@ public class VolatilityCalculator : IStrategy
         if(ohlcList.Count > 1){
 
             var dayRange = (ohlcList.First().high - ohlcList.First().low) * envVariables.GetScalingFactor(priceObj.symbol);
+            var gap = Math.Abs(ohlcList.First().close - ohlcList.Skip(1).First().open) * envVariables.GetScalingFactor(priceObj.symbol);
             var dayClose = ohlcList.First().close;
             ohlcList.RemoveAt(0);
 
@@ -72,6 +75,7 @@ public class VolatilityCalculator : IStrategy
                 dayRange = dayRange,
                 dayClose = dayClose,
                 totalMovement = movement,
+                dayCloseGap = gap,
                 distanceBetweenPriceMoves=distanceBetweenPriceMoves.Average()
             };
 
@@ -89,5 +93,6 @@ public class VolatilityCalculator : IStrategy
 
         lastBatchUpdate=DateTime.Now;
         elasticClient.IndexMany(volatilityList, "volatility");
+        volatilityList= new List<VolatilityObject>();
     }
 }

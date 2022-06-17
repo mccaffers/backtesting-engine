@@ -38,6 +38,14 @@ public class Positions : TradingBase, IPositions
 
             var distance = envVaribles.kineticStopLoss;
 
+            // if(myTradeObj.profit>50){
+            //     distance=distance/2;      
+            // }
+
+            // if(myTradeObj.profit>100){
+            //     distance=distance/3;      
+            // }
+
             if(myTradeObj.direction == TradeDirection.BUY){
                 var proposedStoplevel = myTradeObj.close - (distance / envVaribles.GetScalingFactor(priceObj.symbol));
                 if(proposedStoplevel > myTradeObj.stopLevel){
