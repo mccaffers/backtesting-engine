@@ -53,7 +53,6 @@ public class VolatilityCalculator : IStrategy
         } else if(lastPrice!=priceObj.ask){
             var distance = Math.Abs(lastPrice-priceObj.ask) * envVariables.GetScalingFactor(priceObj.symbol);
             movement+=distance;
-            System.Console.WriteLine(Math.Abs(lastPrice-priceObj.ask) );
             distanceBetweenPriceMoves.Add(distance);
             lastPrice=priceObj.ask;
         }

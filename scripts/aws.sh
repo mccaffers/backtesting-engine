@@ -18,8 +18,8 @@ main() {
     ######
     # Trading Variables
 
-    declare -a strategies=("VolatilityCalculator") 
-    # declare -a strategies=("RandomStrategy") 
+    # declare -a strategies=("VolatilityCalculator") 
+    declare -a strategies=("RandomStrategy") 
 
     # Major Forex Currencies
     # declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
@@ -33,16 +33,16 @@ main() {
     declare -a symbolsArray=("ETHUSD" "BTCUSD")
     yearsStart="2018"
 
-    stopLossInPipsRange="800 1 800"
-    limitInPipsRange="800 1 800"
+    stopLossInPipsRange="500 20 500"
+    limitInPipsRange="500 20 500"
     iterationRange="1 1 1"
     accountEquity=10000
     yearsEnd="2021"
     maximumDrawndownPercentage=75
     
-    kineticStopLossRange="200 200 200"
+    kineticStopLossRange="200 200 800"
     kineticLimitRange=1
-    kineticOn=0 # 1 on, 0 off
+    kineticOn=1 # 1 on, 0 off
 
     ######
 

@@ -33,11 +33,10 @@ public class SystemTests
             .BuildServiceProvider();
 
         var reportingMock = new Mock<IReporting>();
+        var esMock = new Mock<IElasticClient>().Object;
 
-        var taskManager = provider.GetService<ITaskManager>();
-        var environmentVariables = provider.GetService<IEnvironmentVariables>();
+        var systemMock = new Mock<SystemSetup>(provider, reportingMock.Object, esMock, environmentObj);
 
-        var systemMock = new Mock<SystemSetup>(provider, reportingMock.Object, environmentObj);
         systemMock.Setup(x=>x.StartEngine())
                         .Throws(new TradingException(message: "error", "", environmentObj));
 
@@ -56,23 +55,25 @@ public class SystemTests
     [Fact]
     public void TestNormalException(){
 
+        // Arrange the environment mocks
         var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
         var environmentObj = environmentMock.Object;
 
+        // Setup the Service Provider just for the services we need
         var provider = new ServiceCollection()
             .AddSingleton<IEnvironmentVariables>(environmentObj)
             .AddSingleton<ITaskManager>(new Mock<ITaskManager>().Object)
             .AddSingleton<ITradingObjects, TradingObjects>()
-            .AddSingleton<IElasticClient, ElasticClient>()
             .AddSingleton<ISystemObjects, SystemObjects>()
+            .AddSingleton<IElasticClient>(new Mock<IElasticClient>().Object)
             .BuildServiceProvider();
 
+
+        // Mock an empty reporting object, we don't want to send any reports
         var reportingMock = new Mock<IReporting>();
+        var esMock = new Mock<IElasticClient>().Object;
 
-        var taskManager = provider.GetService<ITaskManager>();
-        var environmentVariables = provider.GetService<IEnvironmentVariables>();
-
-        var systemMock = new Mock<SystemSetup>(provider, reportingMock.Object, environmentObj);
+        var systemMock = new Mock<SystemSetup>(provider, reportingMock.Object, esMock, environmentObj);
         systemMock.Setup(x=>x.StartEngine())
                         .Throws(new ArgumentException(message: "error"));
                         
