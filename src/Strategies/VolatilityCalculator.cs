@@ -22,6 +22,7 @@ public class VolatilityObject {
     public decimal totalMovement { get;set;}
     public decimal distanceBetweenPriceMoves { get;set;}
     public decimal dayCloseGap { get;set;}
+    public decimal spreadDistance {get;set;}
 }
 
 public class VolatilityCalculator : IStrategy
@@ -43,10 +44,14 @@ public class VolatilityCalculator : IStrategy
     private decimal lastPrice = decimal.Zero;
     private decimal movement = decimal.Zero;
     private List<decimal> distanceBetweenPriceMoves = new List<decimal>();
+    private List<decimal> spreadDistance = new List<decimal>();
+
+    private decimal lastBid = decimal.Zero;
+    private decimal lastAsk = decimal.Zero;
 
     public void Invoke(PriceObj priceObj) {
 
-        ohlcList = GenericOHLC.CalculateOHLC(priceObj, TimeSpan.FromDays(1), ohlcList);
+        ohlcList = GenericOHLC.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromDays(1), ohlcList);
 
         if(lastPrice==decimal.Zero){
             lastPrice=priceObj.ask;
@@ -55,6 +60,17 @@ public class VolatilityCalculator : IStrategy
             movement+=distance;
             distanceBetweenPriceMoves.Add(distance);
             lastPrice=priceObj.ask;
+        }
+
+        if(lastBid != priceObj.bid || lastAsk != priceObj.ask){
+            if(lastBid!=priceObj.bid){
+                lastBid=priceObj.bid;
+            }
+            if(lastAsk!=priceObj.ask){
+                lastAsk=priceObj.ask;
+            }
+            var spread = Math.Abs(lastAsk - lastBid);
+            spreadDistance.Add(spread); 
         }
 
         // Will only be higher than one count if there is more than one day in the list
@@ -75,10 +91,14 @@ public class VolatilityCalculator : IStrategy
                 dayClose = dayClose,
                 totalMovement = movement,
                 dayCloseGap = gap,
-                distanceBetweenPriceMoves=distanceBetweenPriceMoves.Average()
+                distanceBetweenPriceMoves=distanceBetweenPriceMoves.Average(),
+                spreadDistance=spreadDistance.Average() * envVariables.GetScalingFactor(priceObj.symbol)
             };
 
+            System.Console.WriteLine(vObject.spreadDistance);
+
             distanceBetweenPriceMoves=new List<decimal>();
+            spreadDistance=new List<decimal>();
             movement=0m;
             volatilityList.Add(vObject);
             BatchUpdate();

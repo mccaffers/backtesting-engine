@@ -25,6 +25,9 @@ public class ObjectsPopulateTest
     {
         // Arrange
         var envMock = TestEnvironment.SetEnvironmentVariables(); 
+        
+        // The Symbols for the filenames need to be defined
+        envMock.SetupGet<string[]>(x=>x.symbols).Returns(new string[]{"FileName1","FileName2","FileName3"});
 
         var inputMock = new Mock<Ingest>(envMock.Object);
 
@@ -41,8 +44,6 @@ public class ObjectsPopulateTest
         // stub out the StreamReader Cleanup method so the method doesn't try to dipose of the streamreader
         inputMock.Protected()
         .Setup("StreamReaderCleanup");
-
-        // inputMock.Object.EnvironmentSetup();
 
         // inputMock.Protected().SetupGet<IEnumerable<string>>("fileNames").Returns(fileNames);
         inputMock.SetupGet(x => x.fileNames).Returns(fileNames.ToList());

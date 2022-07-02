@@ -38,6 +38,7 @@ public class AccountObjTests
         tradingObject?.tradeHistory.TryAdd("1", new TradeHistoryObject(){
             profit=10
         });
+        tradingObject?.accountObj.AddTradeProftOrLoss(10);
 
         Assert.Equal(510, tradingObject?.accountObj.pnl);
         Assert.False(tradingObject?.accountObj.hasAccountExceededDrawdownThreshold());
@@ -45,6 +46,7 @@ public class AccountObjTests
         tradingObject?.tradeHistory.TryAdd("2", new TradeHistoryObject(){
             profit=0
         });
+        tradingObject?.accountObj.AddTradeProftOrLoss(0);
 
         Assert.Equal(510, tradingObject?.accountObj.pnl);
         Assert.False(tradingObject?.accountObj.hasAccountExceededDrawdownThreshold());
@@ -52,6 +54,7 @@ public class AccountObjTests
         tradingObject?.tradeHistory.TryAdd("3", new TradeHistoryObject(){
             profit=100
         });
+        tradingObject?.accountObj.AddTradeProftOrLoss(100);
 
         Assert.Equal(610, tradingObject?.accountObj.pnl);
         Assert.False(tradingObject?.accountObj.hasAccountExceededDrawdownThreshold());
@@ -60,6 +63,7 @@ public class AccountObjTests
         tradingObject?.tradeHistory.TryAdd("4", new TradeHistoryObject(){
             profit=-210
         });
+        tradingObject?.accountObj.AddTradeProftOrLoss(-210);
 
         Assert.Equal(400, tradingObject?.accountObj.pnl);
         Assert.False(tradingObject?.accountObj.hasAccountExceededDrawdownThreshold());
@@ -67,6 +71,7 @@ public class AccountObjTests
         tradingObject?.tradeHistory.TryAdd("5", new TradeHistoryObject(){
             profit=-200
         });
+        tradingObject?.accountObj.AddTradeProftOrLoss(-200);
 
         Assert.Equal(200, tradingObject?.accountObj.pnl);
         Assert.True(tradingObject?.accountObj.hasAccountExceededDrawdownThreshold());
@@ -84,9 +89,7 @@ public class AccountObjTests
         Assert.Equal(500, tradingObject?.accountObj.pnl);
         Assert.Equal(10, tradingObject?.accountObj.maximumDrawndownPercentage);
 
-        tradingObject?.tradeHistory.TryAdd("5", new TradeHistoryObject(){
-            profit=-60
-        });
+        tradingObject?.accountObj.AddTradeProftOrLoss(-60);
 
         Assert.Equal(440, tradingObject?.accountObj.pnl);
         Assert.True(tradingObject?.accountObj.hasAccountExceededDrawdownThreshold());

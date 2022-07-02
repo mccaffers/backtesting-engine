@@ -29,6 +29,8 @@ public class DataInputTests
     public void TestPopulateLocalBuffer(int expectedResult, string line){
 
         var envMock = TestEnvironment.SetEnvironmentVariables(); 
+        envMock.SetupGet<string[]>(x=>x.symbols).Returns(new string[]{"TestEnvironmentSetup"});
+
         var inputMock = new Mock<Ingest>(envMock.Object) {
             CallBase = true
         };

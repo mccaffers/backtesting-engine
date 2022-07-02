@@ -119,9 +119,7 @@ public class Reporting : TradingBase, IReporting
             tradeProfit = profit,
             stopDistanceInPips = int.Parse(envVariables.stopDistanceInPips),
             limitDistanceInPips = int.Parse(envVariables.limitDistanceInPips),
-            kineticLimit=envVariables.kineticLimit,
-            kineticStopLoss=envVariables.kineticStopLoss,
-            instanceCount=envVariables.instanceCount
+            environmentVariables=envVariables
         });
         
         _=BatchTradeUpdate();

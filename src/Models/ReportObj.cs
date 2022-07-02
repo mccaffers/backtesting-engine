@@ -49,7 +49,5 @@ public class ReportTradeObj {
     public int stopDistanceInPips {get;set;}
     public int limitDistanceInPips {get;set;}
     public int instanceCount { get; init; } = 0;
-    public int kineticStopLoss {get;init;}
-    public int kineticLimit {get;init;}
-
+    public IEnvironmentVariables? environmentVariables {get;set;}
 }

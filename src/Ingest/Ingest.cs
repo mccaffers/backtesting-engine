@@ -175,7 +175,8 @@ public class Ingest : IIngest
     public static bool ArrayHasRightValues(string[] values)
     {
         return values.Length > 4 &&
-            values.Skip(1).All(x => char.IsDigit(x.First()));
+            values.Skip(1).All(x => char.IsDigit(x.FirstOrDefault('a'))); 
+            // just a random default 'a' so that the application doesn't throw on an empty column eg. ,,,,
     }
 
     // Extract the datetime from the string

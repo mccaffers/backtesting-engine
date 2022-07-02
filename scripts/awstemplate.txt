@@ -23,6 +23,7 @@ export tradingSize=${tradingSize}
 export instanceCount=${instanceCount}
 export kineticStopLoss=${kineticStopLoss}
 export kineticLimit=${kineticLimit}
+export randomStrategyAmountOfHHLL=${randomStrategyAmountOfHHLL}
 
 export consoleLog=false
 export systemLog=false

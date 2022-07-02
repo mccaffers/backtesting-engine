@@ -30,6 +30,7 @@ public interface IEnvironmentVariables
     int kineticStopLoss {get; init;}
     int kineticLimit {get; init;}
     bool doNotCleanUpDataFolder {get;init;}
+    int randomStrategyAmountOfHHLL {get; init;}
     
     Dictionary<string, decimal> getScalingFactorDictionary();
     decimal GetScalingFactor(string symbol);
@@ -73,6 +74,7 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.tradingSize = Get("tradingSize");
         this.kineticStopLoss = int.Parse(Get("kineticStopLoss"));
         this.kineticLimit = int.Parse(Get("kineticLimit"));
+        this.randomStrategyAmountOfHHLL = int.Parse(Get("randomStrategyAmountOfHHLL"));
 
         if(!string.IsNullOrEmpty(Get("doNotCleanUpDataFolder", true))){
             this.doNotCleanUpDataFolder = bool.Parse(Get("doNotCleanUpDataFolder"));
@@ -111,6 +113,7 @@ public class EnvironmentVariables : IEnvironmentVariables
     public virtual bool doNotCleanUpDataFolder {get;init;}
     public virtual int kineticStopLoss {get;init;}
     public virtual int kineticLimit {get;init;}
+    public virtual int randomStrategyAmountOfHHLL {get; init;}
 
     // Custom environment variables
     public virtual string tickDataFolder { get; init; } = string.Empty;

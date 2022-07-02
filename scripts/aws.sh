@@ -19,19 +19,20 @@ main() {
     # Trading Variables
 
     # declare -a strategies=("VolatilityCalculator") 
-    declare -a strategies=("RandomStrategy") 
+    # declare -a strategies=("RandomStrategy") 
+    declare -a strategies=("RandomWithCloseAtHHLL") 
 
     # Major Forex Currencies
-    # declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
-    # yearsStart="2004"
+    declare -a symbolsArray=("EURUSD") # "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
+    yearsStart="2004"
 
     ## Multiple Indexes
     # declare -a symbolsArray=("JPNIDX225" "SPNIDX35" "FRAIDX40" "DEUIDX40" "AUSIDX200" "USAIDXTECH" "USAIDX500" "USAIDX30" "EURIDX600" "GBRIDX100")
     # yearsStart="2014"
     
     ## Crypto
-    declare -a symbolsArray=("ETHUSD" "BTCUSD")
-    yearsStart="2018"
+    # declare -a symbolsArray=("ETHUSD" "BTCUSD")
+    # yearsStart="2018"
 
     stopLossInPipsRange="500 20 500"
     limitInPipsRange="500 20 500"
@@ -40,9 +41,13 @@ main() {
     yearsEnd="2021"
     maximumDrawndownPercentage=75
     
-    kineticStopLossRange="200 200 800"
-    kineticLimitRange=1
-    kineticOn=1 # 1 on, 0 off
+    ## Trailing Stop Loss
+    kineticOn=0 # 1 on, 0 off
+    kineticStopLossRange="0 1 0"
+    kineticLimitRange="0 1 0"
+    
+    ## Random HH LL Strategy Customs
+    randomStrategyAmountOfHHLL="5 5 20"
 
     ######
 
@@ -104,15 +109,7 @@ limitFunc(){
     do
         export limitDistanceInPips=$pips
 
-        # If Kinetic has been set
-        if ((kineticOn))
-        then
-            kineticSLFunc
-        
-        else
-            export kineticStopLoss=0
-            deploy
-        fi
+        kineticSLFunc
 
     done
 }
@@ -132,9 +129,18 @@ kineticTPFunc(){
         export kineticLimit=$pips
         export limitDistanceInPips=$pips
         
+        randomStrategyHHLLFunc
+    done
+}
+
+randomStrategyHHLLFunc(){
+    for pips in `seq $randomStrategyAmountOfHHLL`
+    do
+        export randomStrategyAmountOfHHLL=$pips
         deploy
     done
 }
+
 
 instanceCount=0
 
