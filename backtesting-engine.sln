@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "backtesting-engine", "src\backtesting-engine.csproj", "{4AAF31D8-3E05-4A30-80D7-6D8B628C40AE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "backtesting-engine", "src\backtesting\backtesting-engine.csproj", "{4AAF31D8-3E05-4A30-80D7-6D8B628C40AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "tests\test.csproj", "{2FFC25A3-52B6-4B71-BAF2-DF3F0EBD1F1F}"
 EndProject

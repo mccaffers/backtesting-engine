@@ -25,6 +25,8 @@ public static class PathUtil {
         var codeBasePath = Uri.UnescapeDataString(codeBaseUrl.AbsolutePath);
         var dirPath = Path.GetDirectoryName(codeBasePath) ?? "";
 
+        System.Console.WriteLine(dirPath);
+
         if(relativePath.Length > 0){
             return Path.Combine(dirPath, "Resources", relativePath);
         } else {

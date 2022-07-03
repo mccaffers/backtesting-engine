@@ -1,5 +1,6 @@
 
 using backtesting_engine;
+using backtesting_engine.interfaces;
 using backtesting_engine_models;
 using Elasticsearch.Net;
 using Nest;
@@ -70,7 +71,6 @@ public class Reporting : TradingBase, IReporting
             stopDistanceInPips =  int.Parse(envVariables.stopDistanceInPips),
             limitDistanceInPips =  int.Parse(envVariables.limitDistanceInPips),
             instanceCount = envVariables.instanceCount,
-            environmentVariables=envVariables
         };
 
 
@@ -119,7 +119,6 @@ public class Reporting : TradingBase, IReporting
             tradeProfit = profit,
             stopDistanceInPips = int.Parse(envVariables.stopDistanceInPips),
             limitDistanceInPips = int.Parse(envVariables.limitDistanceInPips),
-            environmentVariables=envVariables
         });
         
         _=BatchTradeUpdate();

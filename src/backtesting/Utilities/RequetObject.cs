@@ -1,4 +1,5 @@
 using backtesting_engine;
+using backtesting_engine.interfaces;
 using Utilities;
 
 namespace backtesting_engine_models;

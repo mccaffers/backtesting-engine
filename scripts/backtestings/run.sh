@@ -7,8 +7,8 @@ set +o allexport
 
 runID=$(uuidgen|sed -e 's/-//g')
 
-dotnet build ./src
+dotnet build ./backtesting
 # dotnet test
 
 echo $runID
-dotnet run --project ./src
+dotnet run --project ./backtesting

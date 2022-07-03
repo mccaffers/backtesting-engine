@@ -75,8 +75,8 @@ main() {
     ######
 
     # Remove binary files
-    rm -rf ./src/bin/ ./src/obj/ ./tests/bin/ ./tests/obj/
-    zip -r engine.zip ./src ./backtesting-engine.sln ./tests
+    rm -rf ./backtesting/bin/ ./backtesting/obj/ ./tests/bin/ ./tests/obj/
+    zip -r engine.zip ./backtesting ./backtesting-engine.sln ./tests
     dotnet restore 
 
     # Associate the runID with the files, maybe move this to a commit ID in the future

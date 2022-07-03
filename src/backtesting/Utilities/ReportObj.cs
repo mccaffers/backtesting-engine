@@ -35,7 +35,7 @@ public class ReportFinalObj {
 
     public int instanceCount { get;set; }
 
-    public IEnvironmentVariables? environmentVariables {get;set;}
+    // public IEnvironmentVariables? environmentVariables {get;set;}
 }
 
 public class ReportTradeObj {
@@ -49,5 +49,5 @@ public class ReportTradeObj {
     public int stopDistanceInPips {get;set;}
     public int limitDistanceInPips {get;set;}
     public int instanceCount { get; init; } = 0;
-    public IEnvironmentVariables? environmentVariables {get;set;}
+    // public IEnvironmentVariables? environmentVariables {get;set;}
 }

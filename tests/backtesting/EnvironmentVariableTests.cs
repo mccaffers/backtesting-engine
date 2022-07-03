@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using backtesting_engine;
+using backtesting_engine.interfaces;
 using Moq;
 using Moq.Protected;
 using Utilities;

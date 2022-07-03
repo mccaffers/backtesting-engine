@@ -1,3 +1,5 @@
+using System;
+
 namespace backtesting_engine;
 
 public class OhlcObject {

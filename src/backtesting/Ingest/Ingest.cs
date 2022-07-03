@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
+using backtesting_engine.interfaces;
 using Newtonsoft.Json;
 using Utilities;
 

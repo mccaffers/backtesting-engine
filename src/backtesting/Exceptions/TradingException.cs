@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using backtesting_engine.interfaces;
 using Newtonsoft.Json;
 using Utilities;
 
