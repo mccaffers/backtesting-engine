@@ -7,13 +7,12 @@ public class RequestObject {
     
     private readonly IEnvironmentVariables env;
 
-    public RequestObject(PriceObj priceObj, TradeDirection direction, IEnvironmentVariables env)
+    public RequestObject(PriceObj priceObj, TradeDirection direction, IEnvironmentVariables env, string key)
     {
         this.priceObj = priceObj;
         this.direction = direction;
         this.openDate = priceObj.date;
-        // TODO
-        // this.key = DictionaryKeyStrings.OpenTrade(priceObj.symbol, priceObj.date);
+        this.key = key;
         this.symbol = priceObj.symbol;
         this.env = env;
         this.scalingFactor = env.GetScalingFactor(priceObj.symbol);

@@ -112,8 +112,9 @@ public class AccountObjTests
             ask=100,
         };
 
+        var key = DictionaryKeyStrings.OpenTrade(priceObj.symbol, priceObj.date);
         // Create a trade request object to open a trade
-        var request = new RequestObject(priceObj, TradeDirection.BUY, envVariables) {
+        var request = new RequestObject(priceObj, TradeDirection.BUY, envVariables, key) {
             size = 1
         };
 
@@ -130,8 +131,9 @@ public class AccountObjTests
             ask=100,
         };
 
+
         // Create a trade request object to open a trade
-        request = new RequestObject(priceObj, TradeDirection.BUY, envVariables) {
+        request = new RequestObject(priceObj, TradeDirection.BUY, envVariables, key) {
             size = 1
         };
 
@@ -159,8 +161,10 @@ public class AccountObjTests
             bid=120,
         };
 
+        var key = DictionaryKeyStrings.OpenTrade(priceObj.symbol, priceObj.date);
+
         // Create a trade request object to open a trade
-        var request = new RequestObject(priceObj, TradeDirection.SELL, envVariables) {
+        var request = new RequestObject(priceObj, TradeDirection.SELL, envVariables, key) {
             size = 1
         };
 

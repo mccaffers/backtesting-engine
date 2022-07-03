@@ -70,7 +70,6 @@ public class PositionTests
         var envVariables = provider.GetService<IEnvironmentVariables>() ?? new EnvironmentVariables();
         var openOrder = provider.GetService<IOpenOrder>();
 
-
         // Act
         // Inital price event
         var priceObj = new PriceObj() {
@@ -79,10 +78,12 @@ public class PositionTests
             bid=bid,
         };
 
+        var key = DictionaryKeyStrings.OpenTrade(priceObj.symbol, priceObj.date);
+
         // Create a trade request object to open a trade
         openOrder?.Request(new RequestObject(priceObj,
                                              tradeDirection,
-                                             envVariables) {
+                                             envVariables, key) {
             size = 1,
         });
 

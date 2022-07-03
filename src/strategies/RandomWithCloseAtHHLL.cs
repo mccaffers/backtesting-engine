@@ -55,7 +55,9 @@ public class RandomWithCloseAtHhll : IStrategy
                 limitLevel = recentLow;
             }
 
-            var openOrderRequest = new RequestObject(priceObj, direction, envVariables)
+            var key = DictionaryKeyStrings.OpenTrade(priceObj.symbol, priceObj.date);
+
+            var openOrderRequest = new RequestObject(priceObj, direction, envVariables, key)
             {
                 size = decimal.Parse(envVariables.tradingSize),
                 stopLevel = stopLevel,

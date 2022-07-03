@@ -9,7 +9,7 @@ public static class ServiceExtension {
     public static IServiceCollection RegisterStrategies(this IServiceCollection services, IEnvironmentVariables variables)
     {
         foreach(var i in variables.strategy.Split(",")){
-            var _type = Type.GetType("backtesting_engine_strategies." + i) ?? default(Type);
+            var _type = Type.GetType("backtesting_engine_strategies." + i + ",strategies") ?? default(Type);
             if(_type is not null && typeof(IStrategy).IsAssignableFrom(_type) ){
                 services.AddSingleton(typeof(IStrategy), _type);
             }

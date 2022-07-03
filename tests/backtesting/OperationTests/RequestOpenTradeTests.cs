@@ -4,6 +4,7 @@ using backtesting_engine.interfaces;
 using backtesting_engine_models;
 using backtesting_engine_operations;
 using Moq;
+using Utilities;
 using Xunit;
 
 namespace Tests;
@@ -36,7 +37,8 @@ public class RequestOpenTradesTests
         var requestOpenTradeMock = new Mock<RequestOpenTrade>(openOrderMock.Object);
         
         // Create a trade request object to open a trade
-        var reqObj = new RequestObject(priceObj, TradeDirection.BUY, environmentMock.Object) {
+        var key = DictionaryKeyStrings.OpenTrade(priceObj.symbol, priceObj.date);
+        var reqObj = new RequestObject(priceObj, TradeDirection.BUY, environmentMock.Object, key) {
             size = 1,
         };
 
@@ -69,8 +71,10 @@ public class RequestOpenTradesTests
 
         var requestOpenTradeMock = new Mock<RequestOpenTrade>(openOrderMock.Object );
 
+        var key = DictionaryKeyStrings.OpenTrade(priceObj.symbol, priceObj.date);
+
         // Create a trade request object to open a trade
-        var reqObj = new RequestObject(priceObj, TradeDirection.BUY, environmentMock.Object) {
+        var reqObj = new RequestObject(priceObj, TradeDirection.BUY, environmentMock.Object, key) {
             size = 1,
         };
 
@@ -78,7 +82,7 @@ public class RequestOpenTradesTests
         Assert.Equal(priceObj.ask-1, receivedReqObj?.level);
 
         // Create a trade request object to open a trade
-        reqObj = new RequestObject(priceObj, TradeDirection.SELL, environmentMock.Object) {
+        reqObj = new RequestObject(priceObj, TradeDirection.SELL, environmentMock.Object, key) {
             size = 1,
         };
 
@@ -110,8 +114,10 @@ public class RequestOpenTradesTests
 
         var requestOpenTradeMock = new Mock<RequestOpenTrade>(openOrderMock.Object);
 
+        var key = DictionaryKeyStrings.OpenTrade(priceObj.symbol, priceObj.date);
+
         // Create a trade request object to open a trade
-        var reqObj = new RequestObject(priceObj, TradeDirection.BUY, environmentMock.Object) {
+        var reqObj = new RequestObject(priceObj, TradeDirection.BUY, environmentMock.Object, key) {
             size = 1,
             stopDistancePips = 10,
             limitDistancePips = 10
@@ -140,7 +146,7 @@ public class RequestOpenTradesTests
         };
 
         // Create a trade request object to open a trade
-        reqObj = new RequestObject(priceObj, TradeDirection.SELL, environmentMock.Object) {
+        reqObj = new RequestObject(priceObj, TradeDirection.SELL, environmentMock.Object, key) {
             size = 1,
             stopDistancePips = 10,
             limitDistancePips = 10

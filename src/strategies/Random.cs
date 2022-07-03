@@ -5,6 +5,7 @@ using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
 using backtesting_engine.interfaces;
 using backtesting_engine_models;
+using Utilities;
 
 namespace backtesting_engine_strategies;
 
@@ -31,7 +32,9 @@ public class RandomStrategy : IStrategy
             direction = TradeDirection.SELL;
         }
 
-        var openOrderRequest = new RequestObject(priceObj, direction, envVariables)
+        var key = DictionaryKeyStrings.OpenTrade(priceObj.symbol, priceObj.date);
+
+        var openOrderRequest = new RequestObject(priceObj, direction, envVariables, key)
         {
             size = decimal.Parse(envVariables.tradingSize),
             stopDistancePips = decimal.Parse(envVariables.stopDistanceInPips),
