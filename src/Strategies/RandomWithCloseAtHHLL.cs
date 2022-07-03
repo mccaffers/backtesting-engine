@@ -11,13 +11,13 @@ using Utilities;
 namespace backtesting_engine_strategies;
 
 
-public class RandomWithCloseAtHHLL : IStrategy
+public class RandomWithCloseAtHhll : IStrategy
 {
     readonly IRequestOpenTrade requestOpenTrade;
     readonly IEnvironmentVariables envVariables;
-    private List<OHLCObject> ohlcList = new List<OHLCObject>();
+    private List<OhlcObject> ohlcList = new List<OhlcObject>();
 
-    public RandomWithCloseAtHHLL(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables)
+    public RandomWithCloseAtHhll(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables)
     {
         this.requestOpenTrade = requestOpenTrade;
         this.envVariables = envVariables;
@@ -27,20 +27,22 @@ public class RandomWithCloseAtHHLL : IStrategy
     public void Invoke(PriceObj priceObj)
     {
 
-        ohlcList = GenericOHLC.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromHours(envVariables.randomStrategyAmountOfHHLL), ohlcList);
+        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromHours(envVariables.randomStrategyAmountOfHHLL), ohlcList);
 
         // Keep 30 days of history
-        if(ohlcList.Count() > 10){
+        if(ohlcList.Count > 10){
             
             var recentHigh = ohlcList.Max(x=>x.high);
             var recentLow = ohlcList.Min(x=>x.low);
 
             var randomInt = new Random().Next(2); // 0 or 1
+
+            // Default to BUY
             TradeDirection direction = TradeDirection.BUY;
             if (randomInt== 0)
             { 
                 direction = TradeDirection.SELL;
-            }
+            } 
 
             var stopLevel = 0m;
             var limitLevel = 0m;
@@ -48,11 +50,9 @@ public class RandomWithCloseAtHHLL : IStrategy
             if(direction == TradeDirection.BUY){
                 stopLevel = recentLow;
                 limitLevel = recentHigh;
-                // limitLevel = ((recentHigh-priceObj.ask)/2) + priceObj.ask;
-            } else if(direction == TradeDirection.SELL){
+            } else {
                 stopLevel = recentHigh;
                 limitLevel = recentLow;
-                // limitLevel = ((priceObj.ask-recentLow)/2) - priceObj.ask;
             }
 
             var openOrderRequest = new RequestObject(priceObj, direction, envVariables)

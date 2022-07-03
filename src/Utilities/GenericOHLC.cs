@@ -3,14 +3,14 @@ using backtesting_engine;
 namespace Utilities
 {
 
-    public static class GenericOHLC
+    public static class GenericOhlc
     {
 
-        public static List<OHLCObject> CalculateOHLC(PriceObj priceObj, decimal price, TimeSpan duration, List<OHLCObject> OHLCArray) {
+        public static List<OhlcObject> CalculateOHLC(PriceObj priceObj, decimal price, TimeSpan duration, List<OhlcObject> OHLCArray) {
 
             // If the array is empty lets start populating
-            if(OHLCArray.Count() == 0){
-                OHLCArray.Add(new OHLCObject(){
+            if(OHLCArray.Count == 0){
+                OHLCArray.Add(new OhlcObject(){
                     date=priceObj.date,
                     open=price,
                     high=price,
@@ -19,19 +19,19 @@ namespace Utilities
                 });
             }
 
-            var index = OHLCArray.Count()-1; // Get the last item
+            var index = OHLCArray.Count-1; // Get the last item
 
             // if we hit the minute threshold, build a new OHLC object
             var diff = priceObj.date.Subtract(OHLCArray[index].date).TotalMinutes;
             if(diff > duration.TotalMinutes){
-                OHLCArray.Add(new OHLCObject(){
+                OHLCArray.Add(new OhlcObject(){
                     date=priceObj.date,
                     open=price,
                     high=price,
                     low=price,
                     close=price
                 });
-                index = OHLCArray.Count()-1; 
+                index = OHLCArray.Count-1; 
             }
 
             if(price > OHLCArray[index].high){

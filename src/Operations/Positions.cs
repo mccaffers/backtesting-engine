@@ -11,7 +11,7 @@ public interface IPositions
     void CloseAll();
     IEnumerable<RequestObject> GetOrderBook(string symbol);
     void Review(PriceObj priceObj);
-    void KinetStopLimit(PriceObj priceObj);
+    void TrailingStopLoss(PriceObj priceObj);
     void UpdateTradeHistory(RequestObject reqObj);
     void ReviewEquity();
 }
@@ -26,54 +26,63 @@ public class Positions : TradingBase, IPositions
         this.envVaribles = envVaribles;
     }
 
-    public void KinetStopLimit(PriceObj priceObj)
+    public void TrailingStopLoss(PriceObj priceObj)
     {
+
+        // Check Trailing Stop Loss is active
         if(envVaribles.kineticStopLoss == 0){
             return;
         }
 
         foreach (var myTradeObj in GetOrderBook(priceObj.symbol))
         {
+            // Update the close price, referenced in further conditions
             myTradeObj.UpdateClose(priceObj);
 
-            var distance = envVaribles.kineticStopLoss;
-
-            // if(myTradeObj.profit>50){
-            //     distance=distance/2;      
-            // }
-
-            // if(myTradeObj.profit>100){
-            //     distance=distance/3;      
-            // }
+            var distance = envVaribles.kineticStopLoss / envVaribles.GetScalingFactor(priceObj.symbol);
 
             if(myTradeObj.direction == TradeDirection.BUY){
-                var proposedStoplevel = myTradeObj.close - (distance / envVaribles.GetScalingFactor(priceObj.symbol));
-                if(proposedStoplevel > myTradeObj.stopLevel){
-                    myTradeObj.stopLevel=proposedStoplevel;
-                }
-
-                if(envVaribles.kineticLimit !=0){
-                    var proposedLimit = myTradeObj.close + (distance / envVaribles.GetScalingFactor(priceObj.symbol));
-                    if(proposedLimit > myTradeObj.limitLevel){
-                        myTradeObj.limitLevel = proposedLimit;
-                    }
-                }
-                
+                UpdateSLForBUYDirection(myTradeObj, distance);
             } else if(myTradeObj.direction == TradeDirection.SELL){
-                var proposedStoplevel = myTradeObj.close + (distance / envVaribles.GetScalingFactor(priceObj.symbol));
-                if(proposedStoplevel < myTradeObj.stopLevel){
-                    myTradeObj.stopLevel=proposedStoplevel;
-                }
-
-                if(envVaribles.kineticLimit !=0){
-                    var proposedLimit = myTradeObj.close - (distance / envVaribles.GetScalingFactor(priceObj.symbol));
-                    if(proposedLimit < myTradeObj.limitLevel){
-                        myTradeObj.limitLevel = proposedLimit;
-                    }
-                }
+                UpdateSLForSELLDirection(myTradeObj, distance);
             }
         }
+    }
 
+    private void UpdateSLForBUYDirection(RequestObject? myTradeObj, decimal distance){
+        if(myTradeObj == null){
+            return;
+        }
+
+        var proposedStoplevel = myTradeObj.close - distance;
+        if(proposedStoplevel > myTradeObj.stopLevel){
+            myTradeObj.stopLevel=proposedStoplevel;
+        }
+
+        if(envVaribles.kineticLimit !=0){
+            var proposedLimit = myTradeObj.close + distance;
+            if(proposedLimit > myTradeObj.limitLevel){
+                myTradeObj.limitLevel = proposedLimit;
+            }
+        }
+    }
+    
+    private void UpdateSLForSELLDirection(RequestObject? myTradeObj, decimal distance){
+        if(myTradeObj == null){
+            return;
+        }
+
+        var proposedStoplevel = myTradeObj.close + distance;
+        if(proposedStoplevel < myTradeObj.stopLevel){
+            myTradeObj.stopLevel=proposedStoplevel;
+        }
+
+        if(envVaribles.kineticLimit !=0){
+            var proposedLimit = myTradeObj.close - distance;
+            if(proposedLimit < myTradeObj.limitLevel){
+                myTradeObj.limitLevel = proposedLimit;
+            }
+        }
     }
 
     public void ReviewEquity()

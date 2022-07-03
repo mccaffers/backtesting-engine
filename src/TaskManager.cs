@@ -16,16 +16,12 @@ public class TaskManager : ITaskManager
 
     readonly IConsumer con;
     readonly IIngest ing;
-    readonly IReporting reporting;
-    readonly IEnvironmentVariables envVariables;
 
-    public TaskManager(IConsumer c, IIngest i, IReporting reporting, IEnvironmentVariables envVariables)
+    public TaskManager(IConsumer c, IIngest i)
     {
         this.con = c;
         this.ing = i;
         this.buffer = new BufferBlock<PriceObj>();
-        this.reporting = reporting;
-        this.envVariables = envVariables;
     }
 
     public async Task IngestAndConsume()

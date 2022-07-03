@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Utilities;
 
 public static class DecimalUtil
 {
 
-    public static int[] powof10 = new int[10]
+    private static int[] powof10 = new int[10]
     {
         1,
         10,
@@ -17,6 +19,7 @@ public static class DecimalUtil
         1000000000
     };
 
+    [SuppressMessage("Sonar Code Smell", "S3776:Cognitive Complexity of methods should not be too high", Justification = "Decimal parser taken from open source for faster parsing")]
     public static decimal ParseDecimal(string input)
     {
         int len = input.Length;
