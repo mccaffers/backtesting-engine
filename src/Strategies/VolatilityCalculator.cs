@@ -44,9 +44,6 @@ public class VolatilityCalculator : IStrategy
     private List<decimal> distanceBetweenPriceMoves = new List<decimal>();
     private List<decimal> spreadDistance = new List<decimal>();
 
-    private decimal lastBid = decimal.Zero;
-    private decimal lastAsk = decimal.Zero;
-
     public void Invoke(PriceObj priceObj) {
 
         ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromDays(1), ohlcList);
@@ -60,14 +57,7 @@ public class VolatilityCalculator : IStrategy
             lastPrice=priceObj.ask;
         }
 
-        if(lastBid!=priceObj.bid){
-            lastBid=priceObj.bid;
-        }
-        if(lastAsk!=priceObj.ask){
-            lastAsk=priceObj.ask;
-        }
-
-        var spread = Math.Abs(lastAsk - lastBid);
+        var spread = Math.Abs(priceObj.ask - priceObj.bid);
         spreadDistance.Add(spread); 
 
         // Will only be higher than one count if there is more than one day in the list
