@@ -20,7 +20,7 @@ public class ExtensionTests
             date=currentDt
         };
 
-        var output = DictionaryKeyStrings.OpenTrade(priceObj);
+        var output = DictionaryKeyStrings.OpenTrade(priceObj.symbol,priceObj.date);
         Assert.Equal(priceObj.symbol + "-" + priceObj.date, output);
     }
 

@@ -1,13 +1,9 @@
 using backtesting_engine;
+using backtesting_engine.interfaces;
 using backtesting_engine_models;
 using Utilities;
 
 namespace backtesting_engine_operations;
-
-public interface IRequestOpenTrade
-{
-    void Request(RequestObject reqObj);
-}
 
 public class RequestOpenTrade : IRequestOpenTrade
 {

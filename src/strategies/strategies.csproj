@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>backtesting_engine</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -14,8 +13,9 @@
     <PackageReference Include="NEST" Version="7.17.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <ProjectReference Include="..\models\models.csproj" />
+    <ProjectReference Include="..\utilities\utilities.csproj" />
     <ProjectReference Include="..\interfaces\interfaces.csproj" />
-    <ProjectReference Include="..\strategies\strategies.csproj" />
  </ItemGroup>
+
 
 </Project>

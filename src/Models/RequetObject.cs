@@ -1,6 +1,5 @@
 using backtesting_engine;
 using backtesting_engine.interfaces;
-using Utilities;
 
 namespace backtesting_engine_models;
 
@@ -13,7 +12,8 @@ public class RequestObject {
         this.priceObj = priceObj;
         this.direction = direction;
         this.openDate = priceObj.date;
-        this.key = DictionaryKeyStrings.OpenTrade(priceObj);
+        // TODO
+        // this.key = DictionaryKeyStrings.OpenTrade(priceObj.symbol, priceObj.date);
         this.symbol = priceObj.symbol;
         this.env = env;
         this.scalingFactor = env.GetScalingFactor(priceObj.symbol);

@@ -5,16 +5,8 @@ using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
 using backtesting_engine.interfaces;
 using backtesting_engine_models;
-using backtesting_engine_operations;
-using Newtonsoft.Json;
-using Utilities;
 
 namespace backtesting_engine_strategies;
-
-public interface IStrategy
-{
-    void Invoke(PriceObj priceObj);
-}
 
 public class RandomStrategy : IStrategy
 {

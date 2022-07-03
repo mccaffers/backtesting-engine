@@ -1,13 +1,10 @@
 using backtesting_engine.analysis;
+using backtesting_engine.interfaces;
 using backtesting_engine_models;
 using Utilities;
 
 namespace backtesting_engine;
 
-public interface ICloseOrder
-{
-    void Request(TradeHistoryObject tradeHistoryObj);
-}
 
 public class CloseOrder : TradingBase, ICloseOrder
 {
@@ -21,7 +18,8 @@ public class CloseOrder : TradingBase, ICloseOrder
     // Data Update
     public void Request(TradeHistoryObject tradeHistoryObj)
     {
-        this.tradingObjects.tradeHistory.TryAdd(DictionaryKeyStrings.CloseTradeKey(tradeHistoryObj), tradeHistoryObj);
+        var key = DictionaryKeyStrings.CloseTradeKey(tradeHistoryObj.symbol, tradeHistoryObj.openDate, tradeHistoryObj.level);
+        this.tradingObjects.tradeHistory.TryAdd(key, tradeHistoryObj);
         this.tradingObjects.accountObj.AddTradeProftOrLoss(tradeHistoryObj.profit);
         this.tradingObjects.openTrades.TryRemove(tradeHistoryObj.key, out _);
 
