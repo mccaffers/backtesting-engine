@@ -146,7 +146,7 @@ public class DataInputTests
         consumerMock.Setup<Task>(x=>x.ConsumeAsync(It.IsAny<BufferBlock<PriceObj>>(), It.IsAny<CancellationToken>()))
                         .Returns(Task.FromResult(0));
 
-        var taskManagerMock = new Mock<TaskManager>(consumerMock.Object, ingestMock.Object, reportingMock.Object, envMock.Object); // can't mock program
+        var taskManagerMock = new Mock<TaskManager>(consumerMock.Object, ingestMock.Object); // can't mock program
 
         ingestMock.Object.fileNames.Add(Path.Combine(PathUtil.GetTestPath("TestEnvironmentSetup"), "testSymbol.csv"));
 
