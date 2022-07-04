@@ -41,9 +41,9 @@ public class ExtensionTests
         var envMock = TestEnvironment.SetEnvironmentVariables(); 
 
         // Strategy that does exist
-        envMock.SetupGet<string>(x=>x.strategy).Returns("RandomStrategy");
+        envMock.SetupGet<string>(x=>x.strategy).Returns("RandomWithCloseAtHHLL");
         var collection = new ServiceCollection().RegisterStrategies(envMock.Object);
-        var response = collection.All(x=> x.ImplementationType!=null && x.ImplementationType.Name == "RandomStrategy");
+        var response = collection.All(x=> x.ImplementationType!=null && x.ImplementationType.Name == "RandomWithCloseAtHHLL");
         Assert.True(response);
         
     }
