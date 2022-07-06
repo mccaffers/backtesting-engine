@@ -25,8 +25,8 @@ export kineticStopLoss=${kineticStopLoss}
 export kineticLimit=${kineticLimit}
 export randomStrategyAmountOfHHLL=${randomStrategyAmountOfHHLL}
 
-export consoleLog=false
-export systemLog=false
+export consoleLog=true
+export systemLog=true
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
@@ -53,6 +53,6 @@ rm -rf ./files.zip
 
 # Run project
 dotnet build /home/ec2-user/project -v q
-dotnet run --project /home/ec2-user/project/src
-poweroff
+dotnet run --project /home/ec2-user/project/src/backtesting
+# poweroff
 }  &> /home/ec2-user/output.txt 

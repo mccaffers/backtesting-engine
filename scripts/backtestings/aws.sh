@@ -31,7 +31,7 @@ main() {
     # yearsStart="2014"
     
     ## Crypto
-    declare -a symbolsArray=("ETHUSD" "BTCUSD")
+    declare -a symbolsArray=("ETHUSD") # "BTCUSD")
     yearsStart="2018"
 
     #####
@@ -75,8 +75,8 @@ main() {
     ######
 
     # Remove binary files
-    rm -rf ./backtesting/bin/ ./backtesting/obj/ ./tests/bin/ ./tests/obj/
-    zip -r engine.zip ./backtesting ./backtesting-engine.sln ./tests
+    find . -iname "bin" -o -iname "obj" | xargs rm -rf
+    zip -r engine.zip ./src ./backtesting-engine.sln ./tests
     dotnet restore 
 
     # Associate the runID with the files, maybe move this to a commit ID in the future

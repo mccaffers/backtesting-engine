@@ -11,8 +11,6 @@ using Utilities;
 
 namespace backtesting_engine_strategies;
 
-
-
 public class VolatilityCalculator : IStrategy
 {
     readonly IEnvironmentVariables envVariables;
@@ -69,8 +67,6 @@ public class VolatilityCalculator : IStrategy
                 distanceBetweenPriceMoves=distanceBetweenPriceMoves.Average(),
                 spreadDistance=spreadDistance.Average() * envVariables.GetScalingFactor(priceObj.symbol)
             };
-
-            System.Console.WriteLine(vObject.spreadDistance);
 
             distanceBetweenPriceMoves=new List<decimal>();
             spreadDistance=new List<decimal>();
