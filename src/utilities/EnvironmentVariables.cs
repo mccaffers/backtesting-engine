@@ -14,38 +14,50 @@ public class EnvironmentVariables : IEnvironmentVariables
             return;
         }
 
+        this.operatingEnvironment = Get("operatingEnvironment");
+
+        // Variables for both environments
         this.strategy = Get("strategy");
-        this.runID = Get("runID");
-        this.symbolFolder = Get("symbolFolder");
         this.stopDistanceInPips = Get("stopDistanceInPips");
         this.limitDistanceInPips = Get("limitDistanceInPips");
-        this.elasticPassword = Get("elasticPassword");
-        this.elasticUser = Get("elasticUser");
-        this.elasticCloudID = Get("elasticCloudID");
-        this.accountEquity = Get("accountEquity");
-        this.maximumDrawndownPercentage = Get("maximumDrawndownPercentage");
-        this.s3Bucket = Get("s3Bucket");
-        this.s3Path = Get("s3Path");
-        this.hostname = Dns.GetHostName();
-        this.runIteration = Get("runIteration");
-        this.instanceCount = int.Parse(Get("instanceCount"));
-        this.tickDataFolder = Path.Combine(Path.GetFullPath("./" + this.symbolFolder));
         this.reportingEnabled = bool.Parse(Get("reportingEnabled"));
-        this.symbols = Get("symbols").Split(",");
-
-        this.yearsStart = int.Parse(Get("yearsStart"));
-        this.yearsEnd = int.Parse(Get("yearsEnd"));
-
-        this.years = Enumerable.Range(this.yearsStart, this.yearsEnd - this.yearsStart + 1).ToArray(); 
         this.scalingFactor = Get("scalingFactor");
         this.tradingSize = Get("tradingSize");
         this.kineticStopLoss = int.Parse(Get("kineticStopLoss"));
-        this.kineticLimit = int.Parse(Get("kineticLimit"));
-        this.randomStrategyAmountOfHHLL = int.Parse(Get("randomStrategyAmountOfHHLL"));
+        this.symbols = Get("symbols").Split(",");
 
-        if(!string.IsNullOrEmpty(Get("doNotCleanUpDataFolder", true))){
-            this.doNotCleanUpDataFolder = bool.Parse(Get("doNotCleanUpDataFolder"));
+        if(operatingEnvironment == "AWS-Lambda"){
+
         }
+
+        if(operatingEnvironment == "Backtesting"){
+            this.randomStrategyAmountOfHHLL = int.Parse(Get("randomStrategyAmountOfHHLL"));
+            this.kineticLimit = int.Parse(Get("kineticLimit"));
+            this.maximumDrawndownPercentage = Get("maximumDrawndownPercentage");
+            this.accountEquity = Get("accountEquity");
+            this.runID = Get("runID");
+            this.symbolFolder = Get("symbolFolder");
+            this.elasticPassword = Get("elasticPassword");
+            this.elasticUser = Get("elasticUser");
+            this.elasticCloudID = Get("elasticCloudID");
+            this.s3Bucket = Get("s3Bucket");
+            this.s3Path = Get("s3Path");
+            this.hostname = Dns.GetHostName();
+            this.runIteration = Get("runIteration");
+            this.instanceCount = int.Parse(Get("instanceCount"));
+            this.tickDataFolder = Path.Combine(Path.GetFullPath("./" + this.symbolFolder));
+            this.symbols = Get("symbols").Split(",");
+
+            this.yearsStart = int.Parse(Get("yearsStart"));
+            this.yearsEnd = int.Parse(Get("yearsEnd"));
+
+            this.years = Enumerable.Range(this.yearsStart, this.yearsEnd - this.yearsStart + 1).ToArray(); 
+
+            if(!string.IsNullOrEmpty(Get("doNotCleanUpDataFolder", true))){
+                this.doNotCleanUpDataFolder = bool.Parse(Get("doNotCleanUpDataFolder"));
+            }
+        }
+
 
     }
 
@@ -88,6 +100,7 @@ public class EnvironmentVariables : IEnvironmentVariables
     public virtual bool reportingEnabled { get; init; } = false;
     public virtual string[] symbols { get; init; } = new string[] { string.Empty };
     public virtual int[] years { get; init; } = new int[] {0};
+    public string operatingEnvironment { get; init; } = string.Empty;
 
     public Dictionary<string, decimal> getScalingFactorDictionary()
     {

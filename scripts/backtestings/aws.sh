@@ -24,7 +24,7 @@ main() {
 
     # Major Forex Currencies
     declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
-    yearsStart="2021"
+    yearsStart="2004"
 
     ## Multiple Indexes
     # declare -a symbolsArray=("JPNIDX225" "SPNIDX35" "FRAIDX40" "DEUIDX40" "AUSIDX200" "USAIDXTECH" "USAIDX500" "USAIDX30" "EURIDX600" "GBRIDX100")
@@ -37,7 +37,7 @@ main() {
     #####
     # Trading Defaults
     # Do not change here
-    stopLossInPipsRange="20 1 20"
+    stopLossInPipsRange="1 1 1"
     limitInPipsRange="1 1 1"
     iterationRange="1 1 1"
     yearsEnd="2021"

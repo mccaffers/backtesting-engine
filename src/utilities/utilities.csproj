@@ -9,6 +9,9 @@
 
  <ItemGroup>
     <ProjectReference Include="..\models\models.csproj" />
+    <ProjectReference Include="..\interfaces\interfaces.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+
  </ItemGroup>
 
 </Project>

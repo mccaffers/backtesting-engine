@@ -1,5 +1,4 @@
 using backtesting_engine.interfaces;
-using backtesting_engine_strategies;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Utilities;

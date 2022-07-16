@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -26,6 +25,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{76ABF554-EC51-4EA3-899F-B0387990D11C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ingest.Tests", "src\live\ingest\test\ingest.Tests.csproj", "{9309B617-28FB-4D1B-ACF3-C9E84531C104}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "invokeStrategy", "src\live\invokeStrategy\src\invokeStrategy.csproj", "{43DDF3A9-631C-4110-86CF-7130FCF827C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "invokeStrategy.Tests", "src\live\invokeStrategy\test\invokeStrategy.Tests.csproj", "{E10AA747-1A9F-46AF-AFD7-C4B635E8CDF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,6 +71,14 @@ Global
 		{9309B617-28FB-4D1B-ACF3-C9E84531C104}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9309B617-28FB-4D1B-ACF3-C9E84531C104}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9309B617-28FB-4D1B-ACF3-C9E84531C104}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43DDF3A9-631C-4110-86CF-7130FCF827C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43DDF3A9-631C-4110-86CF-7130FCF827C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43DDF3A9-631C-4110-86CF-7130FCF827C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43DDF3A9-631C-4110-86CF-7130FCF827C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E10AA747-1A9F-46AF-AFD7-C4B635E8CDF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E10AA747-1A9F-46AF-AFD7-C4B635E8CDF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E10AA747-1A9F-46AF-AFD7-C4B635E8CDF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E10AA747-1A9F-46AF-AFD7-C4B635E8CDF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A1E8C629-D887-45F8-A4F9-41AA2B64A9D0} = {34DC4AAB-D45F-424A-AC69-30631C0F870A}

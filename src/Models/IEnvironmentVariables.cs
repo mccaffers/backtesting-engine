@@ -2,6 +2,9 @@ namespace backtesting_engine.interfaces;
 
 public interface IEnvironmentVariables
 {
+    string operatingEnvironment { get; init; }
+    
+    // Both
     string strategy { get; init; }
     string runID { get; init; }
     string symbolFolder { get; init; }
@@ -32,4 +35,5 @@ public interface IEnvironmentVariables
     
     Dictionary<string, decimal> getScalingFactorDictionary();
     decimal GetScalingFactor(string symbol);
+    
 }

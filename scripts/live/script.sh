@@ -1,1 +1,0 @@
-dotnet lambda deploy-function -pl src/live/ingest/src/ -fn AutomatedTradingIngest -frole Lambda-MyFunction --function-handler ingest::ingest.Function::FunctionHandler
