@@ -1,8 +1,13 @@
+using Amazon;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.DynamoDBEvents;
 using backtesting_engine;
 using backtesting_engine.interfaces;
+using Elasticsearch.Net;
 using Microsoft.Extensions.DependencyInjection;
+using Nest;
 using Newtonsoft.Json;
 using Utilities;
 
@@ -13,22 +18,36 @@ namespace invokeStrategy;
 
 public class Function
 {
-
     private static EnvironmentVariables variables = new EnvironmentVariables();
-    private IServiceCollection? _serviceCollection;
+
+    private static AmazonDynamoDBConfig ClientConfig = new AmazonDynamoDBConfig { RegionEndpoint = RegionEndpoint.EUWest1 };        
+    private static CloudConnectionPool pool = new CloudConnectionPool(variables.elasticCloudID, new BasicAuthenticationCredentials(variables.elasticUser, variables.elasticPassword));
+    private static ConnectionSettings settings = new ConnectionSettings(pool).RequestTimeout(TimeSpan.FromMinutes(2)).EnableApiVersioningHeader().EnableDebugMode();
+
+    private ServiceProvider? serviceProvider;
 
     public Function() => ConfigureServices();
 
     private void ConfigureServices()
     {
         // add dependencies here
-        _serviceCollection = new ServiceCollection()
+        serviceProvider = new ServiceCollection()
             .RegisterStrategies(variables)
-            .AddSingleton<IEnvironmentVariables>(variables);
+            .AddTransient<IRequestOpenTrade, LiveRequestOpenTrade>()
+            .AddTransient<IOpenOrder, OpenOrder>()
+            .AddSingleton<IEnvironmentVariables>(variables)
+            .BuildServiceProvider();
+
     }
+
+    public static DynamoDBContext dynamoDbContext = new DynamoDBContext(new AmazonDynamoDBClient(ClientConfig));
+    public static ElasticClient esClient = new ElasticClient(settings);
     
     public string FunctionHandler(DynamoDBEvent input, ILambdaContext context)
-    {
+    {   
+
+        System.Console.WriteLine(JsonConvert.SerializeObject(input));
+
         Console.WriteLine($"Beginning to process {input.Records.Count} records...");
 
        foreach (var record in input.Records)
@@ -38,19 +57,29 @@ public class Function
             System.Console.WriteLine(JsonConvert.SerializeObject(myObject));
         }
 
-        var esClient = new ElasticClient(settings);
+        // Get the newest DynamoDB object
+        var dynamoDBTick = input.Records.OrderBy(x=>DynamoDbStreamToObject.Convert<PriceObj>(x.Dynamodb.NewImage).date).Last();
+        var priceObj = DynamoDbStreamToObject.Convert<PriceObj>(dynamoDBTick.Dynamodb.NewImage);
+
         //Send an initial report to ElasticSearch
         var response = esClient.Index(new LambdaReport() {
-                            message = "triggered",
+                            function = "invokeStrategy",
+                            priceObj = priceObj,
+                            strategy = variables.strategy,
                             date = DateTime.Now
                         }, b => b.Index("live-invoke"));
 
-        System.Console.WriteLine(response);
-
+        var strategy = serviceProvider?.GetRequiredService<IStrategy>();
+        strategy.Invoke(priceObj);
+        
         return "Success";
     }
 }
 
 public class LambdaReport {
-    public string message {get;set;}
+    public string function {get;set;} = string.Empty;
+    public PriceObj? priceObj {get;set;}
+    public string strategy {get;set;} = string.Empty;
+    public DateTime date {get;set;}
+    
 }

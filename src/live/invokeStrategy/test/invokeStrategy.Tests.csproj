@@ -12,6 +12,6 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\invokeStrategy\invokeStrategy.csproj" />
+    <ProjectReference Include="..\src\invokeStrategy.csproj" />
   </ItemGroup>
 </Project>

@@ -25,6 +25,9 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.tradingSize = Get("tradingSize");
         this.kineticStopLoss = int.Parse(Get("kineticStopLoss"));
         this.symbols = Get("symbols").Split(",");
+        this.elasticPassword = Get("elasticPassword");
+        this.elasticUser = Get("elasticUser");
+        this.elasticCloudID = Get("elasticCloudID");
 
         if(operatingEnvironment == "AWS-Lambda"){
 
@@ -37,9 +40,7 @@ public class EnvironmentVariables : IEnvironmentVariables
             this.accountEquity = Get("accountEquity");
             this.runID = Get("runID");
             this.symbolFolder = Get("symbolFolder");
-            this.elasticPassword = Get("elasticPassword");
-            this.elasticUser = Get("elasticUser");
-            this.elasticCloudID = Get("elasticCloudID");
+
             this.s3Bucket = Get("s3Bucket");
             this.s3Path = Get("s3Path");
             this.hostname = Dns.GetHostName();
