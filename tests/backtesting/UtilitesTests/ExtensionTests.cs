@@ -40,10 +40,10 @@ public class ExtensionTests
         
         var envMock = TestEnvironment.SetEnvironmentVariables(); 
 
-        // Strategy that does exist
-        envMock.SetupGet<string>(x=>x.strategy).Returns("RandomWithCloseAtHHLL");
+        // Strategy that does exist, case sensitive
+        envMock.SetupGet<string>(x=>x.strategy).Returns("RandomWithCloseAtHhll");
         var collection = new ServiceCollection().RegisterStrategies(envMock.Object);
-        var response = collection.All(x=> x.ImplementationType!=null && x.ImplementationType.Name == "RandomWithCloseAtHHLL");
+        var response = collection.All(x=> x.ImplementationType!=null && x.ImplementationType.Name == "RandomWithCloseAtHhll");
         Assert.True(response);
         
     }

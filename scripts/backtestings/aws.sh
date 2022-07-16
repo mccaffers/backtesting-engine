@@ -18,27 +18,27 @@ main() {
     ######
     # Trading Variables
 
-    declare -a strategies=("VolatilityCalculator") 
-    # declare -a strategies=("RandomStrategy") 
+    # declare -a strategies=("VolatilityCalculator") 
+    declare -a strategies=("RandomStrategy") 
     # declare -a strategies=("RandomWithCloseAtHHLL") 
 
     # Major Forex Currencies
-    # declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
-    # yearsStart="2004"
+    declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
+    yearsStart="2021"
 
     ## Multiple Indexes
     # declare -a symbolsArray=("JPNIDX225" "SPNIDX35" "FRAIDX40" "DEUIDX40" "AUSIDX200" "USAIDXTECH" "USAIDX500" "USAIDX30" "EURIDX600" "GBRIDX100")
     # yearsStart="2014"
     
     ## Crypto
-    declare -a symbolsArray=("ETHUSD") # "BTCUSD")
-    yearsStart="2018"
+    # declare -a symbolsArray=("ETHUSD" "BTCUSD")
+    # yearsStart="2018"
 
     #####
     # Trading Defaults
     # Do not change here
-    stopLossInPipsRange="0 1 0"
-    limitInPipsRange="0 1 0"
+    stopLossInPipsRange="20 1 20"
+    limitInPipsRange="1 1 1"
     iterationRange="1 1 1"
     yearsEnd="2021"
     accountEquity=10000
