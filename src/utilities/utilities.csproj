@@ -8,8 +8,8 @@
   </PropertyGroup>
 
  <ItemGroup>
-    <ProjectReference Include="..\models\models.csproj" />
-    <ProjectReference Include="..\interfaces\interfaces.csproj" />
+    <ProjectReference Include="..\Models\models.csproj" />
+    <ProjectReference Include="..\Interfaces\interfaces.csproj" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
 
  </ItemGroup>
