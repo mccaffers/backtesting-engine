@@ -24,7 +24,7 @@ public class RandomWithCloseAtHhll : IStrategy
     }
 
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
-    public void Invoke(PriceObj priceObj)
+    public bool Invoke(PriceObj priceObj)
     {
 
         ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromHours(envVariables.randomStrategyAmountOfHHLL), ohlcList);
@@ -69,5 +69,6 @@ public class RandomWithCloseAtHhll : IStrategy
 
             ohlcList.RemoveAt(0);
         }
+        return true;
     }
 }

@@ -6,7 +6,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{34DC4AAB-D45
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "backtesting-engine", "src\backtesting\backtesting-engine.csproj", "{A1E8C629-D887-45F8-A4F9-41AA2B64A9D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "interfaces", "src\interfaces\interfaces.csproj", "{230D296C-4E8B-4E3F-BE23-CB99D9818E77}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "interfaces", "src\Interfaces\interfaces.csproj", "{230D296C-4E8B-4E3F-BE23-CB99D9818E77}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "live", "live", "{104C4FAE-5AE5-49EB-BDCE-15CCE3D1D058}"
 EndProject
@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ingest", "ingest", "{3D53D1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ingest", "src\live\ingest\src\ingest.csproj", "{7B4CDB5A-BFFE-458C-9602-C183039FCF9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "models", "src\models\models.csproj", "{D202732F-B3CC-43A8-B190-84484B64C35D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "models", "src\Models\models.csproj", "{D202732F-B3CC-43A8-B190-84484B64C35D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "strategies", "src\strategies\strategies.csproj", "{802C0BC2-75BC-44A3-BCD2-539947B7D345}"
 EndProject
@@ -23,10 +23,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "tests\test.csproj", "{AA34B532-DB36-4247-BB9E-306B2D876A32}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ingest.Tests", "src\live\ingest\test\ingest.Tests.csproj", "{9309B617-28FB-4D1B-ACF3-C9E84531C104}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "invokeStrategy", "src\live\invokeStrategy\src\invokeStrategy.csproj", "{43DDF3A9-631C-4110-86CF-7130FCF827C2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "invokeStrategy.Tests", "src\live\invokeStrategy\test\invokeStrategy.Tests.csproj", "{E10AA747-1A9F-46AF-AFD7-C4B635E8CDF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,14 +65,6 @@ Global
 		{9309B617-28FB-4D1B-ACF3-C9E84531C104}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9309B617-28FB-4D1B-ACF3-C9E84531C104}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9309B617-28FB-4D1B-ACF3-C9E84531C104}.Release|Any CPU.Build.0 = Release|Any CPU
-		{43DDF3A9-631C-4110-86CF-7130FCF827C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43DDF3A9-631C-4110-86CF-7130FCF827C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43DDF3A9-631C-4110-86CF-7130FCF827C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43DDF3A9-631C-4110-86CF-7130FCF827C2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E10AA747-1A9F-46AF-AFD7-C4B635E8CDF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E10AA747-1A9F-46AF-AFD7-C4B635E8CDF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E10AA747-1A9F-46AF-AFD7-C4B635E8CDF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E10AA747-1A9F-46AF-AFD7-C4B635E8CDF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A1E8C629-D887-45F8-A4F9-41AA2B64A9D0} = {34DC4AAB-D45F-424A-AC69-30631C0F870A}

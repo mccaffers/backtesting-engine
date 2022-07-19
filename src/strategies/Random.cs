@@ -21,7 +21,7 @@ public class RandomStrategy : IStrategy
     }
 
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
-    public void Invoke(PriceObj priceObj)
+    public bool Invoke(PriceObj priceObj)
     {
 
         var randomInt = new Random().Next(2); 
@@ -42,5 +42,6 @@ public class RandomStrategy : IStrategy
         };
 
         this.requestOpenTrade.Request(openOrderRequest);
+        return true;
     }
 }

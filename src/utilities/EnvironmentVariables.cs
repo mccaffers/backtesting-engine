@@ -24,7 +24,6 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.scalingFactor = Get("scalingFactor");
         this.tradingSize = Get("tradingSize");
         this.kineticStopLoss = int.Parse(Get("kineticStopLoss"));
-        this.symbols = Get("symbols").Split(",");
         this.elasticPassword = Get("elasticPassword");
         this.elasticUser = Get("elasticUser");
         this.elasticCloudID = Get("elasticCloudID");
@@ -34,20 +33,19 @@ public class EnvironmentVariables : IEnvironmentVariables
         }
 
         if(operatingEnvironment == "Backtesting"){
+            this.symbols = Get("symbols").Split(",");
             this.randomStrategyAmountOfHHLL = int.Parse(Get("randomStrategyAmountOfHHLL"));
             this.kineticLimit = int.Parse(Get("kineticLimit"));
             this.maximumDrawndownPercentage = Get("maximumDrawndownPercentage");
             this.accountEquity = Get("accountEquity");
             this.runID = Get("runID");
             this.symbolFolder = Get("symbolFolder");
-
             this.s3Bucket = Get("s3Bucket");
             this.s3Path = Get("s3Path");
             this.hostname = Dns.GetHostName();
             this.runIteration = Get("runIteration");
             this.instanceCount = int.Parse(Get("instanceCount"));
             this.tickDataFolder = Path.Combine(Path.GetFullPath("./" + this.symbolFolder));
-            this.symbols = Get("symbols").Split(",");
 
             this.yearsStart = int.Parse(Get("yearsStart"));
             this.yearsEnd = int.Parse(Get("yearsEnd"));
