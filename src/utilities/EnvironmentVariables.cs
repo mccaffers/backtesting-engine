@@ -31,8 +31,7 @@ public class EnvironmentVariables : IEnvironmentVariables
         if(operatingEnvironment == "AWS-Lambda"){
 
         }
-
-        if(operatingEnvironment == "Backtesting"){
+        if(operatingEnvironment == "backtesting"){
             this.symbols = Get("symbols").Split(",");
             this.randomStrategyAmountOfHHLL = int.Parse(Get("randomStrategyAmountOfHHLL"));
             this.kineticLimit = int.Parse(Get("kineticLimit"));

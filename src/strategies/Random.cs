@@ -24,6 +24,19 @@ public class RandomStrategy : IStrategy
     public bool Invoke(PriceObj priceObj)
     {
 
+        if(priceObj.date.DayOfWeek == DayOfWeek.Sunday)
+        {
+            return true;
+        }
+
+        if(priceObj.date.DayOfWeek == DayOfWeek.Friday && priceObj.date.Hour > 14){
+            return true;
+        }
+
+        if(priceObj.date.Hour < 5 || priceObj.date.Hour > 19){
+            return true;
+        }
+
         var randomInt = new Random().Next(2); 
         // 0 or 1
         TradeDirection direction = TradeDirection.BUY;
