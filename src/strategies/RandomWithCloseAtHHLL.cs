@@ -38,21 +38,30 @@ public class RandomWithCloseAtHhll : IStrategy
             var randomInt = new Random().Next(2); // 0 or 1
 
             // Default to BUY
-            TradeDirection direction = TradeDirection.BUY;
-            if (randomInt== 0)
-            { 
-                direction = TradeDirection.SELL;
-            } 
+            TradeDirection direction = TradeDirection.SELL;
+            // if (randomInt== 0)
+            // { 
+            //     direction = TradeDirection.SELL;
+            // } 
 
-            var stopLevel = 0m;
+            var highDiff = recentHigh - priceObj.ask;
+            var lowerDIff = priceObj.ask - recentLow;
+
+            if(highDiff < lowerDIff){
+                direction = TradeDirection.BUY;
+            }
+
+            var stopDistance = 0m;
             var limitLevel = 0m;
 
             if(direction == TradeDirection.BUY){
-                stopLevel = recentLow;
+                // stopLevel = recentLow;
                 limitLevel = recentHigh;
+                stopDistance=20;
             } else {
-                stopLevel = recentHigh;
+                // stopLevel = recentHigh;
                 limitLevel = recentLow;
+                stopDistance=20;
             }
 
             var key = DictionaryKeyStrings.OpenTrade(priceObj.symbol, priceObj.date);
@@ -60,7 +69,7 @@ public class RandomWithCloseAtHhll : IStrategy
             var openOrderRequest = new RequestObject(priceObj, direction, envVariables, key)
             {
                 size = decimal.Parse(envVariables.tradingSize),
-                stopLevel = stopLevel,
+                stopDistancePips = 10,
                 limitLevel = limitLevel
                
             };

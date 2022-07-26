@@ -37,6 +37,7 @@ public class Consumer : IConsumer
             this.positions.Review(priceObj);
             this.positions.TrailingStopLoss(priceObj);
             this.positions.ReviewEquity();
+            this.positions.PushRequests(priceObj);
         }
 
     }

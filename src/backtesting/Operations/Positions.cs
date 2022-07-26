@@ -13,17 +13,20 @@ public interface IPositions
     IEnumerable<RequestObject> GetOrderBook(string symbol);
     void Review(PriceObj priceObj);
     void TrailingStopLoss(PriceObj priceObj);
-    void UpdateTradeHistory(RequestObject reqObj);
+    void UpdateTradeHistory(RequestObject reqObj, PriceObj priceObj);
     void ReviewEquity();
+    void PushRequests(PriceObj priceObj);
 }
 
 public class Positions : TradingBase, IPositions
 {
     readonly ICloseOrder closeOrder;
+    readonly IOpenOrder openOrder;
     readonly IEnvironmentVariables envVaribles;
-    public Positions(IServiceProvider provider, ICloseOrder closeOrder, IEnvironmentVariables envVaribles) : base(provider)
+    public Positions(IServiceProvider provider, IOpenOrder openOrder, ICloseOrder closeOrder, IEnvironmentVariables envVaribles) : base(provider)
     {
         this.closeOrder = closeOrder;
+        this.openOrder = openOrder;
         this.envVaribles = envVaribles;
     }
 
@@ -86,6 +89,11 @@ public class Positions : TradingBase, IPositions
         }
     }
 
+    public void PushRequests(PriceObj priceObj)
+    {
+        this.closeOrder.PushRequest(priceObj);
+    }
+
     public void ReviewEquity()
     {
         
@@ -102,7 +110,7 @@ public class Positions : TradingBase, IPositions
     {
         foreach (var item in this.tradingObjects.openTrades)
         {
-            UpdateTradeHistory(item.Value);
+            UpdateTradeHistory(item.Value, item.Value.priceObj);
         }
     }
 
@@ -119,12 +127,12 @@ public class Positions : TradingBase, IPositions
             if (myTradeObj.direction == TradeDirection.BUY &&
                     (priceObj.bid <= myTradeObj.stopLevel || priceObj.bid >= myTradeObj.limitLevel))
             {
-                UpdateTradeHistory(myTradeObj);
+                UpdateTradeHistory(myTradeObj, priceObj);
             }
             else if (myTradeObj.direction == TradeDirection.SELL &&
                    (priceObj.ask >= myTradeObj.stopLevel || priceObj.ask <= myTradeObj.limitLevel))
             {
-                UpdateTradeHistory(myTradeObj);
+                UpdateTradeHistory(myTradeObj, priceObj);
             }
         }
     }
@@ -134,17 +142,11 @@ public class Positions : TradingBase, IPositions
         return this.tradingObjects.openTrades.Where(x => x.Key.Contains(symbol)).Select(x => x.Value);
     }
 
-    public void UpdateTradeHistory(RequestObject reqObj)
+    public void UpdateTradeHistory(RequestObject reqObj, PriceObj priceObj)
     {
 
-        TradeHistoryObject tradeHistoryObj = new TradeHistoryObject();
-        tradeHistoryObj.closeLevel = reqObj.close;
-        tradeHistoryObj.profit = reqObj.profit;
-        tradeHistoryObj.closeDateTime = reqObj.closeDate;
-        tradeHistoryObj.runningTime = reqObj.closeDate.Subtract(reqObj.openDate).TotalMinutes;
 
-        PropertyCopier<RequestObject, TradeHistoryObject>.Copy(reqObj, tradeHistoryObj);
-        this.closeOrder.Request(tradeHistoryObj);
+        this.closeOrder.Request(reqObj, priceObj);
     }
 
 

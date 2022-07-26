@@ -9,7 +9,7 @@ namespace backtesting_engine;
 public class TradingObjects : ITradingObjects
 {
     public TradingObjects(IEnvironmentVariables envVariables) {
-        accountObj = new AccountObj(openTrades, 
+        accountObj =  new AccountObj(openTrades, 
                                     tradeHistory,
                                     decimal.Parse(envVariables.accountEquity),
                                     decimal.Parse(envVariables.maximumDrawndownPercentage),
@@ -21,5 +21,5 @@ public class TradingObjects : ITradingObjects
     public string test { get; set; } = "";
     public DateTime tradeTime { get; set; }
     public AccountObj accountObj {get; init;}
-
+    // public interfaces.IAccountObj accountObj { get; init; }
 }

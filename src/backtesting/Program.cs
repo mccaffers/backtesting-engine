@@ -35,7 +35,7 @@ static class Program
                 return esClient;
             })
             .AddTransient<IOpenOrder, OpenOrder>()
-            .AddTransient<ICloseOrder, CloseOrder>()
+            .AddSingleton<ICloseOrder, CloseOrder>()
             .AddTransient<IIngest, backtesting_engine_ingest.Ingest>()
             .AddTransient<IConsumer, Consumer>()
             .AddTransient<IPositions, Positions>()

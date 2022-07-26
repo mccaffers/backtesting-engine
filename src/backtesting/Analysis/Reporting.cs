@@ -68,8 +68,8 @@ public class Reporting : TradingBase, IReporting
             positivePercentage = positivePercentage,
             systemRunTimeInMinutes = DateTime.Now.Subtract(this.systemObjects.systemStartTime).TotalMinutes,
             systemMessage = this.systemObjects.systemMessage,
-            stopDistanceInPips =  int.Parse(envVariables.stopDistanceInPips),
-            limitDistanceInPips =  int.Parse(envVariables.limitDistanceInPips),
+            stopDistanceInPips = decimal.Parse(envVariables.stopDistanceInPips),
+            limitDistanceInPips = decimal.Parse(envVariables.limitDistanceInPips),
             instanceCount = envVariables.instanceCount,
         };
 
@@ -117,8 +117,8 @@ public class Reporting : TradingBase, IReporting
             runID = envVariables.runID,
             runIteration = int.Parse(envVariables.runIteration),
             tradeProfit = profit,
-            stopDistanceInPips = int.Parse(envVariables.stopDistanceInPips),
-            limitDistanceInPips = int.Parse(envVariables.limitDistanceInPips),
+            stopDistanceInPips = decimal.Parse(envVariables.stopDistanceInPips),
+            limitDistanceInPips = decimal.Parse(envVariables.limitDistanceInPips),
         });
         
         _=BatchTradeUpdate();

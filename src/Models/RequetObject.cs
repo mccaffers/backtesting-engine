@@ -17,7 +17,7 @@ public class RequestObject {
         this.env = env;
         this.scalingFactor = env.GetScalingFactor(priceObj.symbol);
 
-        UpdateLevelWithSlippage(1m / env.GetScalingFactor(this.symbol));
+        // UpdateLevelWithSlippage(1m / env.GetScalingFactor(this.symbol));
     }
 
     // When setting the direction, set the current level (ASK/BID)
@@ -26,7 +26,7 @@ public class RequestObject {
         get {
             return _direction;
         }
-        init {
+        set {
             _direction = value;
             this.level = _direction == TradeDirection.BUY ? this.priceObj.ask : this.priceObj.bid;
         }
@@ -89,7 +89,7 @@ public class RequestObject {
     public DateTime closeDate {get; private set;}
 
     // Can only be set in the initialisation of the object
-    public decimal size {get;init;}
+    public decimal size {get;set;}
 
 
     public void UpdateClose(PriceObj priceObj){
@@ -99,9 +99,10 @@ public class RequestObject {
         this.profit = ((this.direction == TradeDirection.BUY ? this.close - this.level : this.level - this.close) 
                         * this.scalingFactor)
                             * this.size;
+
     }
 
     public void UpdateLevelWithSlippage(decimal slippage){
-        this.level = this.direction == TradeDirection.SELL? this.level+slippage : this.level-slippage;
+        this.level = this.direction == TradeDirection.BUY ? this.level-slippage : this.level+slippage;
     }
 }

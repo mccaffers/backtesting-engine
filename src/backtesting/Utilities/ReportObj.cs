@@ -31,8 +31,8 @@ public class ReportFinalObj {
     public int negativeTradeCount {get;set;}
     public int positivePercentage {get;set;}
 
-    public int stopDistanceInPips {get;set;}
-    public int limitDistanceInPips {get;set;}
+    public decimal stopDistanceInPips {get;set;}
+    public decimal limitDistanceInPips {get;set;}
 
     public int instanceCount { get;set; }
 
@@ -47,8 +47,8 @@ public class ReportTradeObj {
     public string? runID {get;set;}
     public decimal tradeProfit {get;set;}
     public int runIteration {get;set;}
-    public int stopDistanceInPips {get;set;}
-    public int limitDistanceInPips {get;set;}
+    public decimal stopDistanceInPips {get;set;}
+    public decimal limitDistanceInPips {get;set;}
     public int instanceCount { get; init; } = 0;
     public IEnvironmentVariables? environmentVariables {get;set;}
 }

@@ -23,8 +23,8 @@ main() {
     # declare -a strategies=("RandomWithCloseAtHHLL") 
 
     # Major Forex Currencies
-    declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
-    yearsStart="2004"
+    declare -a symbolsArray=("EURUSD") # "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
+    yearsStart="2020"
 
     ## Multiple Indexes
     # declare -a symbolsArray=("JPNIDX225" "SPNIDX35" "FRAIDX40" "DEUIDX40" "AUSIDX200" "USAIDXTECH" "USAIDX500" "USAIDX30" "EURIDX600" "GBRIDX100")
@@ -39,7 +39,7 @@ main() {
     # Do not change here
     stopLossInPipsRange="1 1 1"
     limitInPipsRange="1 1 1"
-    iterationRange="1 1 1"
+    iterationRange="1 1 5"
     yearsEnd="2021"
     accountEquity=10000
     maximumDrawndownPercentage=75
@@ -49,16 +49,15 @@ main() {
     randomStrategyAmountOfHHLLSseq="0 5 0"
     #######
 
-
     ####
     # Customisable Trading Variables
-    #
+
     # STOP LOSS Distance in PIPs
-    # stopLossInPipsRange="500 20 500"
-    #
+    stopLossInPipsRange="100 20 100"
+    
     # TAKE PROFIT Distance in PIPs
-    # limitInPipsRange="500 20 500"
-    #
+    limitInPipsRange="1 1 3"
+    
     # Account Equity
     # accountEquity=10000
     # yearsEnd="2021"
@@ -120,20 +119,18 @@ iterationsFunc(){
 }
 
 stopFunc(){
-    for pips in `seq $stopLossInPipsRange`
+    for stopLossVaue in `seq $stopLossInPipsRange`
     do
-        export stopDistanceInPips=$pips
+        export stopDistanceInPips=$stopLossVaue
         limitFunc
     done
 }
 
 limitFunc(){
-    for pips in `seq $limitInPipsRange`
+    for limitValue in `seq $limitInPipsRange`
     do
-        export limitDistanceInPips=$pips
-
-        kineticSLFunc
-
+        export limitDistanceInPips=$limitValue
+        deploy
     done
 }
 
@@ -141,7 +138,6 @@ kineticSLFunc(){
     for pips in `seq $kineticStopLossRange`
     do
         export kineticStopLoss=$pips
-        export stopDistanceInPips=$pips
         kineticTPFunc
     done
 }
@@ -150,7 +146,6 @@ kineticTPFunc(){
     for pips in `seq $kineticLimitRange`
     do
         export kineticLimit=$pips
-        export limitDistanceInPips=$pips
         
         randomStrategyHHLLFunc
     done

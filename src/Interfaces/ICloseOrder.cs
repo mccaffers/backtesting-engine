@@ -4,5 +4,6 @@ namespace backtesting_engine.interfaces;
 
 public interface ICloseOrder
 {
-    void Request(TradeHistoryObject tradeHistoryObj);
+    void Request(RequestObject reqObj, PriceObj priceObj);
+    void PushRequest(PriceObj priceObj);
 }

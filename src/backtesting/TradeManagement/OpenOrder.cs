@@ -18,11 +18,11 @@ public class OpenOrder : TradingBase, IOpenOrder
 
         // One trade open at the moment
         var openTradesCount = this.tradingObjects.openTrades.Count(x => x.Key.Contains(reqObj.priceObj.symbol));
-        if (openTradesCount != 0)
+        if (openTradesCount < 6)
         {
-            return;
+            // System.Console.WriteLine(reqObj.openDate + " " + reqObj.direction + " " + reqObj.level);
+            this.tradingObjects.openTrades.TryAdd(reqObj.key, reqObj);
         }
 
-        this.tradingObjects.openTrades.TryAdd(reqObj.key, reqObj);
     }
 }

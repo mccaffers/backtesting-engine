@@ -103,7 +103,7 @@ public class Ingest : IIngest
 
             _cts.ThrowIfCancellationRequested();
 
-            if(buffer.Count>10000){ // To prevent RAM depletion
+            if(buffer.Count>5000){ // To prevent RAM depletion
                 continue;
             }
 

@@ -1,16 +1,26 @@
 using System.Collections.Concurrent;
 using backtesting_engine.interfaces;
 using backtesting_engine_models;
-using backtesting_engine_operations;
-using Utilities;
 
 namespace backtesting_engine;
 
-public class AccountObj
+public interface IAccountObj
+{
+    decimal openingEquity { get; init; }
+    decimal maximumDrawndownPercentage { get; init; }
+    decimal tradeHistorySum { get; }
+    decimal pnl { get; }
+
+    void AddTradeProftOrLoss(decimal input);
+    decimal CalculateProfit(decimal level, RequestObject openTradeObj);
+    bool hasAccountExceededDrawdownThreshold();
+}
+
+public class AccountObj : IAccountObj
 {
     readonly ConcurrentDictionary<string, RequestObject> openTrades;
 
-    public decimal openingEquity { get; init; } 
+    public decimal openingEquity { get; init; }
     public decimal maximumDrawndownPercentage { get; init; }
     public decimal tradeHistorySum { get; private set; } = decimal.Zero;
 
@@ -20,7 +30,8 @@ public class AccountObj
                            ConcurrentDictionary<string, TradeHistoryObject> tradeHistory,
                            decimal openingEquity,
                            decimal maximumDrawndownPercentage,
-                           IEnvironmentVariables envVariables){
+                           IEnvironmentVariables envVariables)
+    {
 
         this.openTrades = openTrades;
         this.openingEquity = openingEquity;
@@ -28,13 +39,15 @@ public class AccountObj
         this.envVariables = envVariables;
     }
 
-    public void AddTradeProftOrLoss(decimal input){
-        this.tradeHistorySum+=input;
+    public void AddTradeProftOrLoss(decimal input)
+    {
+        this.tradeHistorySum += input;
     }
 
     public decimal pnl
     {
-        get {
+        get
+        {
             return this.openingEquity + this.tradeHistorySum + openTrades.Sum(x => CalculateProfit(x.Value.close, x.Value));
         }
     }
@@ -47,7 +60,8 @@ public class AccountObj
 
     public bool hasAccountExceededDrawdownThreshold()
     {
-        if(this.maximumDrawndownPercentage==0){
+        if (this.maximumDrawndownPercentage == 0)
+        {
             return false;
         }
         return (this.pnl < this.openingEquity * (1 - (this.maximumDrawndownPercentage / 100)));
