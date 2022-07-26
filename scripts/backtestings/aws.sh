@@ -53,10 +53,10 @@ main() {
     # Customisable Trading Variables
 
     # STOP LOSS Distance in PIPs
-    stopLossInPipsRange="100 20 100"
+    stopLossInPipsRange="100 1 100"
     
     # TAKE PROFIT Distance in PIPs
-    limitInPipsRange="1 1 3"
+    limitInPipsRange="100 1 100"
     
     # Account Equity
     # accountEquity=10000
