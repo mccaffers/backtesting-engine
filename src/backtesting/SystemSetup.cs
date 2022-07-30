@@ -26,6 +26,7 @@ public class SystemSetup : ISystemSetup
         Task<string>.Run(async () =>
         {
             try {
+                System.Console.WriteLine("Starting backtesting engine");
                 return await StartEngine();
             }
             catch (TradingException tradingException) {

@@ -17,6 +17,7 @@
     <ProjectReference Include="..\utilities\utilities.csproj" />
     <ProjectReference Include="..\Interfaces\interfaces.csproj" />
     <ProjectReference Include="..\strategies\strategies.csproj" />
+    <ProjectReference Include="..\webserver\webserver.csproj" />
  </ItemGroup>
 
 </Project>
