@@ -31,14 +31,16 @@ public class RandomWithCloseAtHhll : IStrategy
     public bool Invoke(PriceObj priceObj)
     {
 
-        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromHours(envVariables.randomStrategyAmountOfHHLL), ohlcList);
+        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromHours(1), ohlcList);
 
         if(ohlcList.Count>0){
             var item = ohlcList.Where(x=>x.complete);
                 
             if(item.Count() > 0 && lastItem != item.Last()){
                 lastItem = item.Last();
-                webNotification.Message(JsonConvert.SerializeObject(item));
+                Task.Run(async () => {
+                    await webNotification.Message(JsonConvert.SerializeObject(item));
+                }).Wait();
             }
         }
 

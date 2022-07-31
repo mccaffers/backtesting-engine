@@ -69,7 +69,7 @@ const Chat = () => {
 
     useEffect(() => {
         // Chart.exec("trading",'updateSeries', series);
-        // console.log(series);
+        console.log(series);
         // Chart.exec("trading",'updateSeries', series);
     });
 
@@ -116,19 +116,51 @@ const Chat = () => {
                         var currentSeries = series[0];
                         var currentData = currentSeries.data;
                         var high=0;
-                        currentData.forEach(function(item){
-                            if(item.y[1] > high){
-                                high = item.y[1];
-                            }
-                        })
+                        var low=Number.MAX_SAFE_INTEGER;
+                    
+
+                        var minDate = null;
+                        var range = null;
+                        var max = new Date(OHLCObj.date).getTime();
+                        if(currentData.length > 50){
+                            var slicedData=currentData.slice(currentData.length-50, currentData.length-1);
+                            minDate = new Date(slicedData[0].x).getTime();
+                            range = max-minDate;
+
+                            slicedData.forEach(function(item){
+                                if(item.y[1] > high){
+                                    high = item.y[1];
+                                }
+                            })
+                            slicedData.forEach(function(item){
+                                if(item.y[2] < low){
+                                    low = item.y[2];
+                                }
+                            })
+                        } else {
+                            currentData.forEach(function(item){
+                                if(item.y[1] > high){
+                                    high = item.y[1];
+                                }
+                            })
+                            currentData.forEach(function(item){
+                                if(item.y[2] < low){
+                                    low = item.y[2];
+                                }
+                            })
+                        }
 
                         var output = {
                             ...prevOptions,
                             xaxis: {
-                              max: new Date(OHLCObj.date).getTime()
+                                min: minDate,
+                                max: new Date(OHLCObj.date).getTime(),
+                                range: range
+
                             },
                             yaxis: {
-                                max: high
+                                min: low,
+                                max: high,
                             }
                           }
                           

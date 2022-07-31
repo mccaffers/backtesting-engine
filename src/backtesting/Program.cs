@@ -17,11 +17,17 @@ namespace backtesting_engine;
 
 public class WebNotification : IWebNotification
 {
+    private DateTime lastSent=DateTime.MinValue;
+
     public WebNotification(){
     }
     
-    public async void Message(string input)
+    public async Task Message(string input)
     {
+        while(DateTime.Now.Subtract(lastSent).TotalMilliseconds < 1000){
+            continue;
+        }
+        lastSent = DateTime.Now;
         await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
             User="test",
             Message=input
@@ -34,9 +40,9 @@ public class EmptyWebNotification : IWebNotification
     public EmptyWebNotification(){
     }
     
-    public void Message(string input)
+    public Task Message(string input)
     {
-    
+        return Task.CompletedTask;
     }
 }
 
