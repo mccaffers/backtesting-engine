@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/src/backtesting-engine.csproj",
+                "${workspaceFolder}/src/backtesting/backtesting-engine.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -37,6 +37,29 @@
                 "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
-        }
+        },
+        {
+            "type": "npm",
+            "script": "start",
+            "group": {
+              "kind": "test",
+              "isDefault": true
+            },
+            "isBackground": true,   // This prevents the launch.json to wait for the completion of the task
+            "problemMatcher": {
+               "owner": "custom",   // This is not needed but, required by the problemMatcher Object
+               "pattern": {
+                 "regexp": "^$"     // This is not needed but, required by the problemMatcher Object
+               },
+               "background": {
+                 "activeOnStart": true,
+                 "beginsPattern": "Compiling...",  // Signals the begin of the Task
+                 "endsPattern": "Compiled .*"      // Signals that now the initialization of the task is complete
+               }
+            },
+            "options": { 
+                "cwd": "${workspaceFolder}/src/ui" 
+             }
+         }
     ]
 }

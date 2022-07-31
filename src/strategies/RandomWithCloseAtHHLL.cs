@@ -16,18 +16,31 @@ public class RandomWithCloseAtHhll : IStrategy
     readonly IRequestOpenTrade requestOpenTrade;
     readonly IEnvironmentVariables envVariables;
     private List<OhlcObject> ohlcList = new List<OhlcObject>();
+    IWebNotification webNotification;
 
-    public RandomWithCloseAtHhll(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables)
+    public RandomWithCloseAtHhll(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables, IWebNotification webNotification)
     {
         this.requestOpenTrade = requestOpenTrade;
         this.envVariables = envVariables;
+        this.webNotification = webNotification;
     }
+
+    private OhlcObject lastItem = new OhlcObject();
 
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
     public bool Invoke(PriceObj priceObj)
     {
 
         ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromHours(envVariables.randomStrategyAmountOfHHLL), ohlcList);
+
+        if(ohlcList.Count>0){
+            var item = ohlcList.Where(x=>x.complete);
+                
+            if(item.Count() > 0 && lastItem != item.Last()){
+                lastItem = item.Last();
+                webNotification.Message(JsonConvert.SerializeObject(item));
+            }
+        }
 
         // Keep 30 days of history
         if(ohlcList.Count > 10){

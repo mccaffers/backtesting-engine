@@ -24,8 +24,10 @@ namespace Utilities
             // if we hit the minute threshold, build a new OHLC object
             var diff = priceObj.date.Subtract(OHLCArray[index].date).TotalMinutes;
             if(diff > duration.TotalMinutes){
+                OHLCArray[index].complete = true;
                 OHLCArray.Add(new OhlcObject(){
                     date=priceObj.date,
+                    timestamp=priceObj.date.Subtract(new DateTime(1970, 1, 1)).TotalSeconds,
                     open=price,
                     high=price,
                     low=price,

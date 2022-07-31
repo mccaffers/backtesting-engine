@@ -3,6 +3,15 @@
    
     "configurations": [
         {
+            "name": "Chrome",
+            "type": "chrome",
+            "request": "attach",
+            "url": "https://localhost:3000",      // create-react-app's default port 3000
+            "port": 9222,
+            "webRoot": "${workspaceFolder}/src/ui",
+            "preLaunchTask": "npm: start"        // Add prelaunch Task npm: start (defined in tasks.json)
+        },
+        {
             // Use IntelliSense to find out which attributes exist for C# debugging
             // Use hover for the description of the existing attributes
             // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md

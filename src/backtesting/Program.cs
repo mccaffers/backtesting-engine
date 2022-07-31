@@ -24,7 +24,7 @@ public class WebNotification : IWebNotification
     {
         await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
             User="test",
-            Message="works"
+            Message=input
         });
     }
 }
@@ -127,6 +127,7 @@ public static class Program
         .ContinueWith(task => {
                 if(task.IsFaulted){
                     Console.WriteLine(task.Exception?.Message);
+                    Console.WriteLine(task.Exception?.StackTrace);
                 }
                 if(task.IsCanceled){
                     System.Console.WriteLine("Task cancelled");

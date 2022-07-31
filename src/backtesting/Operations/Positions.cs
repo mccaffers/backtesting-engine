@@ -23,20 +23,16 @@ public class Positions : TradingBase, IPositions
     readonly ICloseOrder closeOrder;
     readonly IOpenOrder openOrder;
     readonly IEnvironmentVariables envVaribles;
-    readonly IWebNotification web;
-    public Positions(IServiceProvider provider, IOpenOrder openOrder, ICloseOrder closeOrder, IEnvironmentVariables envVaribles, IWebNotification test) : base(provider)
+
+    public Positions(IServiceProvider provider, IOpenOrder openOrder, ICloseOrder closeOrder, IEnvironmentVariables envVaribles) : base(provider)
     {
         this.closeOrder = closeOrder;
         this.openOrder = openOrder;
         this.envVaribles = envVaribles;
-        this.web = test;
     }
 
     public void TrailingStopLoss(PriceObj priceObj)
     {
-
-        web.Message("test");
-        
         // Check Trailing Stop Loss is active
         if(envVaribles.kineticStopLoss == 0){
             return;
