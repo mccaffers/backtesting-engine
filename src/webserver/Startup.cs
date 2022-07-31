@@ -16,7 +16,7 @@ public class Startup
     {
         services.AddControllers();
 
-        services.AddSignalR();
+        services.AddSignalR().AddMessagePackProtocol();
 
         services.AddCors(options =>
         {

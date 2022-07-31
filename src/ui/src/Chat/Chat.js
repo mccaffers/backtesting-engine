@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { HubConnectionBuilder } from '@microsoft/signalr';
+import { HubConnectionBuilder, HttpTransportType} from '@microsoft/signalr';
+
 
 import ChatWindow from './ChatWindow/ChatWindow';
 import ChatInput from './ChatInput/ChatInput';
 import Chart from "react-apexcharts";
+const signalRMsgPack = require("@microsoft/signalr-protocol-msgpack");
 
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; 
 
@@ -69,11 +71,15 @@ const Chat = () => {
         // Chart.exec("trading",'updateSeries', series);
     });
 
+    const indexValue = useRef(0);
+    const timeValue = useRef(0);
 
     useEffect(() => {
 
+        
         const connection = new HubConnectionBuilder()
-            .withUrl('https://localhost:5001/hubs/chat')
+            .withUrl('https://localhost:5001/hubs/chat', { transport: HttpTransportType.WebSockets | HttpTransportType.LongPolling })
+            .withHubProtocol(new signalRMsgPack.MessagePackHubProtocol())
             .withAutomaticReconnect()
             .build();
 
@@ -83,23 +89,37 @@ const Chat = () => {
 
                 connection.on('ReceiveMessage', message => {
                     
-                    var OHLCObj = JSON.parse(message.message);
+                    var OHLCObj = JSON.parse(message.Message);
 
                     setSeries((prevState) => {
                         let newArray = prevState[0];
-                        const eventDate = new Date(OHLCObj.date).getTime();
-                        const index = newArray.data.findIndex((obj => obj.x===eventDate));
+                        const eventDate = new Date(OHLCObj.d).getTime();
+
+                        if(indexValue.current === 0){
+                            indexValue.current = newArray.data.findIndex((obj => obj.x===eventDate));
+                        }
+                        if(timeValue.current === 0){
+                            timeValue.current = eventDate;
+                        }
+
+                        if(timeValue.current!==eventDate){
+                            timeValue.current = eventDate;
+                            indexValue.current = newArray.data.findIndex((obj => obj.x===eventDate));
+                        }
+
+                        // const index = newArray.data.findIndex((obj => obj.x===eventDate));
                         
                         // -1 means it doesn't exist, lets start a new element
-                        let priceEvent = [ OHLCObj.open, OHLCObj.high, OHLCObj.low, OHLCObj.close];
-                        if(index==-1){
+                        let priceEvent = [ OHLCObj.o, OHLCObj.h, OHLCObj.l, OHLCObj.c];
+                        if(indexValue.current==-1){
                             const keepAmount = 40;
                             if(newArray.data.length>keepAmount){
-                                newArray.data = newArray.data.slice(keepAmount);
+                                newArray.data = newArray.data.slice(newArray.data.length-keepAmount);
                             }
                             newArray.data = [...newArray.data, { x: eventDate, y: priceEvent} ];
+                            indexValue.current = newArray.data.length-1;
                         } else {
-                            newArray.data[index].y = priceEvent;
+                            newArray.data[indexValue.current].y = priceEvent;
                         }
 
                         count.current++;
