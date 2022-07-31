@@ -1,5 +1,5 @@
 import React from 'react';
-import Chat from './Chat/Chat';
+import Chat from './TradingUI/Dashboard';
 
 function App() {
   return (

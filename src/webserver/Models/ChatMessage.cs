@@ -2,8 +2,7 @@ namespace Webserver.Api.Models
 {
     public class ChatMessage
     {
-        public string User { get; set; }
-
-        public string Message { get; set; }
+        public string Activity { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
     }
 }

@@ -23,7 +23,13 @@ public class WebNotification : IWebNotification
     public WebNotification(){
     }
 
-    
+    public async Task AccountUpdate(decimal input)
+    {
+         await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
+            Activity="account",
+            Content=input.ToString()
+        });
+    }
 
     public async Task Message(OhlcObject input)
     {
@@ -42,8 +48,8 @@ public class WebNotification : IWebNotification
         }
 
         await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
-            User="test",
-            Message=JsonConvert.SerializeObject(input)
+            Activity="trade",
+            Content=JsonConvert.SerializeObject(input)
         });
     }
 }
@@ -52,7 +58,12 @@ public class EmptyWebNotification : IWebNotification
 {
     public EmptyWebNotification(){
     }
-    
+
+    public Task AccountUpdate(decimal input)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task Message(OhlcObject input)
     {
         return Task.CompletedTask;

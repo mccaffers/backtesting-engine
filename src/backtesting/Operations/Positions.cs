@@ -23,16 +23,17 @@ public class Positions : TradingBase, IPositions
     readonly ICloseOrder closeOrder;
     readonly IOpenOrder openOrder;
     readonly IEnvironmentVariables envVaribles;
+    readonly IWebNotification webNotification;
 
-    public Positions(IServiceProvider provider, IOpenOrder openOrder, ICloseOrder closeOrder, IEnvironmentVariables envVaribles) : base(provider)
+    public Positions(IServiceProvider provider, IOpenOrder openOrder, ICloseOrder closeOrder, IEnvironmentVariables envVaribles, IWebNotification webNotification) : base(provider)
     {
         this.closeOrder = closeOrder;
         this.openOrder = openOrder;
         this.envVaribles = envVaribles;
+        this.webNotification = webNotification;
     }
 
-    public void TrailingStopLoss(PriceObj priceObj)
-    {
+    public void TrailingStopLoss(PriceObj priceObj) {
         // Check Trailing Stop Loss is active
         if(envVaribles.kineticStopLoss == 0){
             return;
@@ -116,6 +117,10 @@ public class Positions : TradingBase, IPositions
 
     public void Review(PriceObj priceObj)
     {
+
+         Task.Run(async () => {
+            await webNotification.AccountUpdate(this.tradingObjects.accountObj.pnl);
+        }).Wait();
 
         this.tradingObjects.tradeTime = priceObj.date;
 

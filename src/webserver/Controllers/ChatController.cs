@@ -20,7 +20,7 @@ namespace Webserver.Api.Controllers
         public async Task Post(ChatMessage message)
         {
             // run some logic...
-            System.Console.WriteLine(message.Message);
+            // System.Console.WriteLine(message.Message);
             await _chatHub.Clients.All.ReceiveMessage(message);
         }
 
