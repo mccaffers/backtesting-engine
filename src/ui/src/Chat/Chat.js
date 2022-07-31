@@ -95,13 +95,17 @@ const Chat = () => {
                         let newArray = prevState[0];
                         const eventDate = new Date(OHLCObj.d).getTime();
 
+                        // Track current index to prevent a findIndex search on every tick
                         if(indexValue.current === 0){
                             indexValue.current = newArray.data.findIndex((obj => obj.x===eventDate));
                         }
+
+                        // Save the current date
                         if(timeValue.current === 0){
                             timeValue.current = eventDate;
                         }
 
+                        // If the date has changed lets update the current one and refresh the index
                         if(timeValue.current!==eventDate){
                             timeValue.current = eventDate;
                             indexValue.current = newArray.data.findIndex((obj => obj.x===eventDate));

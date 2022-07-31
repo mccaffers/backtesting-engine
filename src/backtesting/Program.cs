@@ -18,6 +18,7 @@ namespace backtesting_engine;
 public class WebNotification : IWebNotification
 {
     private decimal lastClose = decimal.Zero;
+    private decimal count = 0;
 
     public WebNotification(){
     }
@@ -33,6 +34,12 @@ public class WebNotification : IWebNotification
             return;
         }
         lastClose=input.close;
+
+        count++;
+        if(count>1){
+            count=0;
+            return;
+        }
 
         await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
             User="test",
