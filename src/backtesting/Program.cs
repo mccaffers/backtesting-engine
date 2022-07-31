@@ -17,20 +17,26 @@ namespace backtesting_engine;
 
 public class WebNotification : IWebNotification
 {
-    private DateTime lastSent=DateTime.MinValue;
+    private decimal lastClose = decimal.Zero;
 
     public WebNotification(){
     }
+
     
-    public async Task Message(string input)
+
+    public async Task Message(OhlcObject input)
     {
-        while(DateTime.Now.Subtract(lastSent).TotalMilliseconds < 1000){
-            continue;
+        // while(DateTime.Now.Subtract(lastSent).TotalMilliseconds < 10){
+        //     continue;
+        // }
+        if(lastClose == input.close){
+            return;
         }
-        lastSent = DateTime.Now;
+        lastClose=input.close;
+
         await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
             User="test",
-            Message=input
+            Message=JsonConvert.SerializeObject(input)
         });
     }
 }
@@ -40,7 +46,7 @@ public class EmptyWebNotification : IWebNotification
     public EmptyWebNotification(){
     }
     
-    public Task Message(string input)
+    public Task Message(OhlcObject input)
     {
         return Task.CompletedTask;
     }

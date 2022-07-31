@@ -27,7 +27,6 @@ namespace Utilities
                 OHLCArray[index].complete = true;
                 OHLCArray.Add(new OhlcObject(){
                     date=priceObj.date,
-                    timestamp=priceObj.date.Subtract(new DateTime(1970, 1, 1)).TotalSeconds,
                     open=price,
                     high=price,
                     low=price,

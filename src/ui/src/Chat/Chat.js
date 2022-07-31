@@ -15,6 +15,9 @@ const Chat = () => {
 
     const [ options, setOptions ] = useState({
         chart: {
+            animations: {
+                enabled:false
+            },
             events: {
                 beforeZoom: function(ctx) {
                   // we need to clear the range as we only need it on the iniital load.
@@ -48,28 +51,21 @@ const Chat = () => {
         {
             "name": "series-1",
             "data": [
-                {
-                    "x": "2020-01-01T22:01:12.821Z",
-                    "y": [
-                        1.1216,
-                        1.12228,
-                        1.12124,
-                        1.12185
-                    ]
-                }
             ]
         }
   
     ]);
 
     const [ chat, setChat ] = useState([]);
+    const count = useRef(0);
+
     const latestChat = useRef(null);
 
     latestChat.current = chat;
 
     useEffect(() => {
         // Chart.exec("trading",'updateSeries', series);
-        console.log(series);
+        // console.log(series);
         // Chart.exec("trading",'updateSeries', series);
     });
 
@@ -86,44 +82,37 @@ const Chat = () => {
                 console.log('Connected!');
 
                 connection.on('ReceiveMessage', message => {
-                    // const updatedChat = [...latestChat.current];
-                    // updatedChat.push(message);
-
-                    // {user: 'test', message: '[{"date":"2020-01-09T00:02:13.383+00:00","open":1.…1063,"high":1.111,"low":1.11037,"complete":true}]'}
                     
-                    var OHLCObj = JSON.parse(message.message)[0];
-
-
-                    // setData([...data, 1])
-                    // setData([...data, 1])
+                    var OHLCObj = JSON.parse(message.message);
 
                     setSeries((prevState) => {
-                        let newArray = Array.from(prevState)[0];
-            
-                        newArray.data = [...newArray.data, { x: new Date(OHLCObj.date).toISOString(), y: [ OHLCObj.open, OHLCObj.high, OHLCObj.low, OHLCObj.close]} ];
-                        // if(newArray.data.length>5){
-                        //     newArray.data=newArray.data.slice(Math.max(newArray.data.length - 5, 1));
-                        // }
-                        let response = [newArray]
-                        // console.log(response);
-                        return response;
-                    });
+                        let newArray = prevState[0];
+                        const eventDate = new Date(OHLCObj.date).getTime();
+                        const index = newArray.data.findIndex((obj => obj.x===eventDate));
+                        
+                        // -1 means it doesn't exist, lets start a new element
+                        let priceEvent = [ OHLCObj.open, OHLCObj.high, OHLCObj.low, OHLCObj.close];
+                        if(index==-1){
+                            const keepAmount = 40;
+                            if(newArray.data.length>keepAmount){
+                                newArray.data = newArray.data.slice(keepAmount);
+                            }
+                            newArray.data = [...newArray.data, { x: eventDate, y: priceEvent} ];
+                        } else {
+                            newArray.data[index].y = priceEvent;
+                        }
 
-                    setOptions((prevOptions) => {
-                        // prevOptions.chart.xaxis
-                        // prevOptions.chart.xaxis.max = new Date(OHLCObj.date).getTime();
-
-                        var currentSeries = series[0];
-                        var currentData = currentSeries.data;
-                        var high=0;
-                        var low=Number.MAX_SAFE_INTEGER;
-                    
-
-                        var minDate = null;
-                        var range = null;
-                        var max = new Date(OHLCObj.date).getTime();
-                        if(currentData.length > 50){
-                            var slicedData=currentData.slice(currentData.length-50, currentData.length-1);
+                        count.current++;
+                        if(count.current > 200){
+                            count.current=0;
+                            let high=0
+                            let low=Number.MAX_SAFE_INTEGER;
+                        
+                            let minDate = null;
+                            let range = null;
+                            let max = eventDate;
+                            let slicedData = newArray.data;
+                            
                             minDate = new Date(slicedData[0].x).getTime();
                             range = max-minDate;
 
@@ -131,41 +120,31 @@ const Chat = () => {
                                 if(item.y[1] > high){
                                     high = item.y[1];
                                 }
-                            })
-                            slicedData.forEach(function(item){
                                 if(item.y[2] < low){
                                     low = item.y[2];
                                 }
                             })
-                        } else {
-                            currentData.forEach(function(item){
-                                if(item.y[1] > high){
-                                    high = item.y[1];
+
+                            setOptions((prevOptions) => {
+                                return {
+                                    ...prevOptions,
+                                    xaxis: {
+                                        min: minDate,
+                                        max: eventDate,
+                                        range: range
+                                    },
+                                    yaxis: {
+                                        min: low,
+                                        max: high,
+                                    }
                                 }
-                            })
-                            currentData.forEach(function(item){
-                                if(item.y[2] < low){
-                                    low = item.y[2];
-                                }
-                            })
+                            });
                         }
 
-                        var output = {
-                            ...prevOptions,
-                            xaxis: {
-                                min: minDate,
-                                max: new Date(OHLCObj.date).getTime(),
-                                range: range
-
-                            },
-                            yaxis: {
-                                min: low,
-                                max: high,
-                            }
-                          }
-                          
-                        return output;
+                        return [newArray];
                     });
+
+                    
 
                     // console.log(data);
             

@@ -120,7 +120,7 @@ public class Ingest : IIngest
                 // Ignore file if it already exists in lineBuffer dictionary
                 if (!localInputBuffer.ContainsKey(file.Key))
                 { 
-                    string line = await file.Value.ReadLineAsync() ?? "";
+                    string line = file.Value.ReadLine() ?? "";
                     PopulateLocalBuffer(file.Key, line);
                 }
 

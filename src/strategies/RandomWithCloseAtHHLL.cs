@@ -31,17 +31,12 @@ public class RandomWithCloseAtHhll : IStrategy
     public bool Invoke(PriceObj priceObj)
     {
 
-        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromHours(1), ohlcList);
+        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromMinutes(30), ohlcList);
 
         if(ohlcList.Count>0){
-            var item = ohlcList.Where(x=>x.complete);
-                
-            if(item.Count() > 0 && lastItem != item.Last()){
-                lastItem = item.Last();
-                Task.Run(async () => {
-                    await webNotification.Message(JsonConvert.SerializeObject(item));
-                }).Wait();
-            }
+            Task.Run(async () => {
+                await webNotification.Message(ohlcList.Last());
+            }).Wait();
         }
 
         // Keep 30 days of history

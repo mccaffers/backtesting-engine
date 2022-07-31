@@ -1,6 +1,8 @@
-    public interface IWebNotification
+using backtesting_engine;
+
+public interface IWebNotification
     {
-        Task Message(string input);
+        Task Message(OhlcObject input);
 
     }
 
