@@ -122,6 +122,7 @@ public class Ingest : IIngest
                 { 
                     string line = file.Value.ReadLine() ?? "";
                     PopulateLocalBuffer(file.Key, line);
+                    await Task.Delay(1);
                 }
 
             }

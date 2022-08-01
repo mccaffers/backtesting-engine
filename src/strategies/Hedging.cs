@@ -26,20 +26,20 @@ public class HedgeStrategy : IStrategy
     }
 
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
-    public bool Invoke(PriceObj priceObj)
+    public Task Invoke(PriceObj priceObj)
     {
 
         if(priceObj.date.DayOfWeek == DayOfWeek.Sunday)
         {
-            return true;
+            return Task.CompletedTask;
         }
 
         if(priceObj.date.DayOfWeek == DayOfWeek.Friday && priceObj.date.Hour > 14){
-            return true;
+            return Task.CompletedTask;
         }
 
         if(priceObj.date.Hour < 5 || priceObj.date.Hour > 19) {
-            return true;
+            return Task.CompletedTask;
         }
 
         var randomInt = new Random().Next(2); 
@@ -130,7 +130,7 @@ public class HedgeStrategy : IStrategy
         }
 
         if(!openTradeBool){
-            return false;
+            return Task.CompletedTask;
         }
        
         // System.Console.WriteLine("Opening " + tradeObjs.openTrades.Count);
@@ -142,6 +142,6 @@ public class HedgeStrategy : IStrategy
         };
 
         this.requestOpenTrade.Request(openOrderRequest);
-        return true;
+            return Task.CompletedTask;
     }
 }

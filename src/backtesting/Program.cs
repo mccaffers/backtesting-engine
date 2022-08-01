@@ -19,18 +19,36 @@ public class WebNotification : IWebNotification
 {
     private decimal lastClose = decimal.Zero;
     private decimal count = 0;
+    private decimal lastAccountBalance=0;
+    private decimal accountCount=0;
 
     public WebNotification(){
     }
 
     public async Task AccountUpdate(decimal input)
     {
-         await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
-            Activity="account",
-            Content=input.ToString()
-        });
+
+        accountCount++;  
+        if(accountCount>30){
+            accountCount=0;
+        }   
+        if(accountCount>1){
+            return;
+        }       
+
+        try {
+
+            await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
+                Activity="account",
+                Content=input.ToString()
+            });
+        } 
+        catch(Exception hubEx){
+            System.Console.WriteLine(hubEx);
+        }
     }
 
+    
     public async Task Message(OhlcObject input)
     {
         // while(DateTime.Now.Subtract(lastSent).TotalMilliseconds < 10){
@@ -47,10 +65,15 @@ public class WebNotification : IWebNotification
             return;
         }
 
-        await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
-            Activity="trade",
-            Content=JsonConvert.SerializeObject(input)
-        });
+        try {
+            await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
+                Activity="trade",
+                Content=JsonConvert.SerializeObject(input)
+            });
+        }
+        catch(Exception hubEx){
+            System.Console.WriteLine(hubEx);
+        }
     }
 }
 

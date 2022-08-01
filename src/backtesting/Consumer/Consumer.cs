@@ -30,11 +30,11 @@ public class Consumer : IConsumer
             // Invoke all the strategies defined in configuration
             foreach (var i in strategies ?? Array.Empty<IStrategy>())
             {
-                i.Invoke(priceObj);
+                await i.Invoke(priceObj);
             }
 
             // Review open positions, check if the new symbol data meets the threshold for LIMI/STOP levels
-            this.positions.Review(priceObj);
+            await this.positions.Review(priceObj);
             this.positions.TrailingStopLoss(priceObj);
             this.positions.ReviewEquity();
             this.positions.PushRequests(priceObj);

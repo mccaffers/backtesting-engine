@@ -11,7 +11,7 @@ public interface IPositions
 {
     void CloseAll();
     IEnumerable<RequestObject> GetOrderBook(string symbol);
-    void Review(PriceObj priceObj);
+    Task Review(PriceObj priceObj);
     void TrailingStopLoss(PriceObj priceObj);
     void UpdateTradeHistory(RequestObject reqObj, PriceObj priceObj);
     void ReviewEquity();
@@ -115,12 +115,10 @@ public class Positions : TradingBase, IPositions
         }
     }
 
-    public void Review(PriceObj priceObj)
+    public async Task Review(PriceObj priceObj)
     {
 
-         Task.Run(async () => {
-            await webNotification.AccountUpdate(this.tradingObjects.accountObj.pnl);
-        }).Wait();
+        await webNotification.AccountUpdate(this.tradingObjects.accountObj.pnl);
 
         this.tradingObjects.tradeTime = priceObj.date;
 

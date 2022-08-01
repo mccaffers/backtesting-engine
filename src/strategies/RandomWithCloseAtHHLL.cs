@@ -28,15 +28,13 @@ public class RandomWithCloseAtHhll : IStrategy
     private OhlcObject lastItem = new OhlcObject();
 
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
-    public bool Invoke(PriceObj priceObj)
+    public async Task Invoke(PriceObj priceObj)
     {
 
-        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromMinutes(30), ohlcList);
+        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromMinutes(5), ohlcList);
 
         if(ohlcList.Count>0){
-            Task.Run(async () => {
-                await webNotification.Message(ohlcList.Last());
-            }).Wait();
+            await webNotification.Message(ohlcList.Last());
         }
 
         // Keep 30 days of history
@@ -88,6 +86,6 @@ public class RandomWithCloseAtHhll : IStrategy
 
             ohlcList.RemoveAt(0);
         }
-        return true;
+        // return true;
     }
 }

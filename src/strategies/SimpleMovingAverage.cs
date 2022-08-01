@@ -25,7 +25,7 @@ public class SimpleMovingAverage : IStrategy
     }
 
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
-    public bool Invoke(PriceObj priceObj)
+    public Task Invoke(PriceObj priceObj)
     {
 
         ohlcListShortTerm = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromHours(4), ohlcListShortTerm);
@@ -57,6 +57,6 @@ public class SimpleMovingAverage : IStrategy
 
             ohlcListShortTerm.RemoveAt(0);
         }
-        return true;
+        return Task.CompletedTask;
     }
 }

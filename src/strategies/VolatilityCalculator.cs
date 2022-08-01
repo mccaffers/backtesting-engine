@@ -30,7 +30,7 @@ public class VolatilityCalculator : IStrategy
     private List<decimal> distanceBetweenPriceMoves = new List<decimal>();
     private List<decimal> spreadDistance = new List<decimal>();
 
-    public bool Invoke(PriceObj priceObj) {
+    public Task Invoke(PriceObj priceObj) {
 
         ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromDays(1), ohlcList);
 
@@ -74,7 +74,7 @@ public class VolatilityCalculator : IStrategy
             volatilityList.Add(vObject);
             BatchUpdate();
         }
-        return true;
+            return Task.CompletedTask;
     }
 
     private void BatchUpdate(){
