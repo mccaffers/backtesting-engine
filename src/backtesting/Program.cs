@@ -58,7 +58,7 @@ public class WebNotification : IWebNotification
     public async Task Message(OhlcObject input, bool force = false)
     {
 
-        if(DateTime.Now.Subtract(lastSent).TotalMilliseconds < 600 && !force){
+        if(DateTime.Now.Subtract(lastSent).TotalMilliseconds < 500 && !force){
             return;
         }
         lastSent=DateTime.Now;
@@ -103,7 +103,6 @@ public class EmptyWebNotification : IWebNotification
         return Task.CompletedTask;
     }
 }
-
 
 public static class Program
 {

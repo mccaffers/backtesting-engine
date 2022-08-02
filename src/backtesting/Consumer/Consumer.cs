@@ -18,6 +18,8 @@ public class Consumer : IConsumer
     }
 
     private DateTime lastReceived = DateTime.Now;
+    private DateTime priceTimeWindow = DateTime.MinValue;
+    private List<PriceObj> cachedPriceObj = new List<PriceObj>();
 
     public async Task ConsumeAsync(BufferBlock<PriceObj> buffer, CancellationToken cts)
     {
@@ -26,25 +28,55 @@ public class Consumer : IConsumer
             // Cancel this task if a cancellation token is received
             cts.ThrowIfCancellationRequested();
 
-                   // Get the symbol data off the buffer
+            // Get the symbol data off the buffer
             var priceObj = await buffer.ReceiveAsync();
+            
         
-            // Invoke all the strategies defined in configuration
-            foreach (var i in strategies ?? Array.Empty<IStrategy>())
-            {
-                await i.Invoke(priceObj);
+            // take in 1 hour (priceObj) over 100 millisecionds (local)
+            if(priceTimeWindow==DateTime.MinValue){
+                priceTimeWindow=priceObj.date;
             }
 
-            // Review open positions, check if the new symbol data meets the threshold for LIMI/STOP levels
-            await this.positions.Review(priceObj);
-            this.positions.TrailingStopLoss(priceObj);
-            this.positions.ReviewEquity();
-            this.positions.PushRequests(priceObj);
-        }
+            await CacheRequests(priceObj);
 
+
+        }
     }
 
-   
+    private async Task CacheRequests(PriceObj priceObj, bool cachedReq = false){
+        // Clock the local time, check it's under 100 milliseconds
+        if(DateTime.Now.Subtract(lastReceived).TotalSeconds <= 0.10){
+
+            // Have we sent an hour
+            if(priceObj.date.Subtract(priceTimeWindow).TotalMinutes<5){
+                await ProcessTick(priceObj);
+            } else {
+                await Task.Delay(100);
+                await CacheRequests(priceObj);
+            }
+
+        } else {
+            lastReceived=DateTime.Now;
+            priceTimeWindow=priceObj.date;
+            await CacheRequests(priceObj);
+        }
+    }
+
+    private async Task ProcessTick(PriceObj priceObj){
+
+        // Invoke all the strategies defined in configuration
+        foreach (var i in strategies ?? Array.Empty<IStrategy>())
+        {
+            await i.Invoke(priceObj);
+        }
+
+        // Review open positions, check if the new symbol data meets the threshold for LIMI/STOP levels
+        await this.positions.Review(priceObj);
+        this.positions.TrailingStopLoss(priceObj);
+        this.positions.ReviewEquity();
+        this.positions.PushRequests(priceObj);
+    }
+
 }
 
 public static class PropertyCopier<TParent, TChild> where TParent : class
