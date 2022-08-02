@@ -17,6 +17,8 @@ public class Consumer : IConsumer
         this.positions = positions;
     }
 
+    private DateTime lastReceived = DateTime.Now;
+
     public async Task ConsumeAsync(BufferBlock<PriceObj> buffer, CancellationToken cts)
     {
         while (await buffer.OutputAvailableAsync())
@@ -24,7 +26,7 @@ public class Consumer : IConsumer
             // Cancel this task if a cancellation token is received
             cts.ThrowIfCancellationRequested();
 
-            // Get the symbol data off the buffer
+                   // Get the symbol data off the buffer
             var priceObj = await buffer.ReceiveAsync();
         
             // Invoke all the strategies defined in configuration

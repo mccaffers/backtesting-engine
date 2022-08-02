@@ -18,23 +18,19 @@ const Chat = () => {
     var range = max - min
 
  
-    const [ series, setSeries ] = useState([
+    const [ series, setSeries ] = useState(
         {
             "width": 1000,
-            "name": "series-1",
-            "data": [
+            "series": [{
+                "name": "series-1",
+                "data": [
+                ]}
             ],
             "options": {
                 chart: {
                     animations: {
                         enabled:false
-                    },
-                    events: {
-                        beforeZoom: function(ctx) {
-                          // we need to clear the range as we only need it on the iniital load.
-                          ctx.w.config.xaxis.range = undefined
-                        }
-                      }
+                    }
                   },
                   title: {
                     text: '',
@@ -42,9 +38,6 @@ const Chat = () => {
                   },
                   xaxis: {
                     type: 'datetime',
-                    min: min,
-                    max: max,
-                    range:range
                   },
                   yaxis: {
                     tooltip: {
@@ -59,7 +52,7 @@ const Chat = () => {
             }
         }
   
-    ]);
+    );
 
     const [ chat, setChat ] = useState([]);
     const [ account, setAccount ] = useState(0);
@@ -81,9 +74,10 @@ const Chat = () => {
     function UpdateChart(OHLCObj){
         
         setSeries((prevState) => {
-            let newArray = prevState[0];
+
+            let newState = prevState;
+            let newArray = prevState.series[0];
             const eventDate = new Date(OHLCObj.d).getTime();
-            
 
             // Track current index to prevent a findIndex search on every tick
             if(indexValue.current === 0){
@@ -116,7 +110,9 @@ const Chat = () => {
                 newArray.data[indexValue.current].x = newArray.data[indexValue.current].x;
                 newArray.data[indexValue.current].y = priceEvent;
             }
-            newArray.name = Date.now().toString(36) + Math.random().toString(36).substring(2);
+
+            newArray.name="candlestick";
+            newArray.type="candlestick";
             // if(newArray.width === 1000){
             //     newArray.width = 999;
             // } else {
@@ -142,8 +138,8 @@ const Chat = () => {
                 }
             })
 
-            newArray.options = {
-                ...newArray.options,
+            newState.options = {
+                ...newState.options,
                 xaxis: {
                     min: minDate,
                     max: eventDate,
@@ -155,7 +151,23 @@ const Chat = () => {
                 }
             };
 
-            return [newArray];
+            newState.series = [
+                newArray,{
+                    name: 'line',
+                    type: 'line',
+                    data: [
+                      {
+                        x: minDate,
+                        y: high
+                      }, {
+                        x: max,
+                        y: low
+                      }
+                    ]
+                  }
+            ];
+            return newState;
+
         });
     }
     
@@ -223,10 +235,9 @@ const Chat = () => {
             <div>Account: {account}</div>
             <Chart
               id="trading"
-              options={series[0].options}
-              series={series}
-              type="candlestick"
-              width={series[0].width}
+              options={series.options}
+              series={series.series}
+              width={series.width}
             />
         </div>
     );

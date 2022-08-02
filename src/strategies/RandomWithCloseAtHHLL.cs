@@ -31,10 +31,16 @@ public class RandomWithCloseAtHhll : IStrategy
     public async Task Invoke(PriceObj priceObj)
     {
 
-        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromMinutes(5), ohlcList);
+        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromMinutes(30), ohlcList);
 
-        if(ohlcList.Count>0){
-            await webNotification.Message(ohlcList.Last());
+        if(ohlcList.Count>1){
+            var secondLast = ohlcList[ohlcList.Count - 2];
+            if(secondLast.complete && secondLast.close!=lastItem.close){
+                await webNotification.Message(secondLast, true);
+                lastItem=secondLast;
+            } else {
+                await webNotification.Message(ohlcList.Last());
+            }
         }
 
         // Keep 30 days of history

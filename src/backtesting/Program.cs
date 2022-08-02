@@ -21,6 +21,8 @@ public class WebNotification : IWebNotification
     private decimal count = 0;
     private decimal lastAccountBalance=0;
     private decimal accountCount=0;
+    private DateTime lastSent = DateTime.Now;
+    private DateTime lastSentAccount = DateTime.Now;
 
     public WebNotification(){
     }
@@ -28,16 +30,20 @@ public class WebNotification : IWebNotification
     public async Task AccountUpdate(decimal input)
     {
 
-        accountCount++;  
-        if(accountCount>30){
-            accountCount=0;
-        }   
-        if(accountCount>1){
+        if(DateTime.Now.Subtract(lastSentAccount).TotalMilliseconds < 600){
             return;
-        }       
+        }
+        lastSentAccount = DateTime.Now;
+
+        // accountCount++;  
+        // if(accountCount>5){
+        //     accountCount=0;
+        // }    
+        // if(accountCount>1){
+        //     return;
+        // }       
 
         try {
-
             await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
                 Activity="account",
                 Content=input.ToString()
@@ -49,21 +55,26 @@ public class WebNotification : IWebNotification
     }
 
     
-    public async Task Message(OhlcObject input)
+    public async Task Message(OhlcObject input, bool force = false)
     {
-        // while(DateTime.Now.Subtract(lastSent).TotalMilliseconds < 10){
-        //     continue;
-        // }
-        if(lastClose == input.close){
+
+        if(DateTime.Now.Subtract(lastSent).TotalMilliseconds < 600 && !force){
+            return;
+        }
+        lastSent=DateTime.Now;
+
+        if(lastClose == input.close && !force){
             return;
         }
         lastClose=input.close;
 
-        count++;
-        if(count>1){
-            count=0;
-            return;
-        }
+        // count++;
+        // if(count>3){
+        //     count=0;
+        // }
+        // if(count>1 && !force){
+        //     return;
+        // }
 
         try {
             await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
@@ -87,7 +98,7 @@ public class EmptyWebNotification : IWebNotification
         throw new NotImplementedException();
     }
 
-    public Task Message(OhlcObject input)
+    public Task Message(OhlcObject input, bool force)
     {
         return Task.CompletedTask;
     }

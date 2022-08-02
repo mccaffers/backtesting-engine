@@ -25,6 +25,8 @@ namespace Utilities
             var diff = priceObj.date.Subtract(OHLCArray[index].date).TotalMinutes;
             if(diff > duration.TotalMinutes){
                 OHLCArray[index].complete = true;
+                OHLCArray[index].close = price;
+
                 OHLCArray.Add(new OhlcObject(){
                     date=priceObj.date,
                     open=price,
