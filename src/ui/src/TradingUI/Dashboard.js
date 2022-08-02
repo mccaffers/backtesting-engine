@@ -150,22 +150,40 @@ const Chat = () => {
                     max: high+(Math.random()/10000000),
                 }
             };
+            
+            newState.series[0] = newArray;
+            
+            return newState;
 
-            newState.series = [
-                newArray,{
-                    name: 'line',
-                    type: 'line',
-                    data: [
-                      {
-                        x: minDate,
-                        y: high
-                      }, {
-                        x: max,
-                        y: low
-                      }
-                    ]
-                  }
-            ];
+        });
+    }
+    function AddTrade(OHLCObj){
+
+        
+        setSeries((prevState) => {
+
+            let newState = prevState;
+
+            let color = '#478778'; // green
+            if(OHLCObj.profit < 0){
+                color ='#ff0000';
+            }
+
+            newState.series.push({
+                name: 'line',
+                type: 'line',
+                color: color,
+                stroke: '0.5',
+                data: [
+                    {
+                    x: new Date(OHLCObj.openDate).getTime(),
+                    y: OHLCObj.level
+                    }, {
+                    x: new Date(OHLCObj.closeDateTime).getTime(),
+                    y: OHLCObj.closeLevel
+                    }
+                ]
+            });
             return newState;
 
         });
@@ -186,11 +204,14 @@ const Chat = () => {
 
                 connection.on('ReceiveMessage', message => {
                     
-                    if(message.Activity === "trade"){
+                    if(message.Activity === "price"){
                         var OHLCObj = JSON.parse(message.Content);
                         UpdateChart(OHLCObj);
                     } else if(message.Activity === "account"){
                         setAccount(message.Content)
+                    } else if(message.Activity == "trade"){
+                        var OHLCObj = JSON.parse(message.Content);
+                        AddTrade(OHLCObj);
                     }
 
                     // Chart.exec('trading', "updateSeries");

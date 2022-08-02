@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.SignalR;
 using Webserver.Api.Hubs.Clients;
 using Newtonsoft.Json;
 using Webserver.Api.Hubs;
+using backtesting_engine_models;
 
 namespace backtesting_engine;
 
@@ -35,14 +36,6 @@ public class WebNotification : IWebNotification
         }
         lastSentAccount = DateTime.Now;
 
-        // accountCount++;  
-        // if(accountCount>5){
-        //     accountCount=0;
-        // }    
-        // if(accountCount>1){
-        //     return;
-        // }       
-
         try {
             await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
                 Activity="account",
@@ -53,6 +46,21 @@ public class WebNotification : IWebNotification
             System.Console.WriteLine(hubEx);
         }
     }
+
+    public async Task TradeUpdate(TradeHistoryObject input)
+    {
+
+        try {
+            await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
+                Activity="trade",
+                Content=JsonConvert.SerializeObject(input)
+            });
+        } 
+        catch(Exception hubEx){
+            System.Console.WriteLine(hubEx);
+        }
+    }
+
 
     
     public async Task Message(OhlcObject input, bool force = false)
@@ -68,17 +76,10 @@ public class WebNotification : IWebNotification
         }
         lastClose=input.close;
 
-        // count++;
-        // if(count>3){
-        //     count=0;
-        // }
-        // if(count>1 && !force){
-        //     return;
-        // }
 
         try {
             await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
-                Activity="trade",
+                Activity="price",
                 Content=JsonConvert.SerializeObject(input)
             });
         }
@@ -101,6 +102,11 @@ public class EmptyWebNotification : IWebNotification
     public Task Message(OhlcObject input, bool force)
     {
         return Task.CompletedTask;
+    }
+
+    public Task TradeUpdate(TradeHistoryObject input)
+    {
+        throw new NotImplementedException();
     }
 }
 

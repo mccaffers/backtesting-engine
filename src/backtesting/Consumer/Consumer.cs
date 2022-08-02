@@ -38,8 +38,6 @@ public class Consumer : IConsumer
             }
 
             await CacheRequests(priceObj);
-
-
         }
     }
 

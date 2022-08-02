@@ -11,12 +11,14 @@ public class CloseOrder : TradingBase, ICloseOrder
 {
 
     readonly IReporting reporting;
-
+    readonly IWebNotification webNotification;
     public Dictionary<string, TradeHistoryObject> cache;
 
-    public CloseOrder(IServiceProvider provider, IReporting reporting) : base(provider) {
+
+    public CloseOrder(IServiceProvider provider, IReporting reporting, IWebNotification webNotification) : base(provider) {
         this.reporting = reporting;
         cache = new Dictionary<string,TradeHistoryObject>();
+        this.webNotification=webNotification;
     }
 
     public void PushRequest(PriceObj priceObj){
@@ -57,6 +59,7 @@ public class CloseOrder : TradingBase, ICloseOrder
 
         ConsoleLogger.Log(tradeHistoryObj.closeDateTime + "\t" + this.tradingObjects.accountObj.pnl.ToString("0.00") + "\t Closed trade for " + tradeHistoryObj.symbol + "\t" + tradeHistoryObj.profit.ToString("0.00") + "\t" + tradeHistoryObj.direction + "\t" + tradeHistoryObj.level.ToString("0.#####") + "\t" + tradeHistoryObj.closeLevel.ToString("0.#####") + "\t" + tradeHistoryObj.runningTime.ToString("0.00"));
 
+        webNotification.TradeUpdate(tradeHistoryObj);
         this.reporting.TradeUpdate(tradeHistoryObj.closeDateTime, tradeHistoryObj.symbol, tradeHistoryObj.profit);
     }
 }

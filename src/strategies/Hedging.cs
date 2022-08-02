@@ -16,30 +16,47 @@ public class HedgeStrategy : IStrategy
     readonly IEnvironmentVariables envVariables;
     readonly ITradingObjects tradeObjs;
     readonly ICloseOrder closeOrder;
-
-    public HedgeStrategy(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables, ITradingObjects tradeObjs, ICloseOrder closeOrder)
+    IWebNotification webNotification;
+    private List<OhlcObject> ohlcList = new List<OhlcObject>();
+    private OhlcObject lastItem = new OhlcObject();
+    public HedgeStrategy(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables, ITradingObjects tradeObjs, ICloseOrder closeOrder, IWebNotification webNotification)
     {
         this.requestOpenTrade = requestOpenTrade;
         this.envVariables = envVariables;
         this.tradeObjs = tradeObjs;
         this.closeOrder = closeOrder;
+        this.webNotification = webNotification;
     }
 
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
-    public Task Invoke(PriceObj priceObj)
+    public async Task Invoke(PriceObj priceObj)
     {
+        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromMinutes(30), ohlcList);
 
+        if(ohlcList.Count>1){
+            var secondLast = ohlcList[ohlcList.Count - 2];
+            if(secondLast.complete && secondLast.close!=lastItem.close){
+                await webNotification.Message(secondLast, true);
+                lastItem=secondLast;
+            } else {
+                await webNotification.Message(ohlcList.Last());
+            }
+        }
+
+        if(ohlcList.Count > 10){
+            ohlcList.RemoveAt(0);
+        }
         if(priceObj.date.DayOfWeek == DayOfWeek.Sunday)
         {
-            return Task.CompletedTask;
+            return;
         }
 
         if(priceObj.date.DayOfWeek == DayOfWeek.Friday && priceObj.date.Hour > 14){
-            return Task.CompletedTask;
+            return;
         }
 
         if(priceObj.date.Hour < 5 || priceObj.date.Hour > 19) {
-            return Task.CompletedTask;
+            return;
         }
 
         var randomInt = new Random().Next(2); 
@@ -130,7 +147,7 @@ public class HedgeStrategy : IStrategy
         }
 
         if(!openTradeBool){
-            return Task.CompletedTask;
+            return;
         }
        
         // System.Console.WriteLine("Opening " + tradeObjs.openTrades.Count);
@@ -142,6 +159,6 @@ public class HedgeStrategy : IStrategy
         };
 
         this.requestOpenTrade.Request(openOrderRequest);
-            return Task.CompletedTask;
+            return;
     }
 }
