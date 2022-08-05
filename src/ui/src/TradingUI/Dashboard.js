@@ -100,7 +100,7 @@ const Chat = () => {
             // -1 means it doesn't exist, lets start a new element
             let priceEvent = [ OHLCObj.o, OHLCObj.h, OHLCObj.l, OHLCObj.c];
             if(indexValue.current==-1){
-                const keepAmount = 40;
+                const keepAmount = 80;
                 if(newArray.data.length>keepAmount){
                     newArray.data = newArray.data.slice(newArray.data.length-keepAmount);
                 }

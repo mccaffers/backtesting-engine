@@ -43,10 +43,10 @@ public class Consumer : IConsumer
 
     private async Task CacheRequests(PriceObj priceObj, bool cachedReq = false){
         // Clock the local time, check it's under 100 milliseconds
-        if(DateTime.Now.Subtract(lastReceived).TotalSeconds <= 0.10){
+        if(DateTime.Now.Subtract(lastReceived).TotalSeconds <= 0.5){
 
             // Have we sent an hour
-            if(priceObj.date.Subtract(priceTimeWindow).TotalMinutes<5){
+            if(priceObj.date.Subtract(priceTimeWindow).TotalMinutes<10){
                 await ProcessTick(priceObj);
             } else {
                 await Task.Delay(100);

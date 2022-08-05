@@ -60,8 +60,6 @@ public class WebNotification : IWebNotification
             System.Console.WriteLine(hubEx);
         }
     }
-
-
     
     public async Task Message(OhlcObject input, bool force = false)
     {
