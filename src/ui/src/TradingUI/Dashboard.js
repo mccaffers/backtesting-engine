@@ -27,17 +27,21 @@ const Chat = () => {
             animationEnabled: true,
             theme: "light2", // "light1", "light2", "dark1", "dark2"
             exportEnabled: true,
+            dataPointWidth: 20,
             title: {
-                text: "Netflix Stock Price in 2016"
+                text: ""
             },
             subtitles: [{
-                text: "Weekly Averages"
+                text: ""
             }],
             axisX: {
+                interval: 30,
+                intervalType: "minute",
             },
             axisY: {
-                prefix: "$",
-                title: "Price"
+                prefix: "",
+                title: "",
+                includeZero: false,
             },
             data: [{				
                 type: "candlestick",
@@ -59,14 +63,8 @@ const Chat = () => {
     latestChat.current = chat;
 
     useEffect(() => {
-        // Chart.exec("trading",'updateSeries', series);
-        // console.log(series);
-        // Chart.exec("trading",'updateSeries', series);
-        console.log(JSON.stringify(series));
-
     });
 
-    
     // const indexValue = useRef(0);
     const timeValue = useRef(0);
 
@@ -74,101 +72,67 @@ const Chat = () => {
 
     function UpdateChart(OHLCObj){
         
-        // setSeries((prevState) => {
+        const eventDate = +new Date(OHLCObj.d);
 
-            // let newState = prevState;
-            const eventDate = +new Date(OHLCObj.d);
+        setSeries((previousState) => {
+            let previousDataPoints = previousState.data[0].dataPoints;
 
-            // // Track current index to prevent a findIndex search on every tick
-            // if(indexValue.current === 0){
-            //     indexValue.current = dataPoints.findIndex((obj => obj.x.data===eventDate));
-            // }
-
-            // // Save the current date
-            // if(timeValue.current === 0){
-            //     timeValue.current = eventDate;
-            // }
-
-            // // If the date has changed lets update the current one and refresh the index
-            // if(timeValue.current!==eventDate){
-            //     timeValue.current = eventDate;
-            //     indexValue.current = dataPoints.findIndex((obj => obj.x===eventDate));
-            // }
-
-            // const index = newArray.data.findIndex((obj => obj.x===eventDate));
-            
-            setSeries((previousState) => {
-                let previousDataPoints = previousState.data[0].dataPoints;
-
-                let indexValue = previousDataPoints.findIndex((obj => obj.x===eventDate));
-                // -1 means it doesn't exist, lets start a new element
-                let priceEvent = [ OHLCObj.o, OHLCObj.h, OHLCObj.l, OHLCObj.c];
-                if(indexValue==-1){
-                    const keepAmount = 20;
-                    if(previousDataPoints.length>keepAmount){
-                        previousDataPoints = previousDataPoints.slice(previousDataPoints.length-keepAmount);
-                    }
-                    previousDataPoints = [...previousDataPoints, { y: priceEvent, x: eventDate} ];
-                    indexValue = previousDataPoints.length-1;
-                } else {
-                    // dataPoints.current[indexValue.current].x = dataPoints.current[indexValue.current].x;
-                    previousDataPoints[indexValue].y = priceEvent;
+            let indexValue = previousDataPoints.findIndex((obj => obj.x===eventDate));
+            // -1 means it doesn't exist, lets start a new element
+            let priceEvent = [ OHLCObj.o, OHLCObj.h, OHLCObj.l, OHLCObj.c];
+            if(indexValue==-1){
+                const keepAmount = 20;
+                if(previousDataPoints.length>keepAmount){
+                    previousDataPoints = previousDataPoints.slice(previousDataPoints.length-keepAmount);
                 }
-                let color = "red";
-                if(previousDataPoints[indexValue].y[3]>previousDataPoints[indexValue].y[0]){
-                    color="green";
-                }
-                previousDataPoints[indexValue].color = color;
+                previousDataPoints = [...previousDataPoints, { y: priceEvent, x: eventDate} ];
+                indexValue = previousDataPoints.length-1;
+            } else {
+                // dataPoints.current[indexValue.current].x = dataPoints.current[indexValue.current].x;
+                previousDataPoints[indexValue].y = priceEvent;
+            }
+            let color = "red";
+            if(previousDataPoints[indexValue].y[3]>previousDataPoints[indexValue].y[0]){
+                color="green";
+            }
+            previousDataPoints[indexValue].color = color;
 
-                previousState.data[0].dataPoints = previousDataPoints;
+            previousState.data[0].dataPoints = previousDataPoints;
 
-                return previousState;
-            });
+            return previousState;
+        });
 
-            chartRef.current.render();
-
-        
-
-            
-            // return newState;
-
+        chartRef.current.render();
         
     }
 
     function AddTrade(OHLCObj){
-
         
-        setSeries((prevState) => {
+        setSeries((previousState) => {
 
-            let newState = prevState;
+            let newState = previousState.data;
 
-            let color = '#478778'; // green
+            let color = 'green'; // green
             if(OHLCObj.profit < 0){
-                color ='#ff0000';
+                color ='red';
             }
-
-            newState.series.push({
-                name: 'line',
-                type: 'line',
-                color: color,
-                stroke: '0.5',
-                data: [
-                    {
-                    x: new Date(OHLCObj.openDate).getTime(),
-                    y: OHLCObj.level
-                    }, {
-                    x: new Date(OHLCObj.closeDateTime).getTime(),
-                    y: OHLCObj.closeLevel
-                    }
+           
+            newState.push({
+                type: "line",
+                
+                color:color,
+                dataPoints: [
+                    { x: +new Date(OHLCObj.openDate), y: OHLCObj.level, indexLabel: OHLCObj.direction },
+                    { x: +new Date(OHLCObj.closeDateTime), y: OHLCObj.closeLevel }
                 ]
             });
-            return newState;
+            previousState.date = newState;
+            return previousState;
 
         });
     }
     
     useEffect(() => {
-
         
         const connection = new HubConnectionBuilder()
             .withUrl('https://localhost:5001/hubs/chat', { transport: HttpTransportType.WebSockets | HttpTransportType.LongPolling })
@@ -189,7 +153,7 @@ const Chat = () => {
                         setAccount(message.Content)
                     } else if(message.Activity == "trade"){
                         var OHLCObj = JSON.parse(message.Content);
-                        // AddTrade(OHLCObj);
+                        AddTrade(OHLCObj);
                     }
 
                     // Chart.exec('trading', "updateSeries");
