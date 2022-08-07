@@ -46,7 +46,7 @@ public class Consumer : IConsumer
         if(DateTime.Now.Subtract(lastReceived).TotalSeconds <= 0.5){
 
             // Have we sent an hour
-            if(priceObj.date.Subtract(priceTimeWindow).TotalMinutes<10){
+            if(priceObj.date.Subtract(priceTimeWindow).TotalMinutes<20){
                 await ProcessTick(priceObj);
             } else {
                 await Task.Delay(100);

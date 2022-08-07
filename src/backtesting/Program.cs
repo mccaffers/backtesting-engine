@@ -64,7 +64,7 @@ public class WebNotification : IWebNotification
     public async Task Message(OhlcObject input, bool force = false)
     {
 
-        if(DateTime.Now.Subtract(lastSent).TotalMilliseconds < 500 && !force){
+        if(DateTime.Now.Subtract(lastSent).TotalMilliseconds < 200 && !force){
             return;
         }
         lastSent=DateTime.Now;

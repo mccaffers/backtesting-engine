@@ -42,6 +42,8 @@ const Chat = () => {
             data: [{				
                 type: "candlestick",
                 xValueType: "dateTime",
+                risingColor: "green",
+                fallingColor: "red",  
                 dataPoints: []
             }]
         }
@@ -102,7 +104,7 @@ const Chat = () => {
                 // -1 means it doesn't exist, lets start a new element
                 let priceEvent = [ OHLCObj.o, OHLCObj.h, OHLCObj.l, OHLCObj.c];
                 if(indexValue==-1){
-                    const keepAmount = 80;
+                    const keepAmount = 20;
                     if(previousDataPoints.length>keepAmount){
                         previousDataPoints = previousDataPoints.slice(previousDataPoints.length-keepAmount);
                     }
@@ -112,6 +114,12 @@ const Chat = () => {
                     // dataPoints.current[indexValue.current].x = dataPoints.current[indexValue.current].x;
                     previousDataPoints[indexValue].y = priceEvent;
                 }
+                let color = "red";
+                if(previousDataPoints[indexValue].y[3]>previousDataPoints[indexValue].y[0]){
+                    color="green";
+                }
+                previousDataPoints[indexValue].color = color;
+
                 previousState.data[0].dataPoints = previousDataPoints;
 
                 return previousState;
