@@ -98,6 +98,22 @@ const Chat = () => {
             previousDataPoints[indexValue].color = color;
 
             previousState.data[0].dataPoints = previousDataPoints;
+            let candleSticks = previousState.data[0];
+
+
+
+            // Remove old trades from the UI
+            let alignedState = [];
+
+            for(const item of previousState.data){
+                if(item.type === "line"){
+                    alignedState.push({
+                            type: "line",
+                            color:item.color,
+                            dataPoints: item.dataPoints.filter(e => e.x > candleSticks.dataPoints[0].x)});
+                }
+            }
+            previousState.data = [candleSticks, ...alignedState]
 
             return previousState;
         });
@@ -110,23 +126,26 @@ const Chat = () => {
         
         setSeries((previousState) => {
 
-            let newState = previousState.data;
 
             let color = 'green'; // green
             if(OHLCObj.profit < 0){
                 color ='red';
             }
+            let direction = "BUY";
+            if(OHLCObj.direction === 1){
+                direction="SELL";
+            }
            
-            newState.push({
+            previousState.data.push({
                 type: "line",
-                
                 color:color,
                 dataPoints: [
-                    { x: +new Date(OHLCObj.openDate), y: OHLCObj.level, indexLabel: OHLCObj.direction },
+                    { x: +new Date(OHLCObj.openDate), y: OHLCObj.level, indexLabel: direction },
                     { x: +new Date(OHLCObj.closeDateTime), y: OHLCObj.closeLevel }
                 ]
             });
-            previousState.date = newState;
+
+
             return previousState;
 
         });
