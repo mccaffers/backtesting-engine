@@ -20,7 +20,7 @@ code {
 }
 
 .wrapper > * {
-  padding: 10px;
+  padding: 5px;
   flex: 1 100%;
 }
 
@@ -58,7 +58,7 @@ code {
 }
 
 body {
-  padding: 2em; 
+  padding: 0.5em; 
 }
 
 .accountLabel { 

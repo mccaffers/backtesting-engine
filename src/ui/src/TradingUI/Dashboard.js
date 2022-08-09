@@ -17,13 +17,7 @@ process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 const Chat = () => {
 
-    var min= new Date("2020-01-01T22:01:12.821Z").getTime();
-    var max= new Date("2020-01-05T22:04:12.821Z").getTime();
-    var range = max - min
-
-    
-    const [ series, setSeries ] = useState(
-        {
+    const [ series, setSeries ] = useState({
             animationEnabled: true,
             theme: "light2", // "light1", "light2", "dark1", "dark2"
             exportEnabled: true,
@@ -40,7 +34,7 @@ const Chat = () => {
                 title: "",
                 includeZero: false,
             },
-            dataPointMinWidth: 2,
+            dataPointMinWidth: 5,
             data: [{				
                 type: "candlestick",
                 xValueType: "dateTime",
@@ -49,25 +43,11 @@ const Chat = () => {
                 dataPoints: []
             }]
         }
-  
     );
 
-    const [ chat, setChat ] = useState([]);
     const [ account, setAccount ] = useState(0);
-    const count = useRef(0);
-
-    const latestChat = useRef(null);
-
-    latestChat.current = chat;
-
-    useEffect(() => {
-    });
-
-    // const indexValue = useRef(0);
-    const timeValue = useRef(0);
 
     var chartRef = useRef();
-
     function UpdateChart(OHLCObj){
         
         const eventDate = +new Date(OHLCObj.d);
@@ -98,8 +78,6 @@ const Chat = () => {
             previousState.data[0].dataPoints = previousDataPoints;
             let candleSticks = previousState.data[0];
 
-
-
             // Remove old trades from the UI
             let alignedState = [];
 
@@ -124,7 +102,6 @@ const Chat = () => {
         
         setSeries((previousState) => {
 
-
             let color = '#007500'; // green
             if(OHLCObj.profit < 0){
                 color ='#750000';
@@ -142,7 +119,6 @@ const Chat = () => {
                     { x: +new Date(OHLCObj.closeDateTime), y: OHLCObj.closeLevel }
                 ]
             });
-
 
             return previousState;
 
@@ -173,10 +149,6 @@ const Chat = () => {
                         AddTrade(OHLCObj);
                     }
 
-                    // Chart.exec('trading', "updateSeries");
-                    // console.log(data);
-            
-                    // setChat(updatedChat);
                 });
             })
             .catch(e => console.log('Connection failed: ', e));
@@ -210,16 +182,7 @@ const Chat = () => {
         
         <div>
             {/* <TradeInput sendMessage={sendMessage} /> */}
-            {/* <hr /> */}
-            {/* <ChatWindow chat={chat}/> */}
             <div></div>
-            {/* <Chart
-              id="trading"
-              options={series.options}
-              series={series.series}
-              width={series.width}
-            /> */}
-
             <div class="wrapper">
                 <header class="header">Backtesting</header>
                 <article class="main">
@@ -235,7 +198,7 @@ const Chat = () => {
                 <aside class="aside aside-2">
                     <div>Account</div>
                     <div class="accountLabel">{account}</div></aside>
-                <footer class="footer">Footer</footer>
+                <footer class="footer">Trade History</footer>
             </div>
         </div>
     );

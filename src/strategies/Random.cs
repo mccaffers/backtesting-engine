@@ -33,10 +33,10 @@ public class RandomStrategy : IStrategy
         if(ohlcList.Count>1){
             var secondLast = ohlcList[ohlcList.Count - 2];
             if(secondLast.complete && secondLast.close!=lastItem.close){
-                await webNotification.Message(secondLast, true);
+                await webNotification.PriceUpdate(secondLast, true);
                 lastItem=secondLast;
             } else {
-                await webNotification.Message(ohlcList.Last());
+                await webNotification.PriceUpdate(ohlcList.Last());
             }
         }
 
