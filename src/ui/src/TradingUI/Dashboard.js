@@ -27,7 +27,6 @@ const Chat = () => {
             animationEnabled: true,
             theme: "light2", // "light1", "light2", "dark1", "dark2"
             exportEnabled: true,
-            dataPointWidth: 20,
             title: {
                 text: ""
             },
@@ -35,19 +34,18 @@ const Chat = () => {
                 text: ""
             }],
             axisX: {
-                interval: 30,
-                intervalType: "minute",
             },
             axisY: {
                 prefix: "",
                 title: "",
                 includeZero: false,
             },
+            dataPointMinWidth: 2,
             data: [{				
                 type: "candlestick",
                 xValueType: "dateTime",
-                risingColor: "green",
-                fallingColor: "red",  
+                risingColor: "#00D100",
+                fallingColor: "#FF0000",  
                 dataPoints: []
             }]
         }
@@ -81,7 +79,7 @@ const Chat = () => {
             // -1 means it doesn't exist, lets start a new element
             let priceEvent = [ OHLCObj.o, OHLCObj.h, OHLCObj.l, OHLCObj.c];
             if(indexValue==-1){
-                const keepAmount = 20;
+                const keepAmount = 40;
                 if(previousDataPoints.length>keepAmount){
                     previousDataPoints = previousDataPoints.slice(previousDataPoints.length-keepAmount);
                 }
@@ -91,9 +89,9 @@ const Chat = () => {
                 // dataPoints.current[indexValue.current].x = dataPoints.current[indexValue.current].x;
                 previousDataPoints[indexValue].y = priceEvent;
             }
-            let color = "red";
+            let color = "#FF0000"; // red
             if(previousDataPoints[indexValue].y[3]>previousDataPoints[indexValue].y[0]){
-                color="green";
+                color="#00D100"; // green
             }
             previousDataPoints[indexValue].color = color;
 
@@ -127,9 +125,9 @@ const Chat = () => {
         setSeries((previousState) => {
 
 
-            let color = 'green'; // green
+            let color = '#007500'; // green
             if(OHLCObj.profit < 0){
-                color ='red';
+                color ='#750000';
             }
             let direction = "BUY";
             if(OHLCObj.direction === 1){
@@ -169,7 +167,7 @@ const Chat = () => {
                         var OHLCObj = JSON.parse(message.Content);
                         UpdateChart(OHLCObj);
                     } else if(message.Activity === "account"){
-                        setAccount(message.Content)
+                        setAccount(parseFloat(message.Content).toFixed(2))
                     } else if(message.Activity == "trade"){
                         var OHLCObj = JSON.parse(message.Content);
                         AddTrade(OHLCObj);
@@ -211,10 +209,10 @@ const Chat = () => {
     return (
         
         <div>
-            <TradeInput sendMessage={sendMessage} />
-            <hr />
+            {/* <TradeInput sendMessage={sendMessage} /> */}
+            {/* <hr /> */}
             {/* <ChatWindow chat={chat}/> */}
-            <div>Account: {account}</div>
+            <div></div>
             {/* <Chart
               id="trading"
               options={series.options}
@@ -222,11 +220,23 @@ const Chat = () => {
               width={series.width}
             /> */}
 
-            <CanvasJSChart options = {series}
-            onRef={(ref) => {
-                chartRef.current = ref;
-              }}
-            />
+            <div class="wrapper">
+                <header class="header">Backtesting</header>
+                <article class="main">
+                <CanvasJSChart options = {series}
+                    onRef={(ref) => {
+                        chartRef.current = ref;
+                    }}
+                />
+                </article>
+                <aside class="aside aside-1">
+                    <div>Open Trades</div>
+                    <div class="accountLabel">0</div></aside>
+                <aside class="aside aside-2">
+                    <div>Account</div>
+                    <div class="accountLabel">{account}</div></aside>
+                <footer class="footer">Footer</footer>
+            </div>
         </div>
     );
 };

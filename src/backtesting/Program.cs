@@ -31,7 +31,7 @@ public class WebNotification : IWebNotification
     public async Task AccountUpdate(decimal input)
     {
 
-        if(DateTime.Now.Subtract(lastSentAccount).TotalMilliseconds < 600){
+        if(DateTime.Now.Subtract(lastSentAccount).TotalMilliseconds < 200){
             return;
         }
         lastSentAccount = DateTime.Now;
