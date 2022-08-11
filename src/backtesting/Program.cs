@@ -33,7 +33,6 @@ public static class Program
         if(args.Count() > 0 && args[0] == "web"){
             System.Console.WriteLine("Web");
             
-
             _ = Task.Run(() => {
                 Webserver.Api.Program.Main(new string[1]{"web"});
             }).ContinueWith(task => {
