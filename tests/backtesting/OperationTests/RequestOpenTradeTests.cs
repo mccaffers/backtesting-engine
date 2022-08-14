@@ -45,7 +45,7 @@ public class RequestOpenTradesTests
         requestOpenTradeMock.Object.Request(reqObj);
 
         Assert.Equal(reqObj.priceObj, receivedReqObj?.priceObj);
-        Assert.Equal(priceObj.ask-1, receivedReqObj?.level); // slippage test
+        Assert.Equal(priceObj.ask, receivedReqObj?.level); // slippage test
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class RequestOpenTradesTests
         };
 
         requestOpenTradeMock.Object.Request(reqObj);
-        Assert.Equal(priceObj.ask-1, receivedReqObj?.level);
+        Assert.Equal(priceObj.ask, receivedReqObj?.level);
 
         // Create a trade request object to open a trade
         reqObj = new RequestObject(priceObj, TradeDirection.SELL, environmentMock.Object, key) {
@@ -87,7 +87,7 @@ public class RequestOpenTradesTests
         };
 
         requestOpenTradeMock.Object.Request(reqObj);
-        Assert.Equal(priceObj.bid+1, receivedReqObj?.level);
+        Assert.Equal(priceObj.bid, receivedReqObj?.level);
 
     }
 
@@ -132,12 +132,12 @@ public class RequestOpenTradesTests
         // ASK is subtracted by the slippage
         // ASK is subtracted by the stop distance in PIPs multiplied the scaling factor
         // This equals the STOP limit for the BUY ORDER
-        Assert.Equal(priceObj.ask-(reqObj.stopDistancePips*1)-1, receivedReqObj?.stopLevel); 
+        Assert.Equal(priceObj.ask-(reqObj.stopDistancePips*1), receivedReqObj?.stopLevel); 
 
         // ASK is subtracted by the slippage
         // ASK is increased by the limit distance in PIPs multiplied the scaling factor
         // This equals the Limit for the BUY ORDER
-        Assert.Equal(priceObj.ask+(reqObj.limitDistancePips*1)-1, receivedReqObj?.limitLevel); 
+        Assert.Equal(priceObj.ask+(reqObj.limitDistancePips*1), receivedReqObj?.limitLevel); 
 
         priceObj = new PriceObj() {
             symbol=symbolName,
@@ -161,11 +161,11 @@ public class RequestOpenTradesTests
         // BID is subtracted by the slippage
         // BID is increased by the stop distance in PIPs, times the scaling factor
         // This equals the STOP limit for the BUY ORDER
-        Assert.Equal(priceObj.bid+(reqObj.stopDistancePips*1)+1, receivedReqObj?.stopLevel); 
+        Assert.Equal(priceObj.bid+(reqObj.stopDistancePips*1), receivedReqObj?.stopLevel); 
 
         // BID is subtracted by the slippage
         // BID is subtracted by the limit distance in PIPs multiplied the scaling factor
         // This equals the Limit for the BUY ORDER
-        Assert.Equal(priceObj.bid-(reqObj.limitDistancePips*1)+1, receivedReqObj?.limitLevel); 
+        Assert.Equal(priceObj.bid-(reqObj.limitDistancePips*1), receivedReqObj?.limitLevel); 
     }
 }

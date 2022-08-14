@@ -147,8 +147,6 @@ public class Positions : TradingBase, IPositions
 
     public void UpdateTradeHistory(RequestObject reqObj, PriceObj priceObj)
     {
-
-
         this.closeOrder.Request(reqObj, priceObj);
     }
 

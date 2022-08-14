@@ -43,10 +43,12 @@ public class WebNotification : IWebNotification
 
     private async Task PublishMessage(string activity, string content){
         try {
-            await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
-                Activity=activity,
-                Content=content
-            });
+            if(Webserver.Api.Program.hubContext!=null){
+                await Webserver.Api.Program.hubContext.Clients.All.ReceiveMessage(new Webserver.Api.Models.ChatMessage(){
+                    Activity=activity,
+                    Content=content
+                });
+            }
         }
         catch(Exception hubEx){
             System.Console.WriteLine(hubEx);

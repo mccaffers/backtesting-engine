@@ -40,6 +40,7 @@ public class PositionTests
             .AddSingleton<ISystemObjects, SystemObjects>()
             .AddSingleton<IElasticClient>(new Mock<IElasticClient>().Object)
             .AddSingleton<IReporting, Reporting>()
+            .AddSingleton<IWebNotification, EmptyWebNotification>()
             .AddSingleton<ICloseOrder, CloseOrder>()
             .AddSingleton<IOpenOrder, OpenOrder>()
             .AddSingleton<IPositions, Positions>()
@@ -63,7 +64,7 @@ public class PositionTests
     public void BuyCalculationsTest(decimal ask, decimal bid, decimal accountEquity, string direction) {
 
         TradeDirection tradeDirection = (TradeDirection)Enum.Parse(typeof(TradeDirection), direction);
-
+ 
         var provider = Setup(accountEquity);
         var tradingObject = provider.GetService<ITradingObjects>();
         var positions = provider.GetService<IPositions>();
@@ -96,7 +97,12 @@ public class PositionTests
 
         positions?.Review(priceObjNext);
 
-        var slippage = 1m / envVariables?.GetScalingFactor(symbolName);
+        // There is now an order excution delay on closing trades
+        priceObjNext.date=priceObjNext.date.AddSeconds(61);
+        positions?.PushRequests(priceObjNext);
+
+        // var slippage = 1m / envVariables?.GetScalingFactor(symbolName);
+        var slippage = 0;
 
         var expectedPnL = accountEquity - ( (ask - slippage) - bid);
         if(tradeDirection == TradeDirection.SELL){

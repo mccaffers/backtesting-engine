@@ -120,7 +120,7 @@ public class AccountObjTests
 
         var output = tradingObject?.accountObj.CalculateProfit(currentLevel, request);
 
-        Assert.Equal(-19,output);
+        Assert.Equal(-20,output);
 
 
         // Test a BUY
@@ -139,7 +139,7 @@ public class AccountObjTests
 
         output = tradingObject?.accountObj.CalculateProfit(currentLevel, request);
 
-        Assert.Equal(21,output);
+        Assert.Equal(20,output);
 
     }
 
@@ -170,7 +170,7 @@ public class AccountObjTests
 
         var output = tradingObject?.accountObj.CalculateProfit(currentLevel, request);
 
-        Assert.Equal(21, output);
+        Assert.Equal(20, output);
 
     }
 }
