@@ -16,8 +16,6 @@ public class RequestObject {
         this.symbol = priceObj.symbol;
         this.env = env;
         this.scalingFactor = env.GetScalingFactor(priceObj.symbol);
-
-        // UpdateLevelWithSlippage(1m / env.GetScalingFactor(this.symbol));
     }
 
     // When setting the direction, set the current level (ASK/BID)

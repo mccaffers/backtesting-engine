@@ -14,5 +14,5 @@ public class TradeHistoryObject {
     public double runningTime {get;set;}
     public decimal stopLevel {get;set;}
     public decimal limitLevel {get;set;}
-    public RequestObject reqObj {get;set;}
+    public RequestObject? reqObj {get;set;}
 }

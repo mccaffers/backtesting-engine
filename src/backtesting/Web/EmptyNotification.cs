@@ -1,3 +1,4 @@
+using backtesting_engine.interfaces;
 using backtesting_engine_models;
 
 namespace backtesting_engine;

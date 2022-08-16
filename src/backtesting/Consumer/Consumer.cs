@@ -19,7 +19,6 @@ public class Consumer : IConsumer
 
     private DateTime lastReceived = DateTime.Now;
     private DateTime priceTimeWindow = DateTime.MinValue;
-    private List<PriceObj> cachedPriceObj = new List<PriceObj>();
 
     public async Task ConsumeAsync(BufferBlock<PriceObj> buffer, CancellationToken cts)
     {
@@ -41,7 +40,7 @@ public class Consumer : IConsumer
         }
     }
 
-    private async Task CacheRequests(PriceObj priceObj, bool cachedReq = false){
+    private async Task CacheRequests(PriceObj priceObj){
         // Clock the local time, check it's under 100 milliseconds
         if(DateTime.Now.Subtract(lastReceived).TotalSeconds <= 0.4){
 
