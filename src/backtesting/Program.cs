@@ -13,6 +13,7 @@ using Webserver.Api.Hubs.Clients;
 using Newtonsoft.Json;
 using Webserver.Api.Hubs;
 using backtesting_engine_models;
+using backtesting_engine_web;
 
 namespace backtesting_engine;
 
@@ -54,8 +55,9 @@ public static class Program
                 
             );
             
-            Thread.Sleep(5000); // wait for web server to boot up
-            serviceCollection.AddSingleton<IWebNotification,WebNotification>();
+            Thread.Sleep(2000); // wait for web server to boot up
+            serviceCollection.AddSingleton<IWebUtils, WebUtils>();
+            serviceCollection.AddSingleton<IWebNotification, WebNotification>();
 
         } else {
             System.Console.WriteLine("Not web");

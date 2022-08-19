@@ -3,6 +3,7 @@ using backtesting_engine;
 using backtesting_engine.interfaces;
 using backtesting_engine_operations;
 using backtesting_engine_strategies;
+using backtesting_engine_web;
 
 namespace backtesting_engine_ingest;
 
@@ -10,11 +11,13 @@ public class Consumer : IConsumer
 {
     readonly IEnumerable<IStrategy>? strategies;
     readonly IPositions positions;
+    readonly IWebUtils webUtils;
 
-    public Consumer(IEnumerable<IStrategy> strategies, IPositions positions) {
+    public Consumer(IEnumerable<IStrategy> strategies, IPositions positions, IWebUtils webUtils) {
 
         this.strategies = strategies;
         this.positions = positions;
+        this.webUtils = webUtils;
     }
 
     private DateTime lastReceived = DateTime.Now;
@@ -72,6 +75,7 @@ public class Consumer : IConsumer
         this.positions.TrailingStopLoss(priceObj);
         this.positions.ReviewEquity();
         this.positions.PushRequests(priceObj);
+        await this.webUtils.Invoke(priceObj);
     }
 
 }

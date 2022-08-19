@@ -124,14 +124,13 @@ const Chat = () => {
 
         });
     }
-    
-    useEffect(() => {
-        
+
+    function connectToSignalR(){
         const connection = new HubConnectionBuilder()
-            .withUrl('https://localhost:5001/hubs/chat', { transport: HttpTransportType.WebSockets | HttpTransportType.LongPolling })
-            .withHubProtocol(new signalRMsgPack.MessagePackHubProtocol())
-            .withAutomaticReconnect()
-            .build();
+        .withUrl('https://localhost:5001/hubs/chat', { transport: HttpTransportType.WebSockets | HttpTransportType.LongPolling })
+        .withHubProtocol(new signalRMsgPack.MessagePackHubProtocol())
+        .withAutomaticReconnect()
+        .build();
 
         connection.start()
             .then(result => {
@@ -151,8 +150,15 @@ const Chat = () => {
 
                 });
             })
-            .catch(e => console.log('Connection failed: ', e));
+            .catch(e => {
+                console.log('Connection failed: ', e)
+                setTimeout(connectToSignalR, 1000);
+            });
+    }
 
+    // Initiate Functions
+    useEffect(() => {
+        connectToSignalR();
     }, []);
 
     const sendMessage = async (user, message) => {

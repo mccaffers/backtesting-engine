@@ -11,4 +11,9 @@ dotnet build ./src/backtesting
 # dotnet test
 
 echo $runID
-dotnet run --project ./src/backtesting -- web
+
+parallel --halt now,fail=1 --line-buffer --tty --jobs 2 --verbose ::: \
+"npm start --prefix ./src/ui/" \
+"dotnet run --project ./src/backtesting -- web" 
+
+
