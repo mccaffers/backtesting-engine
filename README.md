@@ -6,6 +6,7 @@
 </div>
 
 <!-- ABOUT THE PROJECT -->
+
 ## About The Project
 
 This backtesting engine is a personal project of mine, built in C# to explore and experiment with various trading strategies at scale.
