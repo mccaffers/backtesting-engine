@@ -7,12 +7,6 @@ using Nest;
 using Elasticsearch.Net;
 using backtesting_engine.analysis;
 using System.Net;
-using Webserver.Api.Controllers;
-using Microsoft.AspNetCore.SignalR;
-using Webserver.Api.Hubs.Clients;
-using Newtonsoft.Json;
-using Webserver.Api.Hubs;
-using backtesting_engine_models;
 using backtesting_engine_web;
 
 namespace backtesting_engine;
@@ -48,11 +42,9 @@ public static class Program
                     if(task.IsCompletedSuccessfully){
                         Console.WriteLine("Task completed successfully"); 
                     }
-                    
                     System.Console.WriteLine("Web Server closed");
                     Environment.Exit(0);
                 }   
-                
             );
             
             Thread.Sleep(2000); // wait for web server to boot up
@@ -63,7 +55,6 @@ public static class Program
             System.Console.WriteLine("Not web");
             serviceCollection.AddSingleton<IWebNotification,EmptyWebNotification>();
         }
-
 
         serviceCollection
             .RegisterStrategies(variables)

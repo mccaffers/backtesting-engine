@@ -28,6 +28,7 @@ const Chat = () => {
                 text: ""
             }],
             axisX: {
+                margin: 15,
             },
             axisY: {
                 prefix: "",
@@ -40,6 +41,7 @@ const Chat = () => {
                 xValueType: "dateTime",
                 risingColor: "#00D100",
                 fallingColor: "#FF0000",  
+                connectNullData:true,
                 dataPoints: []
             }]
         }
@@ -59,7 +61,7 @@ const Chat = () => {
             // -1 means it doesn't exist, lets start a new element
             let priceEvent = [ OHLCObj.o, OHLCObj.h, OHLCObj.l, OHLCObj.c];
             if(indexValue==-1){
-                const keepAmount = 40;
+                const keepAmount = 100;
                 if(previousDataPoints.length>keepAmount){
                     previousDataPoints = previousDataPoints.slice(previousDataPoints.length-keepAmount);
                 }
@@ -190,7 +192,7 @@ const Chat = () => {
             {/* <TradeInput sendMessage={sendMessage} /> */}
             <div></div>
             <div class="wrapper">
-                <header class="header">Backtesting</header>
+                <header class="header">Backtesting Engin</header>
                 <article class="main">
                 <CanvasJSChart options = {series}
                     onRef={(ref) => {
