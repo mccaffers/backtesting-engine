@@ -48,7 +48,7 @@ public class AccountObj : IAccountObj
     {
         get
         {
-            return this.openingEquity + this.tradeHistorySum + openTrades.Sum(x => CalculateProfit(x.Value.close, x.Value));
+            return this.openingEquity + this.tradeHistorySum + openTrades.Sum(x => CalculateProfit(x.Value.closeLevel, x.Value));
         }
     }
 

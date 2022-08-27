@@ -101,7 +101,7 @@ const Chat = () => {
         
     }
 
-    function AddTrade(OHLCObj){
+    function AddTrade(OHLCObj, tradeType = "closed"){
         
         setSeries((previousState) => {
 
@@ -113,8 +113,42 @@ const Chat = () => {
             if(OHLCObj.direction === 1){
                 direction="SELL";
             }
-           
-            previousState.data.push({
+
+            let newState = previousState;
+
+            if(tradeType === "closed" ){
+                // Does the key exist && is it open
+                if(newState.data.some(item => item._tradingKey === OHLCObj.key) && 
+                    newState.data.some(item => item._tradingType === "open")){
+                        console.log("found open trade to remove");
+                        // Remove it
+                        newState.data = newState.data.filter(function(item) {
+                            return item._tradingKey !== OHLCObj.key
+                        })
+                }
+            }
+            
+            // Lets check if the open trade exists, only need to add it once
+            if(tradeType === "open"){
+                if(newState.data.some(item => item._tradingKey === OHLCObj.key)){
+                    const index = newState.data.findIndex((element, index) => {
+                        if (element._tradingKey === OHLCObj.key) {
+                          return true
+                        }
+                    });
+
+                    if(index!==-1){
+                        newState.data[index].dataPoints[1].x = +new Date(OHLCObj.closeDate);
+                        newState.data[index].dataPoints[1].y = OHLCObj.closeLevel;
+                        return newState;
+                    }
+                }
+            }
+
+            // Otherwise, add the open trades that doesn't exist, or a new closed trade
+            newState.data.push({
+                _tradingType: tradeType,
+                _tradingKey: OHLCObj.key,
                 type: "line",
                 color:color,
                 dataPoints: [
@@ -123,7 +157,7 @@ const Chat = () => {
                 ]
             });
 
-            return previousState;
+            return newState;
 
         });
     }
@@ -152,6 +186,11 @@ const Chat = () => {
                     } else if(message.Activity == "openTrades"){
                         var parsedOpenTrades = JSON.parse(message.Content);
                         setOpenTrades(parsedOpenTrades)
+
+                        parsedOpenTrades.map( item => {
+                            AddTrade(item.Value, "open");
+                        })
+
                     }
 
                 });

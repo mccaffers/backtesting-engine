@@ -59,13 +59,13 @@ public class Positions : TradingBase, IPositions
             return;
         }
 
-        var proposedStoplevel = myTradeObj.close - distance;
+        var proposedStoplevel = myTradeObj.closeLevel - distance;
         if(proposedStoplevel > myTradeObj.stopLevel){
             myTradeObj.stopLevel=proposedStoplevel;
         }
 
         if(envVaribles.kineticLimit !=0){
-            var proposedLimit = myTradeObj.close + distance;
+            var proposedLimit = myTradeObj.closeLevel + distance;
             if(proposedLimit > myTradeObj.limitLevel){
                 myTradeObj.limitLevel = proposedLimit;
             }
@@ -77,13 +77,13 @@ public class Positions : TradingBase, IPositions
             return;
         }
 
-        var proposedStoplevel = myTradeObj.close + distance;
+        var proposedStoplevel = myTradeObj.closeLevel + distance;
         if(proposedStoplevel < myTradeObj.stopLevel){
             myTradeObj.stopLevel=proposedStoplevel;
         }
 
         if(envVaribles.kineticLimit !=0){
-            var proposedLimit = myTradeObj.close - distance;
+            var proposedLimit = myTradeObj.closeLevel - distance;
             if(proposedLimit < myTradeObj.limitLevel){
                 myTradeObj.limitLevel = proposedLimit;
             }

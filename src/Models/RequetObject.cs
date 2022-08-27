@@ -82,7 +82,7 @@ public class RequestObject {
 
     // Private set propertises
     public decimal level {get; private set;}
-    public decimal close {get; private set;}
+    public decimal closeLevel {get; private set;}
     public decimal profit {get; private set;}
     public DateTime closeDate {get; private set;}
 
@@ -92,9 +92,9 @@ public class RequestObject {
 
     public void UpdateClose(PriceObj priceObj){
 
-        this.close = this.direction == TradeDirection.BUY ? priceObj.bid : priceObj.ask;
+        this.closeLevel = this.direction == TradeDirection.BUY ? priceObj.bid : priceObj.ask;
         this.closeDate = priceObj.date;
-        this.profit = ((this.direction == TradeDirection.BUY ? this.close - this.level : this.level - this.close) 
+        this.profit = ((this.direction == TradeDirection.BUY ? this.closeLevel - this.level : this.level - this.closeLevel) 
                         * this.scalingFactor)
                             * this.size;
 

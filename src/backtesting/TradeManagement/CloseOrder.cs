@@ -37,7 +37,7 @@ public class CloseOrder : TradingBase, ICloseOrder
     {
 
         TradeHistoryObject tradeHistoryObj = new TradeHistoryObject();
-        tradeHistoryObj.closeLevel = reqObj.close;
+        tradeHistoryObj.closeLevel = reqObj.closeLevel;
         tradeHistoryObj.profit = reqObj.profit;
         tradeHistoryObj.closeDateTime = reqObj.closeDate;
         tradeHistoryObj.runningTime = reqObj.closeDate.Subtract(reqObj.openDate).TotalMinutes;
