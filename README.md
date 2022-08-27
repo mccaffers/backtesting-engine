@@ -31,6 +31,8 @@ This backtesting engine is a personal project of mine, built in C# to explore an
 ### Prerequisites
 
 * dotnet v6
+  * Web Use
+    * dotnet dev-certs https --trust
 * financial tick data in CSV format, specifically:
     ```bash
     # ./tickdata/{symbol}/2020.csv:

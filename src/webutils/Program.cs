@@ -22,7 +22,7 @@ public class WebUtils : IWebUtils
 
     public async Task Invoke(PriceObj priceObj)
     {
-        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromMinutes(30), ohlcList);
+        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromMinutes(60), ohlcList);
 
         if (ohlcList.Count > 1)
         {

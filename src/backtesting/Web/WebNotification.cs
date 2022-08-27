@@ -7,16 +7,30 @@ namespace backtesting_engine;
 public class WebNotification : IWebNotification
 {
     private DateTime lastSentAccount = DateTime.Now;
+    private DateTime lastSentOpenTrade = DateTime.Now;
+
     public async Task AccountUpdate(decimal input)
     {
 
-        if(DateTime.Now.Subtract(lastSentAccount).TotalMilliseconds < 200){
+        if(DateTime.Now.Subtract(lastSentAccount).TotalMilliseconds < 500){
             return;
         }
         lastSentAccount = DateTime.Now;
 
         await PublishMessage("account", input.ToString());
     }
+
+    public async Task OpenTrades(List<KeyValuePair<string, RequestObject>> input)
+    {
+
+        if(DateTime.Now.Subtract(lastSentOpenTrade).TotalMilliseconds < 500){
+            return;
+        }
+        lastSentOpenTrade = DateTime.Now;
+
+        await PublishMessage("openTrades", JsonConvert.SerializeObject(input));
+    }
+
 
     public async Task TradeUpdate(TradeHistoryObject input)
     {

@@ -119,12 +119,12 @@ public class Positions : TradingBase, IPositions
     {
 
         await webNotification.AccountUpdate(this.tradingObjects.accountObj.pnl);
+        await webNotification.OpenTrades(this.tradingObjects.openTrades.ToList());
 
         this.tradingObjects.tradeTime = priceObj.date;
 
         foreach (var myTradeObj in GetOrderBook(priceObj.symbol))
         {
-
             myTradeObj.UpdateClose(priceObj);
 
             if (myTradeObj.direction == TradeDirection.BUY &&

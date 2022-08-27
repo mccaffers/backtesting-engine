@@ -25,24 +25,30 @@ code {
 }
 
 .header {
-  background: tomato;
+  /* background: tomato; */
+  font-size:24px;
 }
 
 .footer {
-  background: lightgreen;
+  /* background: lightgreen; */
 }
 
 .main {
   text-align: left;
-  background: deepskyblue;
+  
+  /* background: deepskyblue; */
+}
+
+.chartDiv {
+  margin-bottom:20px;
 }
 
 .aside-1 {
-  background: gold;
+  /* background: gold; */
 }
 
 .aside-2 {
-  background: hotpink;
+  /* background: hotpink; */
 }
 
 @media all and (min-width: 600px) {

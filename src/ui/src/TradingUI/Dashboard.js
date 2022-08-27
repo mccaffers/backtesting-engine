@@ -19,7 +19,7 @@ const Chat = () => {
 
     const [ series, setSeries ] = useState({
             animationEnabled: true,
-            theme: "light2", // "light1", "light2", "dark1", "dark2"
+            theme: "light1", // "light1", "light2", "dark1", "dark2"
             exportEnabled: true,
             title: {
                 text: ""
@@ -35,7 +35,7 @@ const Chat = () => {
                 title: "",
                 includeZero: false,
             },
-            dataPointMinWidth: 5,
+            dataPointMinWidth: 10,
             data: [{				
                 type: "candlestick",
                 xValueType: "dateTime",
@@ -48,6 +48,7 @@ const Chat = () => {
     );
 
     const [ account, setAccount ] = useState(0);
+    const [ openTrades, setOpenTrades] = useState();
 
     var chartRef = useRef();
     function UpdateChart(OHLCObj){
@@ -61,7 +62,7 @@ const Chat = () => {
             // -1 means it doesn't exist, lets start a new element
             let priceEvent = [ OHLCObj.o, OHLCObj.h, OHLCObj.l, OHLCObj.c];
             if(indexValue==-1){
-                const keepAmount = 100;
+                const keepAmount = 50;
                 if(previousDataPoints.length>keepAmount){
                     previousDataPoints = previousDataPoints.slice(previousDataPoints.length-keepAmount);
                 }
@@ -148,6 +149,9 @@ const Chat = () => {
                     } else if(message.Activity == "trade"){
                         var OHLCObj = JSON.parse(message.Content);
                         AddTrade(OHLCObj);
+                    } else if(message.Activity == "openTrades"){
+                        var parsedOpenTrades = JSON.parse(message.Content);
+                        setOpenTrades(parsedOpenTrades)
                     }
 
                 });
@@ -192,21 +196,40 @@ const Chat = () => {
             {/* <TradeInput sendMessage={sendMessage} /> */}
             <div></div>
             <div class="wrapper">
-                <header class="header">Backtesting Engin</header>
-                <article class="main">
-                <CanvasJSChart options = {series}
+                <header class="header">Backtesting Engine</header>
+                <div class="chartDiv"><CanvasJSChart options = {series}
                     onRef={(ref) => {
                         chartRef.current = ref;
                     }}
-                />
+                /></div>
+                <article class="main">
+                <table>
+                    <tbody>
+                        {openTrades?.map( item => (
+                                    <tr>
+                                    <td>
+                                    Open
+                                    </td>                                    <td>
+                                    { new Date(item.Value.openDate).toUTCString() }
+                                    </td>
+                                    <td>
+                                    { item.Value.profit }
+                                    </td>
+                                    </tr>
+                                    
+                        ))}
+                    
+                        </tbody>
+                    </table>
                 </article>
                 <aside class="aside aside-1">
                     <div>Open Trades</div>
-                    <div class="accountLabel">0</div></aside>
+                    <div class="accountLabel">{openTrades?.length}</div></aside>
                 <aside class="aside aside-2">
                     <div>Account</div>
-                    <div class="accountLabel">{account}</div></aside>
-                <footer class="footer">Trade History</footer>
+                    <div class="accountLabel">{account}</div>
+                </aside>
+             
             </div>
         </div>
     );
