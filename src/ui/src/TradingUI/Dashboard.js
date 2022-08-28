@@ -49,6 +49,7 @@ const Chat = () => {
 
     const [ account, setAccount ] = useState(0);
     const [ openTrades, setOpenTrades] = useState();
+    const [ closedTrades, setClosedTrades] = useState([]);
 
     var chartRef = useRef();
     function UpdateChart(OHLCObj){
@@ -62,7 +63,7 @@ const Chat = () => {
             // -1 means it doesn't exist, lets start a new element
             let priceEvent = [ OHLCObj.o, OHLCObj.h, OHLCObj.l, OHLCObj.c];
             if(indexValue==-1){
-                const keepAmount = 50;
+                const keepAmount = 40;
                 if(previousDataPoints.length>keepAmount){
                     previousDataPoints = previousDataPoints.slice(previousDataPoints.length-keepAmount);
                 }
@@ -103,6 +104,13 @@ const Chat = () => {
         
     }
 
+    function SaveClosedTradeForTable(OHLCObj){
+        setClosedTrades((previousState) => {
+            previousState.push(OHLCObj);
+            return previousState;
+        });
+    }
+
     function AddTrade(OHLCObj, tradeType = "closed"){
         
         setSeries((previousState) => {
@@ -140,6 +148,12 @@ const Chat = () => {
                     });
 
                     if(index!==-1){
+                        if(newState.data[index].dataPoints.length == 1){
+                            newState.data[index].dataPoints[0].x = +new Date(OHLCObj.openDate);
+                            newState.data[index].dataPoints[0].y = OHLCObj.level;
+
+                            newState.data[index].dataPoints.push([]);
+                        }
                         newState.data[index].dataPoints[1].x = +new Date(OHLCObj.closeDateTime);
                         newState.data[index].dataPoints[1].y = OHLCObj.closeLevel;
                         return newState;
@@ -158,7 +172,7 @@ const Chat = () => {
                     { x: +new Date(OHLCObj.closeDateTime), y: OHLCObj.closeLevel }
                 ]
             });
-
+        
             return newState;
 
         });
@@ -185,6 +199,7 @@ const Chat = () => {
                     } else if(message.Activity == "trade"){
                         var OHLCObj = JSON.parse(message.Content);
                         AddTrade(OHLCObj);
+                        SaveClosedTradeForTable(OHLCObj);
                     } else if(message.Activity == "openTrades"){
                         var parsedOpenTrades = JSON.parse(message.Content);
                         setOpenTrades(parsedOpenTrades)
@@ -245,13 +260,17 @@ const Chat = () => {
                 /></div>
                 <article class="main">
                 <table>
+                    <thead>
+                        <tr><td>Date</td><td>Direction</td><td>Profit</td></tr>
+                    </thead>
                     <tbody>
                         {openTrades?.map( item => (
-                                    <tr>
+                                    <tr>                                   
                                     <td>
-                                    Open
-                                    </td>                                    <td>
-                                    { new Date(item.Value.openDate).toUTCString() }
+                                    { new Date(item.Value.openDate).toLocaleString() }
+                                    </td>
+                                    <td>
+                                    { item.Value.direction == 0 ? "BUY" : "SELL" }
                                     </td>
                                     <td>
                                     { item.Value.profit }
@@ -259,13 +278,29 @@ const Chat = () => {
                                     </tr>
                                     
                         ))}
-                    
+                        {closedTrades?.map( item => (
+                                    <tr>                                 
+                                    <td>
+                                    { new Date(item.openDate).toLocaleString() }
+                                    </td>
+                                    <td>
+                                    { item.direction == 0 ? "BUY" : "SELL" }
+                                    </td>
+                                    <td>
+                                    { item.profit }
+                                    </td>
+                                    </tr>
+                                    
+                        ))}
                         </tbody>
                     </table>
                 </article>
                 <aside class="aside aside-1">
                     <div>Open Trades</div>
-                    <div class="accountLabel">{openTrades?.length}</div></aside>
+                    <div class="accountLabel">{openTrades?.length}</div>
+                    <div className="openTradesDiv">Closed Trades</div>
+                    <div class="accountLabel">{closedTrades?.length}</div>
+                </aside>
                 <aside class="aside aside-2">
                     <div>Account</div>
                     <div class="accountLabel">{account}</div>

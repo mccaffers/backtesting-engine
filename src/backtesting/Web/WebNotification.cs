@@ -31,7 +31,6 @@ public class WebNotification : IWebNotification
         await PublishMessage("openTrades", JsonConvert.SerializeObject(input));
     }
 
-
     public async Task TradeUpdate(TradeHistoryObject input)
     {
         await PublishMessage("trade", JsonConvert.SerializeObject(input));

@@ -14,7 +14,7 @@ echo $runID
 
 parallel --halt now,fail=1 --line-buffer --tty --jobs 1 --verbose ::: \
 "dotnet run --project ./src/backtesting -- web" 
-# "npm start --prefix ./src/ui/" \
+# "npm start --prefix ./src/ui/"
 
 
 
