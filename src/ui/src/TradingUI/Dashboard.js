@@ -87,6 +87,8 @@ const Chat = () => {
             for(const item of previousState.data){
                 if(item.type === "line"){
                     alignedState.push({
+                            _tradingType: item._tradingType,
+                            _tradingKey: item._tradingKey,
                             type: "line",
                             color:item.color,
                             dataPoints: item.dataPoints.filter(e => e.x > candleSticks.dataPoints[0].x)});
@@ -138,7 +140,7 @@ const Chat = () => {
                     });
 
                     if(index!==-1){
-                        newState.data[index].dataPoints[1].x = +new Date(OHLCObj.closeDate);
+                        newState.data[index].dataPoints[1].x = +new Date(OHLCObj.closeDateTime);
                         newState.data[index].dataPoints[1].y = OHLCObj.closeLevel;
                         return newState;
                     }
