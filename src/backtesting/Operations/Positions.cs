@@ -119,7 +119,6 @@ public class Positions : TradingBase, IPositions
     {
 
         await webNotification.AccountUpdate(this.tradingObjects.accountObj.pnl);
-        await webNotification.OpenTrades(this.tradingObjects.openTrades.ToList());
 
         this.tradingObjects.tradeTime = priceObj.date;
 

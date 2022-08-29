@@ -48,8 +48,10 @@ const Chat = () => {
     );
 
     const [ account, setAccount ] = useState(0);
-    const [ openTrades, setOpenTrades] = useState();
+    const [ openTrades, setOpenTrades] = useState([]);
     const [ closedTrades, setClosedTrades] = useState([]);
+    const inputOpenTrades = useRef([]);
+    const inputTrades = useRef([]);
 
     var chartRef = useRef();
     function UpdateChart(OHLCObj){
@@ -63,7 +65,7 @@ const Chat = () => {
             // -1 means it doesn't exist, lets start a new element
             let priceEvent = [ OHLCObj.o, OHLCObj.h, OHLCObj.l, OHLCObj.c];
             if(indexValue==-1){
-                const keepAmount = 40;
+                const keepAmount = 20;
                 if(previousDataPoints.length>keepAmount){
                     previousDataPoints = previousDataPoints.slice(previousDataPoints.length-keepAmount);
                 }
@@ -190,25 +192,59 @@ const Chat = () => {
                 console.log('Connected!');
 
                 connection.on('ReceiveMessage', message => {
+
+                    let parsedContent = JSON.parse(message.Content);
                     
-                    if(message.Activity === "price"){
-                        var OHLCObj = JSON.parse(message.Content);
+                    if ('priceUpdate' in parsedContent){
+                        var OHLCObj = JSON.parse(parsedContent.priceUpdate);
                         UpdateChart(OHLCObj);
-                    } else if(message.Activity === "account"){
-                        setAccount(parseFloat(message.Content).toFixed(2))
-                    } else if(message.Activity == "trade"){
-                        var OHLCObj = JSON.parse(message.Content);
-                        AddTrade(OHLCObj);
-                        SaveClosedTradeForTable(OHLCObj);
-                    } else if(message.Activity == "openTrades"){
-                        var parsedOpenTrades = JSON.parse(message.Content);
-                        setOpenTrades(parsedOpenTrades)
-
-                        parsedOpenTrades.map( item => {
-                            AddTrade(item.Value, "open");
-                        })
-
+                    } 
+                    if ('accountUpdate' in parsedContent){
+                        setAccount(parseFloat(parsedContent.accountUpdate[0]).toFixed(2))
                     }
+                    if ('openTrades' in parsedContent){
+                        for (const i in parsedContent.openTrades) {
+                            let item = JSON.parse(parsedContent.openTrades[i]);
+                            AddTrade(item, "open");
+
+                            inputOpenTrades.current.push(item);
+                            
+                        }   
+                        
+                        setOpenTrades((previousState) => {
+                            if (previousState == null){
+                                previousState = [];
+                            }
+                            previousState.push(...inputTrades.current);
+                            inputOpenTrades.current=[];
+                        })
+                    }
+
+
+                    if ('trade' in parsedContent){
+                        for (const i in parsedContent.trade) {
+                            let item = JSON.parse(parsedContent.trade[i]);
+                            AddTrade(item);
+                            SaveClosedTradeForTable(item);
+                        }                      
+                    }
+                    
+
+                    // } else if(message.Activity === "account"){
+                    //     setAccount(parseFloat(message.Content).toFixed(2))
+                    // } else if(message.Activity == "trade"){
+                    //     var OHLCObj = JSON.parse(message.Content);
+                    //     AddTrade(OHLCObj);
+                    //     SaveClosedTradeForTable(OHLCObj);
+                    // } else if(message.Activity == "openTrades"){
+                    //     var parsedOpenTrades = JSON.parse(message.Content);
+                    //     setOpenTrades(parsedOpenTrades)
+
+                    //     parsedOpenTrades.map( item => {
+                    //         AddTrade(item.Value, "open");
+                    //     })
+
+                    // }
 
                 });
             })

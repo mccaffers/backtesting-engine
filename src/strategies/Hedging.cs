@@ -64,12 +64,12 @@ public class HedgeStrategy : IStrategy
         var plannedStopLoss = decimal.Parse(envVariables.stopDistanceInPips);
         var plannedLimit = decimal.Parse(envVariables.limitDistanceInPips);
 
-        // foreach(var item in this.tradeObjs.openTrades.Where(x => x.Key.Contains(priceObj.symbol)).Select(x => x.Value)){
-        //     if(priceObj.date.Subtract(item.openDate).TotalMinutes > 30000){
-        //         this.closeOrder.Request(item, priceObj);
-        //         return false;
-        //     }
-        // }
+        foreach(var item in this.tradeObjs.openTrades.Where(x => x.Key.Contains(priceObj.symbol)).Select(x => x.Value)){
+            if(priceObj.date.Subtract(item.openDate).TotalHours > 1){
+                this.closeOrder.Request(item, priceObj);
+                return Task.CompletedTask;
+            }
+        }
 
         var openTradeBool = true;
         if(tradeObjs.openTrades.Count > 0){
@@ -86,21 +86,21 @@ public class HedgeStrategy : IStrategy
             // }
 
             // We're 40 pips away from the last trade
-            if(tradeObjs.openTrades.Count>1){
-                if(tradeObjs.openTrades.Any(x=>Math.Abs(x.Value.level-priceObj.ask)*envVariables.GetScalingFactor(priceObj.symbol) < 8))
-                    openTradeBool = false;
-            }  
+            // if(tradeObjs.openTrades.Count>1){
+            //     if(tradeObjs.openTrades.Any(x=>Math.Abs(x.Value.level-priceObj.ask)*envVariables.GetScalingFactor(priceObj.symbol) < 8))
+            //         openTradeBool = false;
+            // }  
 
          
 
             // Don't open the same direction at the same time
-            // if(tradeObjs.openTrades.Count == 1 && tradeObjs.openTrades.Any(x=>x.Value.direction == direction)){
-            //     var mostRecentSameDirection = tradeObjs.openTrades.OrderBy(x=>x.Value.direction == direction).Last();
-            //     if((mostRecentSameDirection.Value.level-priceObj.ask)*envVariables.GetScalingFactor(priceObj.symbol) < 5 ){
-            //         // openTradeBool = false;
-            //         direction = mostRecentSameDirection.Value.direction == TradeDirection.BUY ? TradeDirection.SELL : TradeDirection.BUY;
-            //     }
-            // }
+            if(tradeObjs.openTrades.Count == 1 && tradeObjs.openTrades.Any(x=>x.Value.direction == direction)){
+                var mostRecentSameDirection = tradeObjs.openTrades.OrderBy(x=>x.Value.direction == direction).Last();
+                if((mostRecentSameDirection.Value.level-priceObj.ask)*envVariables.GetScalingFactor(priceObj.symbol) < 5 ){
+                    // openTradeBool = false;
+                    direction = mostRecentSameDirection.Value.direction == TradeDirection.BUY ? TradeDirection.SELL : TradeDirection.BUY;
+                }
+            }
            
 
             // All trades are the same direction, lets mix it up

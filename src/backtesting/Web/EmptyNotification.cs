@@ -15,8 +15,8 @@ public class EmptyWebNotification : IWebNotification
         return Task.CompletedTask;
     }
 
-    public Task OpenTrades(List<KeyValuePair<string, RequestObject>> input)
-    {     
+    public Task OpenTrades(RequestObject input)
+    {
         return Task.CompletedTask;
     }
 

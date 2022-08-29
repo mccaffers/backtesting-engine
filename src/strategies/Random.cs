@@ -13,35 +13,32 @@ public class RandomStrategy : IStrategy
 {
     readonly IRequestOpenTrade requestOpenTrade;
     readonly IEnvironmentVariables envVariables;
+    readonly ITradingObjects tradeObjs;
+
     IWebNotification webNotification;
     private List<OhlcObject> ohlcList = new List<OhlcObject>();
     private OhlcObject lastItem = new OhlcObject();
+    readonly ICloseOrder closeOrder;
 
-    public RandomStrategy(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables, IWebNotification webNotification)
+    public RandomStrategy(IRequestOpenTrade requestOpenTrade, ITradingObjects tradeObjs, IEnvironmentVariables envVariables,ICloseOrder closeOrder,  IWebNotification webNotification)
     {
         this.requestOpenTrade = requestOpenTrade;
         this.envVariables = envVariables;
+        this.tradeObjs = tradeObjs;
         this.webNotification = webNotification;
+        this.closeOrder = closeOrder;
+
     }
 
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
     public async Task Invoke(PriceObj priceObj)
     {
 
-        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromMinutes(30), ohlcList);
-
-        if(ohlcList.Count>1){
-            var secondLast = ohlcList[ohlcList.Count - 2];
-            if(secondLast.complete && secondLast.close!=lastItem.close){
-                await webNotification.PriceUpdate(secondLast, true);
-                lastItem=secondLast;
-            } else {
-                await webNotification.PriceUpdate(ohlcList.Last());
+         foreach(var item in this.tradeObjs.openTrades.Where(x => x.Key.Contains(priceObj.symbol)).Select(x => x.Value)){
+            if(priceObj.date.Subtract(item.openDate).TotalHours > 1){
+                this.closeOrder.Request(item, priceObj);
+                return;
             }
-        }
-
-        if(ohlcList.Count > 10){
-            ohlcList.RemoveAt(0);
         }
 
         if(priceObj.date.DayOfWeek == DayOfWeek.Sunday)

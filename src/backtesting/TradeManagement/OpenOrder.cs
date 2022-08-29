@@ -10,7 +10,11 @@ namespace backtesting_engine;
 
 public class OpenOrder : TradingBase, IOpenOrder
 {
-    public OpenOrder(IServiceProvider provider) : base(provider) { }
+    readonly IWebNotification webNotification;
+
+    public OpenOrder(IServiceProvider provider, IWebNotification webNotification) : base(provider) { 
+        this.webNotification = webNotification;
+    }
 
     // Data Update
     public void Request(RequestObject reqObj)
@@ -22,6 +26,7 @@ public class OpenOrder : TradingBase, IOpenOrder
         {
             // System.Console.WriteLine(reqObj.openDate + " " + reqObj.direction + " " + reqObj.level);
             this.tradingObjects.openTrades.TryAdd(reqObj.key, reqObj);
+            webNotification.OpenTrades(reqObj);
         }
 
     }
