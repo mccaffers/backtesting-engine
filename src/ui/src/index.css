@@ -40,6 +40,12 @@ code {
 
 .chartDiv {
   margin-bottom:20px;
+  flex: 1 80%;
+}
+
+.chartDiv2 {
+  margin-bottom:20px;
+  flex: 1 15%;
 }
 
 table {

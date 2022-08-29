@@ -20,7 +20,6 @@ const Chat = () => {
     const [ series, setSeries ] = useState({
             animationEnabled: true,
             theme: "light1", // "light1", "light2", "dark1", "dark2"
-            exportEnabled: true,
             title: {
                 text: ""
             },
@@ -47,13 +46,44 @@ const Chat = () => {
         }
     );
 
+    const [ series2, setSeries2 ] = useState({
+        animationEnabled: true,
+        theme: "light1", // "light1", "light2", "dark1", "dark2"
+        title: {
+            text: ""
+        },
+        subtitles: [{
+            text: ""
+        }],
+        axisX: {
+            margin: 15,
+        },
+        axisY: {
+            prefix: "",
+            title: "",
+            includeZero: false,
+        },
+        dataPointMinWidth: 10,
+        data: [{				
+            type: "candlestick",
+            xValueType: "label",
+            risingColor: "#00D100",
+            fallingColor: "#FF0000",  
+            connectNullData:true,
+            dataPoints: []
+        }]
+    }
+);
+
     const [ account, setAccount ] = useState(0);
     const [ openTrades, setOpenTrades] = useState([]);
     const [ closedTrades, setClosedTrades] = useState([]);
     const inputOpenTrades = useRef([]);
     const inputTrades = useRef([]);
+    const hedgeCount = useRef(0);
 
     var chartRef = useRef();
+    var chartRef2 = useRef();
     function UpdateChart(OHLCObj){
         
         const eventDate = +new Date(OHLCObj.d);
@@ -111,6 +141,95 @@ const Chat = () => {
             previousState.push(OHLCObj);
             return previousState;
         });
+    }
+
+    function AddHedgingTrade(OHLCObj, tradeType = "closed"){
+
+        hedgeCount.current++;
+        if(hedgeCount.current>5){
+            hedgeCount.current=0;
+        }
+        setSeries2((previousState) => {
+
+            let color = '#007500'; // green
+            if(OHLCObj.profit < 0){
+                color ='#750000';
+            }
+            let direction = "BUY";
+            if(OHLCObj.direction === 1){
+                direction="SELL";
+            }
+
+            let newState = previousState;
+
+            if(tradeType === "closed" ){
+                // Does the key exist && is it open
+                if(newState.data.some(item => item._tradingKey === OHLCObj.key) && 
+                    newState.data.some(item => item._tradingType === "open")){
+                        // Remove it
+                        newState.data = newState.data.filter(function(item) {
+                            return item._tradingKey !== OHLCObj.key
+                        })
+                }
+            }
+
+            // Loop all data obj's, if the _date is older than 3 seconds, delete it
+            newState.data = newState.data.filter(function(item) {
+                if(item._date == null){
+                    return true;
+                }
+                let seconds = 5;
+                let localDate=new Date(item._date.getTime() + (1000 * seconds))
+                return localDate.getTime() > new Date().getTime();
+            })
+
+            if(OHLCObj.closeLevel === 0){
+                OHLCObj.closeLevel = OHLCObj.level;
+            }
+            
+            // Lets check if the open trade exists, only need to add it once
+            if(tradeType === "open"){
+                if(newState.data.some(item => item._tradingKey === OHLCObj.key)){
+                    const index = newState.data.findIndex((element, index) => {
+                        if (element._tradingKey === OHLCObj.key) {
+                          return true
+                        }
+                    });
+
+                    if(index!==-1){
+                        if(newState.data[index].dataPoints.length == 1){
+                            newState.data[index].dataPoints[0].x = hedgeCount.current;
+                            newState.data[index].dataPoints[0].y = OHLCObj.level;
+
+                            newState.data[index].dataPoints.push([]);
+                        }
+                        newState.data[index].dataPoints[1].x = hedgeCount.current;
+                        newState.data[index].dataPoints[1].y = OHLCObj.closeLevel;
+                        return newState;
+                    }
+                }
+            
+            }
+
+            // Otherwise, add the open trades that doesn't exist, or a new closed trade
+            newState.data.push({
+                _tradingType: tradeType,
+                _date : new Date(),
+                _tradingKey: OHLCObj.key,
+                type: "line",
+                color:color,
+                dataPoints: [
+                    { x: hedgeCount.current, y: OHLCObj.level, indexLabel: direction },
+                    { x: hedgeCount.current, y: OHLCObj.closeLevel }
+                ]
+            });
+        
+            return newState;
+
+        });
+        chartRef2.current.render();
+
+
     }
 
     function AddTrade(OHLCObj, tradeType = "closed"){
@@ -206,7 +325,7 @@ const Chat = () => {
                         for (const i in parsedContent.openTrades) {
                             let item = JSON.parse(parsedContent.openTrades[i]);
                             AddTrade(item, "open");
-
+                            AddHedgingTrade(item, "open");
                             inputOpenTrades.current.push(item);
                             
                         }   
@@ -225,6 +344,8 @@ const Chat = () => {
                         for (const i in parsedContent.trade) {
                             let item = JSON.parse(parsedContent.trade[i]);
                             AddTrade(item);
+                            AddHedgingTrade(item);
+
                             SaveClosedTradeForTable(item);
                         }                      
                     }
@@ -292,6 +413,11 @@ const Chat = () => {
                 <div class="chartDiv"><CanvasJSChart options = {series}
                     onRef={(ref) => {
                         chartRef.current = ref;
+                    }}
+                /></div>
+                <div class="chartDiv2"><CanvasJSChart options = {series2}
+                    onRef={(ref) => {
+                        chartRef2.current = ref;
                     }}
                 /></div>
                 <article class="main">
