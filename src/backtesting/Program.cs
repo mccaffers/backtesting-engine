@@ -101,8 +101,7 @@ public static class Program
                 if(task.IsCompletedSuccessfully){
                     Console.WriteLine("Task completed successfully"); 
                 }
-            },
-            TaskContinuationOptions.OnlyOnRanToCompletion
+            }
         );
     }
 }

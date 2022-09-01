@@ -9,26 +9,13 @@ using Utilities;
 
 namespace backtesting_engine_strategies;
 
-public class RandomStrategy : IStrategy
+public class RandomStrategy : BaseStrategy, IStrategy
 {
-    readonly IRequestOpenTrade requestOpenTrade;
-    readonly IEnvironmentVariables envVariables;
-    readonly ITradingObjects tradeObjs;
 
-    IWebNotification webNotification;
     private List<OhlcObject> ohlcList = new List<OhlcObject>();
     private OhlcObject lastItem = new OhlcObject();
-    readonly ICloseOrder closeOrder;
 
-    public RandomStrategy(IRequestOpenTrade requestOpenTrade, ITradingObjects tradeObjs, IEnvironmentVariables envVariables,ICloseOrder closeOrder,  IWebNotification webNotification)
-    {
-        this.requestOpenTrade = requestOpenTrade;
-        this.envVariables = envVariables;
-        this.tradeObjs = tradeObjs;
-        this.webNotification = webNotification;
-        this.closeOrder = closeOrder;
-
-    }
+    public RandomStrategy(IRequestOpenTrade requestOpenTrade, ITradingObjects tradeObjs, IEnvironmentVariables envVariables,ICloseOrder closeOrder,  IWebNotification webNotification) : base(requestOpenTrade, tradeObjs, envVariables, closeOrder,  webNotification) {}
 
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
     public async Task Invoke(PriceObj priceObj)

@@ -12,6 +12,5 @@ public abstract class TradingBase {
     {
         this.tradingObjects = provider.GetRequiredService<ITradingObjects>();
         this.systemObjects = provider.GetRequiredService<ISystemObjects>();
-
     }
  }

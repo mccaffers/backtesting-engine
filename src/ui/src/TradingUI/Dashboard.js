@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { HubConnectionBuilder, HttpTransportType} from '@microsoft/signalr';
-import { flushSync } from 'react-dom'; 
-
-import TradeWindow from './TradeWindow/TradeWindow';
-import TradeInput from './TradeInput/TradeInput';
-import TradeUpdate from './TradeUpdate';
-
 import CanvasJSReact from '../libs/canvasjs.react';
+import SaveClosedTradeForTable from '../Functions/SaveClosedTrades';
+import UpdateChart from '../Functions/DisplayOHLCData';
+
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-// import Chart from "react-apexcharts";
+// MessagePack is a fast and compact binary serialization format. It's useful when performance and bandwidth are a concern because it creates smaller messages than JSON.
+// https://docs.microsoft.com/en-us/aspnet/core/signalr/messagepackhubprotocol?view=aspnetcore-6.0
 const signalRMsgPack = require("@microsoft/signalr-protocol-msgpack");
 
+// To fix localhost SSL issues
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; 
 
 const Chat = () => {
@@ -84,64 +83,14 @@ const Chat = () => {
 
     var chartRef = useRef();
     var chartRef2 = useRef();
-    function UpdateChart(OHLCObj){
-        
-        const eventDate = +new Date(OHLCObj.d);
+   
 
-        setSeries((previousState) => {
-            let previousDataPoints = previousState.data[0].dataPoints;
-
-            let indexValue = previousDataPoints.findIndex((obj => obj.x===eventDate));
-            // -1 means it doesn't exist, lets start a new element
-            let priceEvent = [ OHLCObj.o, OHLCObj.h, OHLCObj.l, OHLCObj.c];
-            if(indexValue==-1){
-                const keepAmount = 20;
-                if(previousDataPoints.length>keepAmount){
-                    previousDataPoints = previousDataPoints.slice(previousDataPoints.length-keepAmount);
-                }
-                previousDataPoints = [...previousDataPoints, { y: priceEvent, x: eventDate} ];
-                indexValue = previousDataPoints.length-1;
-            } else {
-                // dataPoints.current[indexValue.current].x = dataPoints.current[indexValue.current].x;
-                previousDataPoints[indexValue].y = priceEvent;
-            }
-            let color = "#FF0000"; // red
-            if(previousDataPoints[indexValue].y[3]>previousDataPoints[indexValue].y[0]){
-                color="#00D100"; // green
-            }
-            previousDataPoints[indexValue].color = color;
-
-            previousState.data[0].dataPoints = previousDataPoints;
-            let candleSticks = previousState.data[0];
-
-            // Remove old trades from the UI
-            let alignedState = [];
-
-            for(const item of previousState.data){
-                if(item.type === "line"){
-                    alignedState.push({
-                            _tradingType: item._tradingType,
-                            _tradingKey: item._tradingKey,
-                            type: "line",
-                            color:item.color,
-                            dataPoints: item.dataPoints.filter(e => e.x > candleSticks.dataPoints[0].x)});
-                }
-            }
-            previousState.data = [candleSticks, ...alignedState]
-
-            return previousState;
-        });
-
-        chartRef.current.render();
-        
-    }
-
-    function SaveClosedTradeForTable(OHLCObj){
-        setClosedTrades((previousState) => {
-            previousState.push(OHLCObj);
-            return previousState;
-        });
-    }
+    // function SaveClosedTradeForTable(OHLCObj){
+    //     setClosedTrades((previousState) => {
+    //         previousState.push(OHLCObj);
+    //         return previousState;
+    //     });
+    // }
 
     function AddHedgingTrade(OHLCObj, tradeType = "closed"){
 
@@ -178,8 +127,12 @@ const Chat = () => {
                 if(item._date == null){
                     return true;
                 }
+                if(item._tradingType === "closed")
+                {
+                    return false;
+                }
                 let seconds = 5;
-                let localDate=new Date(item._date.getTime() + (1000 * seconds))
+                let localDate=new Date(item._date.getTime() + (5000 * seconds))
                 return localDate.getTime() > new Date().getTime();
             })
 
@@ -316,7 +269,7 @@ const Chat = () => {
                     
                     if ('priceUpdate' in parsedContent){
                         var OHLCObj = JSON.parse(parsedContent.priceUpdate);
-                        UpdateChart(OHLCObj);
+                        UpdateChart(OHLCObj,chartRef, setSeries);
                     } 
                     if ('accountUpdate' in parsedContent){
                         setAccount(parseFloat(parsedContent.accountUpdate[0]).toFixed(2))
@@ -346,26 +299,10 @@ const Chat = () => {
                             AddTrade(item);
                             AddHedgingTrade(item);
 
-                            SaveClosedTradeForTable(item);
+                            SaveClosedTradeForTable(item, setClosedTrades);
                         }                      
                     }
                     
-
-                    // } else if(message.Activity === "account"){
-                    //     setAccount(parseFloat(message.Content).toFixed(2))
-                    // } else if(message.Activity == "trade"){
-                    //     var OHLCObj = JSON.parse(message.Content);
-                    //     AddTrade(OHLCObj);
-                    //     SaveClosedTradeForTable(OHLCObj);
-                    // } else if(message.Activity == "openTrades"){
-                    //     var parsedOpenTrades = JSON.parse(message.Content);
-                    //     setOpenTrades(parsedOpenTrades)
-
-                    //     parsedOpenTrades.map( item => {
-                    //         AddTrade(item.Value, "open");
-                    //     })
-
-                    // }
 
                 });
             })
@@ -380,34 +317,9 @@ const Chat = () => {
         connectToSignalR();
     }, []);
 
-    const sendMessage = async (user, message) => {
-       
-        const chatMessage = {
-            user: user,
-            message: message
-        };
-
-        console.log("sendMessage message: " + message);
-
-        try {
-            await  fetch('https://localhost:5001/chat/messages', { 
-                method: 'POST', 
-                body: JSON.stringify(chatMessage),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-        }
-        catch(e) {
-            console.log('Sending message failed.', e);
-        }
-    }
-
     return (
         
         <div>
-            {/* <TradeInput sendMessage={sendMessage} /> */}
-            <div></div>
             <div class="wrapper">
                 <header class="header">Backtesting Engine</header>
                 <div class="chartDiv"><CanvasJSChart options = {series}

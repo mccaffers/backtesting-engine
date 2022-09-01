@@ -12,9 +12,10 @@ dotnet build ./src/backtesting
 
 echo $runID
 
-parallel --halt now,fail=1 --line-buffer --tty --jobs 1 --verbose ::: \
+parallel --halt now,fail=1 --line-buffer --tty --jobs 2 --verbose ::: \
+"npm start --prefix ./src/ui/ 1> /dev/null 2> /dev/null" \
 "dotnet run --project ./src/backtesting -- web" 
-# "npm start --prefix ./src/ui/"
+
 
 
 

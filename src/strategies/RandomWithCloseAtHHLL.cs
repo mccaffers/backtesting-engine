@@ -11,19 +11,11 @@ using Utilities;
 namespace backtesting_engine_strategies;
 
 
-public class RandomWithCloseAtHhll : IStrategy
+public class RandomWithCloseAtHhll : BaseStrategy, IStrategy
 {
-    readonly IRequestOpenTrade requestOpenTrade;
-    readonly IEnvironmentVariables envVariables;
     private List<OhlcObject> ohlcList = new List<OhlcObject>();
-    IWebNotification webNotification;
 
-    public RandomWithCloseAtHhll(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables, IWebNotification webNotification)
-    {
-        this.requestOpenTrade = requestOpenTrade;
-        this.envVariables = envVariables;
-        this.webNotification = webNotification;
-    }
+    public RandomWithCloseAtHhll(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables, ITradingObjects tradeObjs, ICloseOrder closeOrder, IWebNotification webNotification) : base(requestOpenTrade, tradeObjs, envVariables, closeOrder,  webNotification) {}
 
     private OhlcObject lastItem = new OhlcObject();
 

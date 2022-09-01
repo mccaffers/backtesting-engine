@@ -10,23 +10,12 @@ using Utilities;
 
 namespace backtesting_engine_strategies;
 
-public class HedgeStrategy : IStrategy
+public class HedgeStrategy : BaseStrategy, IStrategy
 {
-    readonly IRequestOpenTrade requestOpenTrade;
-    readonly IEnvironmentVariables envVariables;
-    readonly ITradingObjects tradeObjs;
-    readonly ICloseOrder closeOrder;
-    IWebNotification webNotification;
     private List<OhlcObject> ohlcList = new List<OhlcObject>();
     private OhlcObject lastItem = new OhlcObject();
-    public HedgeStrategy(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables, ITradingObjects tradeObjs, ICloseOrder closeOrder, IWebNotification webNotification)
-    {
-        this.requestOpenTrade = requestOpenTrade;
-        this.envVariables = envVariables;
-        this.tradeObjs = tradeObjs;
-        this.closeOrder = closeOrder;
-        this.webNotification = webNotification;
-    }
+
+    public HedgeStrategy(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables, ITradingObjects tradeObjs, ICloseOrder closeOrder, IWebNotification webNotification) : base(requestOpenTrade, tradeObjs, envVariables, closeOrder,  webNotification) {}
 
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
     public Task Invoke(PriceObj priceObj)
