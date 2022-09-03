@@ -3,6 +3,7 @@ import { HubConnectionBuilder, HttpTransportType} from '@microsoft/signalr';
 import CanvasJSReact from '../libs/canvasjs.react';
 import SaveClosedTradeForTable from '../Functions/SaveClosedTrades';
 import UpdateChart from '../Functions/DisplayOHLCData';
+import AddHedgingTrade from '../Functions/TradesOnLinearXAxis';
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -55,14 +56,14 @@ const Chat = () => {
             text: ""
         }],
         axisX: {
-            margin: 15,
+            minimum: 0,
+            maximum: 100,
         },
         axisY: {
             prefix: "",
             title: "",
             includeZero: false,
         },
-        dataPointMinWidth: 10,
         data: [{				
             type: "candlestick",
             xValueType: "label",
@@ -92,98 +93,7 @@ const Chat = () => {
     //     });
     // }
 
-    function AddHedgingTrade(OHLCObj, tradeType = "closed"){
-
-        hedgeCount.current++;
-        if(hedgeCount.current>5){
-            hedgeCount.current=0;
-        }
-        setSeries2((previousState) => {
-
-            let color = '#007500'; // green
-            if(OHLCObj.profit < 0){
-                color ='#750000';
-            }
-            let direction = "BUY";
-            if(OHLCObj.direction === 1){
-                direction="SELL";
-            }
-
-            let newState = previousState;
-
-            if(tradeType === "closed" ){
-                // Does the key exist && is it open
-                if(newState.data.some(item => item._tradingKey === OHLCObj.key) && 
-                    newState.data.some(item => item._tradingType === "open")){
-                        // Remove it
-                        newState.data = newState.data.filter(function(item) {
-                            return item._tradingKey !== OHLCObj.key
-                        })
-                }
-            }
-
-            // Loop all data obj's, if the _date is older than 3 seconds, delete it
-            newState.data = newState.data.filter(function(item) {
-                if(item._date == null){
-                    return true;
-                }
-                if(item._tradingType === "closed")
-                {
-                    return false;
-                }
-                let seconds = 5;
-                let localDate=new Date(item._date.getTime() + (5000 * seconds))
-                return localDate.getTime() > new Date().getTime();
-            })
-
-            if(OHLCObj.closeLevel === 0){
-                OHLCObj.closeLevel = OHLCObj.level;
-            }
-            
-            // Lets check if the open trade exists, only need to add it once
-            if(tradeType === "open"){
-                if(newState.data.some(item => item._tradingKey === OHLCObj.key)){
-                    const index = newState.data.findIndex((element, index) => {
-                        if (element._tradingKey === OHLCObj.key) {
-                          return true
-                        }
-                    });
-
-                    if(index!==-1){
-                        if(newState.data[index].dataPoints.length == 1){
-                            newState.data[index].dataPoints[0].x = hedgeCount.current;
-                            newState.data[index].dataPoints[0].y = OHLCObj.level;
-
-                            newState.data[index].dataPoints.push([]);
-                        }
-                        newState.data[index].dataPoints[1].x = hedgeCount.current;
-                        newState.data[index].dataPoints[1].y = OHLCObj.closeLevel;
-                        return newState;
-                    }
-                }
-            
-            }
-
-            // Otherwise, add the open trades that doesn't exist, or a new closed trade
-            newState.data.push({
-                _tradingType: tradeType,
-                _date : new Date(),
-                _tradingKey: OHLCObj.key,
-                type: "line",
-                color:color,
-                dataPoints: [
-                    { x: hedgeCount.current, y: OHLCObj.level, indexLabel: direction },
-                    { x: hedgeCount.current, y: OHLCObj.closeLevel }
-                ]
-            });
-        
-            return newState;
-
-        });
-        chartRef2.current.render();
-
-
-    }
+    
 
     function AddTrade(OHLCObj, tradeType = "closed"){
         
@@ -204,7 +114,7 @@ const Chat = () => {
                 // Does the key exist && is it open
                 if(newState.data.some(item => item._tradingKey === OHLCObj.key) && 
                     newState.data.some(item => item._tradingType === "open")){
-                        console.log("found open trade to remove");
+                        // console.log("found open trade to remove");
                         // Remove it
                         newState.data = newState.data.filter(function(item) {
                             return item._tradingKey !== OHLCObj.key
@@ -278,9 +188,8 @@ const Chat = () => {
                         for (const i in parsedContent.openTrades) {
                             let item = JSON.parse(parsedContent.openTrades[i]);
                             AddTrade(item, "open");
-                            AddHedgingTrade(item, "open");
+                            AddHedgingTrade(item, "open", setSeries2, hedgeCount, chartRef2);
                             inputOpenTrades.current.push(item);
-                            
                         }   
                         
                         setOpenTrades((previousState) => {
@@ -297,7 +206,7 @@ const Chat = () => {
                         for (const i in parsedContent.trade) {
                             let item = JSON.parse(parsedContent.trade[i]);
                             AddTrade(item);
-                            AddHedgingTrade(item);
+                            AddHedgingTrade(item, "update", setSeries2, hedgeCount, chartRef2);
 
                             SaveClosedTradeForTable(item, setClosedTrades);
                         }                      
