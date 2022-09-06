@@ -44,6 +44,8 @@ public class Positions : TradingBase, IPositions
             // Update the close price, referenced in further conditions
             myTradeObj.UpdateClose(priceObj);
 
+            
+
             var distance = envVaribles.kineticStopLoss / envVaribles.GetScalingFactor(priceObj.symbol);
 
             if(myTradeObj.direction == TradeDirection.BUY){
@@ -125,6 +127,7 @@ public class Positions : TradingBase, IPositions
         foreach (var myTradeObj in GetOrderBook(priceObj.symbol))
         {
             myTradeObj.UpdateClose(priceObj);
+            _ = webNotification.OpenTrades(myTradeObj);
 
             if (myTradeObj.direction == TradeDirection.BUY &&
                     (priceObj.bid <= myTradeObj.stopLevel || priceObj.bid >= myTradeObj.limitLevel))

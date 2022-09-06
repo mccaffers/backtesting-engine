@@ -28,6 +28,8 @@ public class WebNotification : IWebNotification
 
     }
 
+    private Dictionary<string, RequestObject> tradeArray=new Dictionary<string, RequestObject>();
+
     public async Task OpenTrades(RequestObject input)
     {
 
@@ -36,10 +38,7 @@ public class WebNotification : IWebNotification
         // }
         // lastSentOpenTrade = DateTime.Now;
 
-        if(!groupMessage.ContainsKey("openTrades")){
-            groupMessage["openTrades"] = new List<string>();
-        }
-        groupMessage["openTrades"].Add(JsonConvert.SerializeObject(input));
+        tradeArray.Add(input.key, input);
 
         // await PublishMessage("openTrades", JsonConvert.SerializeObject(input));
     }
@@ -77,8 +76,20 @@ public class WebNotification : IWebNotification
         }
         groupMessage["priceUpdate"][0]=JsonConvert.SerializeObject(input);
 
+
+        if(!groupMessage.ContainsKey("openTrades")){
+            groupMessage["openTrades"] = new List<string>();
+        }
+
+        foreach(var item in tradeArray){
+            groupMessage["openTrades"].Add(JsonConvert.SerializeObject(item.Value));    
+        }
+
         await PublishMessage("price", JsonConvert.SerializeObject(groupMessage));
+
+        // Clean up
         groupMessage = new Dictionary<string, List<string>>();
+        tradeArray = new Dictionary<string, RequestObject>();
     }
 
     private async Task PublishMessage(string activity, string content){

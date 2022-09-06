@@ -57,7 +57,7 @@ const Chat = () => {
         }],
         axisX: {
             minimum: 0,
-            maximum: 100,
+            maximum: 50,
         },
         axisY: {
             prefix: "",
@@ -110,40 +110,41 @@ const Chat = () => {
 
             let newState = previousState;
 
-            if(tradeType === "closed" ){
-                // Does the key exist && is it open
-                if(newState.data.some(item => item._tradingKey === OHLCObj.key) && 
-                    newState.data.some(item => item._tradingType === "open")){
-                        // console.log("found open trade to remove");
-                        // Remove it
-                        newState.data = newState.data.filter(function(item) {
-                            return item._tradingKey !== OHLCObj.key
-                        })
-                }
-            }
+            // if(tradeType === "closed" ){
+            //     // Does the key exist && is it open
+            //     if(newState.data.some(item => item._tradingKey === OHLCObj.key) && 
+            //         newState.data.some(item => item._tradingType === "open")){
+            //             // console.log("found open trade to remove");
+            //             // Remove it
+            //             newState.data = newState.data.filter(function(item) {
+            //                 return item._tradingKey !== OHLCObj.key
+            //             })
+            //     }
+            // }
             
             // Lets check if the open trade exists, only need to add it once
-            if(tradeType === "open"){
-                if(newState.data.some(item => item._tradingKey === OHLCObj.key)){
-                    const index = newState.data.findIndex((element, index) => {
-                        if (element._tradingKey === OHLCObj.key) {
-                          return true
-                        }
-                    });
-
-                    if(index!==-1){
-                        if(newState.data[index].dataPoints.length == 1){
-                            newState.data[index].dataPoints[0].x = +new Date(OHLCObj.openDate);
-                            newState.data[index].dataPoints[0].y = OHLCObj.level;
-
-                            newState.data[index].dataPoints.push([]);
-                        }
-                        newState.data[index].dataPoints[1].x = +new Date(OHLCObj.closeDateTime);
-                        newState.data[index].dataPoints[1].y = OHLCObj.closeLevel;
-                        return newState;
+            // if(tradeType === "open"){
+            if(newState.data.some(item => item._tradingKey === OHLCObj.key)){
+                const index = newState.data.findIndex((element, index) => {
+                    if (element._tradingKey === OHLCObj.key) {
+                        return true
                     }
+                });
+
+                if(index!==-1){
+                    if(newState.data[index].dataPoints.length == 1){
+                        newState.data[index].dataPoints[0].x = +new Date(OHLCObj.openDate);
+                        newState.data[index].dataPoints[0].y = OHLCObj.level;
+
+                        newState.data[index].dataPoints.push([]);
+                    }
+                    newState.data[index].dataPoints[1].x = +new Date(OHLCObj.closeDateTime);
+                    newState.data[index].dataPoints[1].y = OHLCObj.closeLevel;
+                    newState.data[index].color = color;
+                    return newState;
                 }
             }
+            // }
 
             // Otherwise, add the open trades that doesn't exist, or a new closed trade
             newState.data.push({

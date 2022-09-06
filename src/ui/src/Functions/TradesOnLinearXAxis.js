@@ -1,7 +1,6 @@
 function AddHedgingTrade(OHLCObj, tradeType, setSeries2, hedgeCount, chartRef2){
 
-    hedgeCount.current++;
-    if(hedgeCount.current>100){
+    if(hedgeCount.current>50){
         hedgeCount.current=0;
 
         setSeries2((previousState) => {
@@ -65,13 +64,14 @@ function AddHedgingTrade(OHLCObj, tradeType, setSeries2, hedgeCount, chartRef2){
                 //     newState.data[index].dataPoints.push([]);
                 // }
                 newState.data[index].color = color;
-                newState.data[index].dataPoints[1].x = hedgeCount.current;
+                console.log(newState.data[index])
+                newState.data[index].dataPoints[1].x = newState.data[index].dataPoints[0].x+2;
                 newState.data[index].dataPoints[1].y = OHLCObj.closeLevel;
                 return newState;
             }
         }
     
-
+        hedgeCount.current++;
 
         // Otherwise, add the open trades that doesn't exist, or a new closed trade
         newState.data.push({
