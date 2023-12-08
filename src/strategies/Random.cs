@@ -15,7 +15,11 @@ public class RandomStrategy : BaseStrategy, IStrategy
     private List<OhlcObject> ohlcList = new List<OhlcObject>();
     private OhlcObject lastItem = new OhlcObject();
 
-    public RandomStrategy(IRequestOpenTrade requestOpenTrade, ITradingObjects tradeObjs, IEnvironmentVariables envVariables,ICloseOrder closeOrder,  IWebNotification webNotification) : base(requestOpenTrade, tradeObjs, envVariables, closeOrder,  webNotification) {}
+    public RandomStrategy(  IRequestOpenTrade requestOpenTrade, 
+                            ITradingObjects tradeObjs, 
+                            IEnvironmentVariables envVariables,
+                            ICloseOrder closeOrder,
+                            IWebNotification webNotification ) : base(requestOpenTrade, tradeObjs, envVariables, closeOrder,  webNotification) {}
 
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
     public async Task Invoke(PriceObj priceObj)

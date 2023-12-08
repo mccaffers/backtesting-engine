@@ -26,14 +26,29 @@ This backtesting engine is a personal project of mine, built in C# to explore an
 * [dotnet](https://dotnet.com)
 
 <!-- GETTING STARTED -->
-## Getting Started
+### Getting Started
 
-### Prerequisites
+#### Testing
+`dotnet test`
+
+#### Demo Run (Working)
+{placeholder}
+
+#### Local Terminal
+sh ./scripts/backtesting/run.sh
+
+#### Local Web & Terminal
+sh ./script/backtesting/web.sh
+
+### Dependencies
 
 * dotnet v6
-  * Web Use
-    * dotnet dev-certs https --trust
-* financial tick data in CSV format, specifically:
+  * Charting & Web use, need to accept dotnet's certificates `dotnet dev-certs https --trust`
+* ElasticSearch for reporting
+* CanvasJS used for charting
+  * JS libaries `canvasjs.min.js` to be placed within ./src/ui/src/libs/ folder
+* Some financial tick data in CSV format, in the /src/tickdata folder (example provided)
+
     ```bash
     # ./tickdata/{symbol}/2020.csv:
     UTC,AskPrice,BidPrice,AskVolume,BidVolume

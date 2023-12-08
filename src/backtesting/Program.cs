@@ -54,6 +54,7 @@ public static class Program
         } else {
             System.Console.WriteLine("Not web");
             serviceCollection.AddSingleton<IWebNotification,EmptyWebNotification>();
+            serviceCollection.AddSingleton<IWebUtils, WebUtilsMock>();
         }
 
         serviceCollection

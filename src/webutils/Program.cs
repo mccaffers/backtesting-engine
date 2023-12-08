@@ -9,6 +9,14 @@ public interface IWebUtils
     Task Invoke(PriceObj priceObj);
 }
 
+public class WebUtilsMock : IWebUtils
+{
+    public Task Invoke(PriceObj priceObj)
+    {
+        return Task.FromResult(0);
+    }
+}
+
 public class WebUtils : IWebUtils
 {
     private List<OhlcObject> ohlcList = new List<OhlcObject>();
