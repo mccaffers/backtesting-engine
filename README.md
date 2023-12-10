@@ -1,7 +1,7 @@
 <div align="center">
 <h3 align="center">C# Backtesting Engine</h3>
   <p align="center">
-    By McCaffers
+    By Ryan (mccaffers.com)
   </p>
 </div>
 
@@ -38,7 +38,7 @@ This backtesting engine is a personal project of mine, built in C# to explore an
 sh ./scripts/backtesting/run.sh
 
 #### Local Web & Terminal
-sh ./script/backtesting/web.sh
+sh ./scripts/backtesting/web.sh
 
 ### Dependencies
 

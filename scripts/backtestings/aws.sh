@@ -73,7 +73,7 @@ main() {
 
     ######
 
-    # Remove binary files
+    # Remove binary files & tests
     find . -iname "bin" -o -iname "obj" | xargs rm -rf
     zip -r engine.zip ./src ./backtesting-engine.sln ./tests
     dotnet restore 
@@ -169,7 +169,7 @@ deploy () {
     envsubst < $SCRIPT_DIR/awstemplate.txt > $SCRIPT_DIR/data.sh
 
     # Deploy
-    aws ec2 run-instances   --image-id resolve:ssm:/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-arm64-gp2  \
+    aws ec2 run-instances   --image-id resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-arm64  \
                             --count 1 \
                             --instance-type ${awsDeployInstanceType//[-]/.} \
                             --key-name ${awsDeployKeyName} \
