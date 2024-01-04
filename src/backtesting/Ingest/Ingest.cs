@@ -48,6 +48,10 @@ public class Ingest : IIngest
             DirectoryInfo di = new DirectoryInfo(symbolFolder);
             var files = di.GetFiles("*.csv").OrderBy(x => x.Name);
 
+            if(files.Count() > 1){
+                throw new Exception("Data is pulled on a yearly basis, remove extra years from /tick folder");
+            }
+
             foreach (var file in files)
             {
                 arrayHolder.Add(file.FullName);
@@ -70,7 +74,7 @@ public class Ingest : IIngest
             var symbol = this.symbols.First(x => file.Contains(x));
             streamDictionary.Add(symbol, ReadFile(file));
         }
-
+        
         await LoopStreamDictionaryAndReadLine(streamDictionary, buffer);
         StreamReaderCleanup();
     }
@@ -102,8 +106,10 @@ public class Ingest : IIngest
         {
 
             _cts.ThrowIfCancellationRequested();
-
-            if(buffer.Count>5000){ // To prevent RAM depletion
+            
+            // To prevent RAM being maxed out and slowing the system down
+            // limit the buffer to hold 10,000 ticks at any one point
+            if(buffer.Count>10000){ 
                 continue;
             }
 

@@ -6,6 +6,7 @@ set -ex
 ###################
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+AWS_MACHINE_IMAGE="resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-arm64"
 
 main() {
 
@@ -24,7 +25,7 @@ main() {
 
     # Major Forex Currencies
     declare -a symbolsArray=("EURUSD") # "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
-    yearsStart="2020"
+    yearsStart=2020
 
     ## Multiple Indexes
     # declare -a symbolsArray=("JPNIDX225" "SPNIDX35" "FRAIDX40" "DEUIDX40" "AUSIDX200" "USAIDXTECH" "USAIDX500" "USAIDX30" "EURIDX600" "GBRIDX100")
@@ -39,8 +40,8 @@ main() {
     # Do not change here
     stopLossInPipsRange="1 1 1"
     limitInPipsRange="1 1 1"
-    iterationRange="1 1 5"
-    yearsEnd="2021"
+    iterationRange="1 1 1"
+    yearsEnd=2021
     accountEquity=10000
     maximumDrawndownPercentage=75
     kineticOn=0 # 1 on, 0 off
@@ -59,8 +60,8 @@ main() {
     limitInPipsRange="100 1 100"
     
     # Account Equity
-    # accountEquity=10000
-    # yearsEnd="2021"
+    accountEquity=100
+    yearsEnd=2020
     # maximumDrawndownPercentage=75
     
     ## Trailing Stop Loss
@@ -75,7 +76,7 @@ main() {
 
     # Remove binary files & tests
     find . -iname "bin" -o -iname "obj" | xargs rm -rf
-    zip -r engine.zip ./src ./backtesting-engine.sln ./tests
+    zip -r engine.zip ./src ./backtesting-engine.sln ./tests -x "src/ui/*" -y
     dotnet restore 
 
     # Associate the runID with the files, maybe move this to a commit ID in the future
@@ -169,7 +170,7 @@ deploy () {
     envsubst < $SCRIPT_DIR/awstemplate.txt > $SCRIPT_DIR/data.sh
 
     # Deploy
-    aws ec2 run-instances   --image-id resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-arm64  \
+    aws ec2 run-instances   --image-id ${AWS_MACHINE_IMAGE}  \
                             --count 1 \
                             --instance-type ${awsDeployInstanceType//[-]/.} \
                             --key-name ${awsDeployKeyName} \

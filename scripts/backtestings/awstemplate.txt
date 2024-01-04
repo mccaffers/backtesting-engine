@@ -32,19 +32,19 @@ export systemLog=false
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 # Pull the project files
-sudo yum install -y libicu60 zstd
-aws s3api get-object --bucket ${awsDeployBucket} --key run/${runID}.zip /home/ec2-user/files.zip &
+# sudo yum install -y zstd libicu
+aws s3api get-object --bucket ${awsDeployBucket} --key run/${runID}.zip /home/ec2-user/files.zip
 
-# Setup dotnet
-export HOME=/root/
-wget -q https://dot.net/v1/dotnet-install.sh 
-sh dotnet-install.sh -c Current 
-ln -s /root/.dotnet/dotnet /usr/bin/dotnet
+# Setup dotnet - Expected to be installed
+# export HOME=/root/
+# wget -q https://dot.net/v1/dotnet-install.sh 
+# sh dotnet-install.sh -Channel 6.0
+# ln -s /root/.dotnet/dotnet /usr/bin/dotnet
 
 # Free up some space
-sudo yum clean all -y
-sudo find /var -name "*.log" \( \( -size +50M -mtime +7 \) -o -mtime +30 \) -exec truncate {} --size 0 \;
-sudo rm -rf /var/cache/yum
+# sudo yum clean all -y
+# sudo find /var -name "*.log" \( \( -size +50M -mtime +7 \) -o -mtime +30 \) -exec truncate {} --size 0 \;
+# sudo rm -rf /var/cache/yum
 
 # Extract project files
 cd /home/ec2-user/
