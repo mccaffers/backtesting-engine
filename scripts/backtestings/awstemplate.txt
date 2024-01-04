@@ -36,7 +36,7 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
 aws s3api get-object --bucket ${awsDeployBucket} --key run/${runID}.zip /home/ec2-user/files.zip
 
 # Setup dotnet - Expected to be installed
-# export HOME=/root/
+export HOME=/root/
 # wget -q https://dot.net/v1/dotnet-install.sh 
 # sh dotnet-install.sh -Channel 6.0
 # ln -s /root/.dotnet/dotnet /usr/bin/dotnet
