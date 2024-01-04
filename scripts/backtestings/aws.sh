@@ -24,7 +24,7 @@ main() {
     # declare -a strategies=("RandomWithCloseAtHHLL") 
 
     # Major Forex Currencies
-    declare -a symbolsArray=("EURUSD") # "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
+    declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
     yearsStart=2020
 
     ## Multiple Indexes
@@ -54,14 +54,16 @@ main() {
     # Customisable Trading Variables
 
     # STOP LOSS Distance in PIPs
-    stopLossInPipsRange="100 1 100"
+    stopLossInPipsRange="30 1 30"
     
     # TAKE PROFIT Distance in PIPs
-    limitInPipsRange="100 1 100"
+    limitInPipsRange="30 1 30"
     
     # Account Equity
-    accountEquity=100
-    yearsEnd=2020
+    accountEquity=0
+    maximumDrawndownPercentage=0
+    yearsStart=2004
+    yearsEnd=2023
     # maximumDrawndownPercentage=75
     
     ## Trailing Stop Loss

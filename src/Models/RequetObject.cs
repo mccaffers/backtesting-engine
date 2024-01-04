@@ -100,7 +100,7 @@ public class RequestObject {
 
     }
 
-    public void UpdateLevelWithSlippage(decimal slippage){
-        this.level = this.direction == TradeDirection.BUY ? this.level-slippage : this.level+slippage;
-    }
+    // public void UpdateLevelWithSlippage(decimal slippage){
+    //     this.level = this.direction == TradeDirection.BUY ? this.level-slippage : this.level+slippage;
+    // }
 }

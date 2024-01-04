@@ -55,6 +55,12 @@ sh ./scripts/backtesting/web.sh
     2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75
     ```
 
+
+### Random Trading Strategy
+    accountEquity=0
+    maximumDrawndownPercentage=0
+
+
 ### License
 [MIT](https://choosealicense.com/licenses/mit/)
 

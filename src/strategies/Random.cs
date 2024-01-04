@@ -1,7 +1,4 @@
-using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Threading.Tasks.Dataflow;
 using backtesting_engine;
 using backtesting_engine.interfaces;
 using backtesting_engine_models;
@@ -9,6 +6,7 @@ using Utilities;
 
 namespace backtesting_engine_strategies;
 
+// https://mccaffers.com/randomly_trading/
 public class RandomStrategy : BaseStrategy, IStrategy
 {
 
@@ -24,7 +22,7 @@ public class RandomStrategy : BaseStrategy, IStrategy
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
     public async Task Invoke(PriceObj priceObj)
     {
-
+        
          foreach(var item in this.tradeObjs.openTrades.Where(x => x.Key.Contains(priceObj.symbol)).Select(x => x.Value)){
             if(priceObj.date.Subtract(item.openDate).TotalHours > 1){
                 this.closeOrder.Request(item, priceObj);
@@ -41,9 +39,9 @@ public class RandomStrategy : BaseStrategy, IStrategy
             return;
         }
 
-        if(priceObj.date.Hour < 5 || priceObj.date.Hour > 19){
-            return;
-        }
+        // if(priceObj.date.Hour < 5 || priceObj.date.Hour > 19){
+        //     return;
+        // }
 
         var randomInt = new Random().Next(2); 
         // 0 or 1
@@ -63,6 +61,11 @@ public class RandomStrategy : BaseStrategy, IStrategy
         };
 
         this.requestOpenTrade.Request(openOrderRequest);
+        
+        // Surpress CS1998
+        // Async method lacks 'await' operators and will run synchronously
+        // await Task.CompletedTask;
+        
         return;
     }
 }

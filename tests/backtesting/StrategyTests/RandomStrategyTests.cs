@@ -40,9 +40,9 @@ public class RandomStrategyTests
             CallBase = true
         };
 
-        await randomStrategyMock.Object.Invoke(priceObjNext);
+        randomStrategyMock.Object.Invoke(priceObjNext);
         priceObjNext.date = priceObjNext.date.AddSeconds(61);
-        await randomStrategyMock.Object.Invoke(priceObjNext);
+        randomStrategyMock.Object.Invoke(priceObjNext);
 
         Assert.Equal(priceObjNext.bid, output?.priceObj.bid);
         Assert.Equal(tradingSize, output?.size);

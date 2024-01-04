@@ -7,15 +7,17 @@ using backtesting_engine_web;
 
 namespace backtesting_engine_ingest;
 
-public class Consumer : IConsumer
+public class WebConsumer : IConsumer
 {
     readonly IEnumerable<IStrategy>? strategies;
     readonly IPositions positions;
+    readonly IWebUtils webUtils;
 
-    public Consumer(IEnumerable<IStrategy> strategies, IPositions positions) {
+    public WebConsumer(IEnumerable<IStrategy> strategies, IPositions positions, IWebUtils webUtils) {
 
         this.strategies = strategies;
         this.positions = positions;
+        this.webUtils = webUtils;
     }
 
     private DateTime lastReceived = DateTime.Now;
@@ -37,7 +39,26 @@ public class Consumer : IConsumer
                 priceTimeWindow=priceObj.date;
             }
 
-            await ProcessTick(priceObj);
+            await CacheRequests(priceObj);
+        }
+    }
+
+    private async Task CacheRequests(PriceObj priceObj){
+        // Clock the local time, check it's under 100 milliseconds
+        if(DateTime.Now.Subtract(lastReceived).TotalSeconds <= 0.2){ //0.4
+
+            // Have we sent an hour
+            if(priceObj.date.Subtract(priceTimeWindow).TotalMinutes<5){
+                await ProcessTick(priceObj);
+            } else {
+                await Task.Delay(100);
+                await CacheRequests(priceObj);
+            }
+
+        } else {
+            lastReceived=DateTime.Now;
+            priceTimeWindow=priceObj.date;
+            await CacheRequests(priceObj);
         }
     }
 
@@ -54,27 +75,7 @@ public class Consumer : IConsumer
         this.positions.TrailingStopLoss(priceObj);
         this.positions.ReviewEquity();
         this.positions.PushRequests(priceObj);
+        await this.webUtils.Invoke(priceObj);
     }
 
-}
-
-public static class PropertyCopier<TParent, TChild> where TParent : class
-                                            where TChild : class
-{
-    public static void Copy(TParent parent, TChild child)
-    {
-        var parentProperties = parent.GetType().GetProperties();
-        var childProperties = child.GetType().GetProperties();
-        foreach (var parentProperty in parentProperties)
-        {
-            foreach (var childProperty in childProperties)
-            {
-                if (parentProperty.Name == childProperty.Name && parentProperty.PropertyType == childProperty.PropertyType)
-                {
-                    childProperty.SetValue(child, parentProperty.GetValue(parent));
-                    break;
-                }
-            }
-        }
-    }
 }

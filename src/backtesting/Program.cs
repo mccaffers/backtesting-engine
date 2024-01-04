@@ -8,6 +8,7 @@ using Elasticsearch.Net;
 using backtesting_engine.analysis;
 using System.Net;
 using backtesting_engine_web;
+using System.Diagnostics;
 
 namespace backtesting_engine;
 
@@ -50,11 +51,12 @@ public static class Program
             Thread.Sleep(2000); // wait for web server to boot up
             serviceCollection.AddSingleton<IWebUtils, WebUtils>();
             serviceCollection.AddSingleton<IWebNotification, WebNotification>();
-
+            serviceCollection.AddTransient<IConsumer, WebConsumer>();
         } else {
             System.Console.WriteLine("Not web");
             serviceCollection.AddSingleton<IWebNotification,EmptyWebNotification>();
             serviceCollection.AddSingleton<IWebUtils, WebUtilsMock>();
+            serviceCollection.AddTransient<IConsumer, Consumer>();
         }
 
         serviceCollection
@@ -76,7 +78,6 @@ public static class Program
             .AddTransient<IOpenOrder, OpenOrder>()
             .AddSingleton<ICloseOrder, CloseOrder>()
             .AddTransient<IIngest, backtesting_engine_ingest.Ingest>()
-            .AddTransient<IConsumer, Consumer>()
             .AddTransient<IPositions, Positions>()
             .AddTransient<ITaskManager, TaskManager>()
             .AddTransient<ISystemSetup, SystemSetup>()
@@ -85,7 +86,10 @@ public static class Program
             .AddSingleton<ITradingObjects, TradingObjects>()
             .AddSingleton<ISystemObjects, SystemObjects>()
             .AddSingleton<IEnvironmentVariables>(variables);
-            
+    
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
+
         await Task.FromResult(
             serviceCollection
             .BuildServiceProvider(true)
@@ -102,6 +106,10 @@ public static class Program
                 if(task.IsCompletedSuccessfully){
                     Console.WriteLine("Task completed successfully"); 
                 }
+
+                sw.Stop();
+
+                Console.WriteLine("Elapsed={0}",sw.Elapsed);
             }
         );
     }

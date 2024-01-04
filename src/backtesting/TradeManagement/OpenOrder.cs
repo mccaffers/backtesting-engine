@@ -22,7 +22,10 @@ public class OpenOrder : TradingBase, IOpenOrder
 
         // One trade open at the moment
         var openTradesCount = this.tradingObjects.openTrades.Count(x => x.Key.Contains(reqObj.priceObj.symbol));
-        if (openTradesCount < 3)
+        
+        // Maximum of one open trade
+        // TODO Make configurable
+        if (openTradesCount < 1)
         {
             // System.Console.WriteLine(reqObj.openDate + " " + reqObj.direction + " " + reqObj.level);
             this.tradingObjects.openTrades.TryAdd(reqObj.key, reqObj);

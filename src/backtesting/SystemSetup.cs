@@ -58,7 +58,7 @@ public class SystemSetup : ISystemSetup
 
                 var symbolFolder = Path.Combine(envVariables.tickDataFolder, symbol);
                 var csvFile = Path.Combine(symbolFolder, year + ".csv");
-
+   
                 // Check if file already exists
                 if (!File.Exists(csvFile))
                 {
