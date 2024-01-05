@@ -64,7 +64,7 @@ public class RandomStrategy : BaseStrategy, IStrategy
         
         // Surpress CS1998
         // Async method lacks 'await' operators and will run synchronously
-        // await Task.CompletedTask;
+        await Task.CompletedTask;
         
         return;
     }

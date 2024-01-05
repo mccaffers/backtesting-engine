@@ -1,11 +1,6 @@
-using System.Collections.Immutable;
-using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
-using backtesting_engine.analysis;
 using backtesting_engine.interfaces;
 using backtesting_engine_ingest;
-using trading_exception;
-using Utilities;
 
 namespace backtesting_engine;
 
@@ -28,8 +23,26 @@ public class TaskManager : ITaskManager
     {
         ing.EnvironmentSetup();
 
-        Task taskProduce = Task.Run(() => ing.ReadLines(buffer, cts.Token)).CancelOnFaulted(cts);
-        Task consumer =  Task.Run(() => con.ConsumeAsync(buffer, cts.Token)).CancelOnFaulted(cts);
+        // Updated to ensure that a stack trace is pushed up the stack
+        // if either task fails
+
+        Task taskProduce = Task.Run(() => ing.ReadLines(buffer, cts.Token))
+            .CancelOnFaulted(cts)
+            .ContinueWith(task => {
+                if(task.IsFaulted){
+                    cts.Cancel();
+                    buffer.SendAsync(new PriceObj());
+                    throw new Exception (task.Exception?.Message, task.Exception);
+                }
+            });
+
+        Task consumer = Task.Run(() => con.ConsumeAsync(buffer, cts.Token)).CancelOnFaulted(cts)
+           .ContinueWith(task => {
+                if(task.IsFaulted){
+                    cts.Cancel();
+                    throw new Exception (task.Exception?.Message, task.Exception);
+                }
+            });
 
         await Task.WhenAll(taskProduce, consumer);
     }

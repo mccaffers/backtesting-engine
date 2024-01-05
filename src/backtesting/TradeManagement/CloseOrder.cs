@@ -23,6 +23,9 @@ public class CloseOrder : TradingBase, ICloseOrder
 
     public void PushRequest(PriceObj priceObj){
         foreach(var item in cache){
+
+            // TODO
+            // Make this configurable, trades must be kept open a minimum of 1 second
             if(priceObj.date.Subtract(item.Value.closeDateTime).TotalSeconds > 1){
                 // Update profit position
                 // item.Value.profit = item.Value.reqObj.profit;

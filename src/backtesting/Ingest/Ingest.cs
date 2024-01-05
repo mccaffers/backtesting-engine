@@ -68,6 +68,7 @@ public class Ingest : IIngest
     public async Task ReadLines(BufferBlock<PriceObj> buffer, CancellationToken cts)
     {
         _cts = cts;
+        
         foreach (var file in fileNames)
         {
             // change this file string to 
@@ -149,6 +150,11 @@ public class Ingest : IIngest
             return;
 
         var dtExtract = extractDt(values[0]);
+        // var future = new DateTime(2015, 1, 15, 9, 31, 1);
+
+        // if(dtExtract.datetime < future ){
+        //     return;
+        // }
 
         if (!dtExtract.parsed)
             return;

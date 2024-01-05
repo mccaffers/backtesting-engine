@@ -55,6 +55,9 @@ sh ./scripts/backtesting/web.sh
     2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75
     ```
 
+### Debugging
+
+If you have changed target frameworks, make sure to update the program path in .vscode `launch.json`
 
 ### Random Trading Strategy
     accountEquity=0

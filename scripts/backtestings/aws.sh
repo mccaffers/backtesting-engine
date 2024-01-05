@@ -25,7 +25,7 @@ main() {
 
     # Major Forex Currencies
     declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
-    yearsStart=2020
+    yearsStart=2004
 
     ## Multiple Indexes
     # declare -a symbolsArray=("JPNIDX225" "SPNIDX35" "FRAIDX40" "DEUIDX40" "AUSIDX200" "USAIDXTECH" "USAIDX500" "USAIDX30" "EURIDX600" "GBRIDX100")
@@ -62,7 +62,6 @@ main() {
     # Account Equity
     accountEquity=0
     maximumDrawndownPercentage=0
-    yearsStart=2004
     yearsEnd=2023
     # maximumDrawndownPercentage=75
     
@@ -169,7 +168,7 @@ deploy () {
 
     let instanceCount=instanceCount+1
     
-    envsubst < $SCRIPT_DIR/awstemplate.txt > $SCRIPT_DIR/data.sh
+    envsubst < $SCRIPT_DIR/template.txt > $SCRIPT_DIR/data.sh
 
     # Deploy
     aws ec2 run-instances   --image-id ${AWS_MACHINE_IMAGE}  \

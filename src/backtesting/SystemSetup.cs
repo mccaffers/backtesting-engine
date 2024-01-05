@@ -30,10 +30,12 @@ public class SystemSetup : ISystemSetup
                 return await StartEngine();
             }
             catch (TradingException tradingException) {
+                System.Console.WriteLine(tradingException);
                 return tradingException.Message;
             }
             catch (Exception ex)
             {
+                System.Console.WriteLine(ex);
                 return await SendStackException(ex);
             }
 
