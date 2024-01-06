@@ -29,12 +29,19 @@ public class Reporting : TradingBase, IReporting
 
     private readonly IElasticClient elasticClient;
     private readonly IEnvironmentVariables envVariables;
+    private readonly decimal stopDistanceInPips;
+    private readonly decimal limitDistanceInPips;
+    private readonly int runIteration;
 
     public Reporting(IServiceProvider provider, IElasticClient elasticClient, IEnvironmentVariables envVariables) : base(provider)
     {
         this.tradeUpdateArray = new List<ReportTradeObj>();
         this.elasticClient =  elasticClient;
         this.envVariables = envVariables;
+
+       stopDistanceInPips = decimal.Parse(envVariables.stopDistanceInPips);
+       limitDistanceInPips = decimal.Parse(envVariables.limitDistanceInPips);
+       runIteration = int.Parse(envVariables.runIteration);
     }
 
     public void EndOfRunReport(string reason = "")
@@ -115,10 +122,10 @@ public class Reporting : TradingBase, IReporting
             symbols = envVariables.symbols,
             pnl = this.tradingObjects.accountObj.pnl,
             runID = envVariables.runID,
-            runIteration = int.Parse(envVariables.runIteration),
+            runIteration = runIteration,
             tradeProfit = profit,
-            stopDistanceInPips = decimal.Parse(envVariables.stopDistanceInPips),
-            limitDistanceInPips = decimal.Parse(envVariables.limitDistanceInPips),
+            stopDistanceInPips = stopDistanceInPips,
+            limitDistanceInPips = limitDistanceInPips,
         });
         
         _=BatchTradeUpdate();

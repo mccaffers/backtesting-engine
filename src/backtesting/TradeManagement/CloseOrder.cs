@@ -55,6 +55,7 @@ public class CloseOrder : TradingBase, ICloseOrder
     }
 
     private void CloseTrade(TradeHistoryObject tradeHistoryObj){
+
         var key = DictionaryKeyStrings.CloseTradeKey(tradeHistoryObj.symbol, tradeHistoryObj.openDate, tradeHistoryObj.level);
         this.tradingObjects.tradeHistory.TryAdd(key, tradeHistoryObj);
         this.tradingObjects.accountObj.AddTradeProftOrLoss(tradeHistoryObj.profit);

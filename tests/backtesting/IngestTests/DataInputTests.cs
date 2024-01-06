@@ -133,7 +133,7 @@ public class DataInputTests
     }
     
     [Fact]
-    public async void TestingReadFile()
+    public async void TestingReadingFile()
     {
         var envMock = TestEnvironment.SetEnvironmentVariables(); 
         var consumerMock = new Mock<IConsumer>();
@@ -158,4 +158,35 @@ public class DataInputTests
 
         Assert.True(items!=null && items.Count == 1);
     }
+
+    [Fact]
+    public async void TestingReadingLargeFile()
+    {
+        var envMock = TestEnvironment.SetEnvironmentVariables(); 
+        envMock.SetupGet<string[]>(x=>x.symbols).Returns(new string[]{"EURUSD"});
+        envMock.SetupGet<string>(x=>x.scalingFactor).Returns("EURUSD,10000;");
+        var consumerMock = new Mock<IConsumer>();
+        var reportingMock = new Mock<IReporting>();
+        var ingestMock = new Mock<Ingest>(envMock.Object){
+            CallBase = true
+        };
+
+        ingestMock.Setup(x=>x.EnvironmentSetup());
+        consumerMock.Setup<Task>(x=>x.ConsumeAsync(It.IsAny<BufferBlock<PriceObj>>(), It.IsAny<CancellationToken>()))
+                        .Returns(Task.FromResult(0));
+
+        var taskManagerMock = new Mock<TaskManager>(consumerMock.Object, ingestMock.Object); // can't mock program
+
+        ingestMock.Object.fileNames.Add(Path.Combine(PathUtil.GetTestPath("EURUSD"), "2020.csv"));
+
+        await taskManagerMock.Object.IngestAndConsume();
+
+        BufferBlock<PriceObj> buffer = taskManagerMock.Object.buffer;
+        IList<PriceObj>? items;
+        var output = buffer.TryReceiveAll(out items);
+
+        Assert.True(items!=null && items.Count == 499);
+    }
+
+    
 }

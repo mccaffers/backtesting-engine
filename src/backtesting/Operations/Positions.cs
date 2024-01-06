@@ -120,9 +120,9 @@ public class Positions : TradingBase, IPositions
     public async Task Review(PriceObj priceObj)
     {
 
-        await webNotification.AccountUpdate(this.tradingObjects.accountObj.pnl);
+        await webNotification.AccountUpdate(tradingObjects.accountObj.pnl);
 
-        this.tradingObjects.tradeTime = priceObj.date;
+        tradingObjects.tradeTime = priceObj.date;
 
         foreach (var myTradeObj in GetOrderBook(priceObj.symbol))
         {
@@ -144,12 +144,18 @@ public class Positions : TradingBase, IPositions
 
     public IEnumerable<RequestObject> GetOrderBook(string symbol)
     {
-        return this.tradingObjects.openTrades.Where(x => x.Key.Contains(symbol)).Select(x => x.Value);
+        if(tradingObjects.openTrades.Count > 0) {
+            return tradingObjects.openTrades
+                    .Where(x => x.Key.StartsWith(symbol, StringComparison.Ordinal))
+                    .Select(x => x.Value);
+        } else {
+            return [];
+        }
     }
 
     public void UpdateTradeHistory(RequestObject reqObj, PriceObj priceObj)
     {
-        this.closeOrder.Request(reqObj, priceObj);
+        closeOrder.Request(reqObj, priceObj);
     }
 
 

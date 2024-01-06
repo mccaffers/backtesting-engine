@@ -48,7 +48,8 @@ public class Ingest : IIngest
             DirectoryInfo di = new DirectoryInfo(symbolFolder);
             var files = di.GetFiles("*.csv").OrderBy(x => x.Name);
 
-            if(files.Count() > 1){
+            if (files.Count() > 1)
+            {
                 throw new Exception("Data is pulled on a yearly basis, remove extra years from /tick folder");
             }
 
@@ -68,14 +69,14 @@ public class Ingest : IIngest
     public async Task ReadLines(BufferBlock<PriceObj> buffer, CancellationToken cts)
     {
         _cts = cts;
-        
+
         foreach (var file in fileNames)
         {
             // change this file string to 
             var symbol = this.symbols.First(x => file.Contains(x));
             streamDictionary.Add(symbol, ReadFile(file));
         }
-        
+
         await LoopStreamDictionaryAndReadLine(streamDictionary, buffer);
         StreamReaderCleanup();
     }
@@ -107,10 +108,11 @@ public class Ingest : IIngest
         {
 
             _cts.ThrowIfCancellationRequested();
-            
+
             // To prevent RAM being maxed out and slowing the system down
             // limit the buffer to hold 10,000 ticks at any one point
-            if(buffer.Count>10000){ 
+            if (buffer.Count > 10000)
+            {
                 continue;
             }
 
@@ -119,21 +121,24 @@ public class Ingest : IIngest
 
                 // Check if any of the files ever finish early
                 if (file.Value.EndOfStream)
-                { 
+                {
                     streamDictionary.Remove(file.Key);
                     continue;
                 }
 
                 // Ignore file if it already exists in lineBuffer dictionary
                 if (!localInputBuffer.ContainsKey(file.Key))
-                { 
+                {
                     string line = file.Value.ReadLine() ?? "";
-                    PopulateLocalBuffer(file.Key, line);
+                    if (line.Length > 0)
+                    {
+                        PopulateLocalBuffer(file.Key, line);
+                    }
                 }
-
             }
-
+        
             await GetOldestItemOffBuffer(buffer);
+            
         }
         buffer.Complete();
     }
@@ -159,14 +164,11 @@ public class Ingest : IIngest
         if (!dtExtract.parsed)
             return;
 
-        var ask = DecimalUtil.ParseDecimal(values[1]);
-        var bid = DecimalUtil.ParseDecimal(values[2]);
-
         localInputBuffer.Add(key, new PriceObj()
         {
             symbol = key,
-            bid = bid,
-            ask = ask,
+            bid = DecimalUtil.ParseDecimal(values[2]),
+            ask = DecimalUtil.ParseDecimal(values[1]),
             date = dtExtract.datetime
         });
 
@@ -187,16 +189,17 @@ public class Ingest : IIngest
     // Simple value and length check on the line
     public static bool ArrayHasRightValues(string[] values)
     {
-        return values.Length > 4 &&
-            values.Skip(1).All(x => char.IsDigit(x.FirstOrDefault('a'))); 
-            // just a random default 'a' so that the application doesn't throw on an empty column eg. ,,,,
+        return values.Length >= 3 &&
+            values.Skip(1).All(x => char.IsDigit(x.FirstOrDefault('a')));
+        // just a random default 'a' so that the application doesn't throw on an empty column eg. ,,,,
     }
 
     // Extract the datetime from the string
     public static (bool parsed, DateTime datetime) extractDt(string dtString)
     {
         DateTime localDt;
-        if (dtString.Contains('+')){
+        if (dtString.Contains('+'))
+        {
             dtString = dtString.Substring(0, dtString.LastIndexOf("+")); // Stripping everything off before the + sign
         }
         var parsedDt = DateTime.TryParseExact(dtString, StringFormats.dtFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out localDt);

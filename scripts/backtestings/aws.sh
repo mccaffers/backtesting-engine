@@ -40,7 +40,7 @@ main() {
     # Do not change here
     stopLossInPipsRange="1 1 1"
     limitInPipsRange="1 1 1"
-    iterationRange="1 1 1"
+    iterationRange="1 1 2"
     yearsEnd=2021
     accountEquity=10000
     maximumDrawndownPercentage=75
@@ -179,8 +179,8 @@ deploy () {
                             --security-group-ids ${awsDeploySecurityGroupID} \
                             --user-data file://${SCRIPT_DIR}/data.sh \
                             --iam-instance-profile=${awsDeployIAMEC2Role} \
+                            #  --instance-initiated-shutdown-behavior terminate \
                             --block-device-mapping "[ { \"DeviceName\": \"/dev/xvda\", \"Ebs\": { \"VolumeSize\": 12 } } ]" \
-                            --instance-initiated-shutdown-behavior terminate \
                             --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='$runID'},{Key=Symbol,Value='$symbols'}]' >> /dev/null
 
     # Cleanup

@@ -23,6 +23,8 @@ public class RandomStrategyTests
 
         var requestOpenTradeMock = new Mock<IRequestOpenTrade>();
         var webNotificationMock = new Mock<IWebNotification>();
+        var tradeObjectsMock = new TradingObjects(envMock.Object);
+        var closeOrderMock = new Mock<ICloseOrder>();
 
          var priceObjNext = new PriceObj(){
             symbol="TestEnvironmentSetup",
@@ -32,17 +34,23 @@ public class RandomStrategyTests
         
         RequestObject? output = null;
 
-        requestOpenTradeMock.Setup(x=>x.Request(It.IsAny<RequestObject>())).Callback( ( RequestObject incomingObject) => {
-            output=incomingObject;
-        });
+        requestOpenTradeMock.Setup(x=>x.Request(It.IsAny<RequestObject>()))
+            .Callback( ( RequestObject incomingObject) => {
+                output=incomingObject;
+            });
 
-        var randomStrategyMock = new Mock<RandomStrategy>(requestOpenTradeMock.Object, envMock.Object, webNotificationMock.Object){
+
+        var randomStrategyMock = new Mock<RandomStrategy>(requestOpenTradeMock.Object, 
+                                                            tradeObjectsMock,
+                                                            envMock.Object, 
+                                                            closeOrderMock.Object,
+                                                            webNotificationMock.Object){
             CallBase = true
         };
 
-        randomStrategyMock.Object.Invoke(priceObjNext);
+        await randomStrategyMock.Object.Invoke(priceObjNext);
         priceObjNext.date = priceObjNext.date.AddSeconds(61);
-        randomStrategyMock.Object.Invoke(priceObjNext);
+        await randomStrategyMock.Object.Invoke(priceObjNext);
 
         Assert.Equal(priceObjNext.bid, output?.priceObj.bid);
         Assert.Equal(tradingSize, output?.size);

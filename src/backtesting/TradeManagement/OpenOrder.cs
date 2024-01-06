@@ -14,6 +14,7 @@ public class OpenOrder : TradingBase, IOpenOrder
 
     public OpenOrder(IServiceProvider provider, IWebNotification webNotification) : base(provider) { 
         this.webNotification = webNotification;
+        
     }
 
     // Data Update

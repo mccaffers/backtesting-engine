@@ -18,9 +18,6 @@ public class Consumer : IConsumer
         this.positions = positions;
     }
 
-    private DateTime lastReceived = DateTime.Now;
-    private DateTime priceTimeWindow = DateTime.MinValue;
-
     public async Task ConsumeAsync(BufferBlock<PriceObj> buffer, CancellationToken cts)
     {
         while (await buffer.OutputAvailableAsync())
@@ -30,11 +27,6 @@ public class Consumer : IConsumer
 
             // Get the symbol data off the buffer
             var priceObj = await buffer.ReceiveAsync();
-            
-            // take in 1 hour (priceObj) over 100 millisecionds (local)
-            if(priceTimeWindow==DateTime.MinValue){
-                priceTimeWindow=priceObj.date;
-            }
 
             await ProcessTick(priceObj);
         }
