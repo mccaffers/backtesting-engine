@@ -28,42 +28,46 @@ main() {
     yearsStart=2004
 
     ## Multiple Indexes
-    # declare -a symbolsArray=("JPNIDX225" "SPNIDX35" "FRAIDX40" "DEUIDX40" "AUSIDX200" "USAIDXTECH" "USAIDX500" "USAIDX30" "EURIDX600" "GBRIDX100")
+    # declare -a symbolsArray=("JPNIDXJPY" "ESPIDXEUR" "FRAIDXEUR" "DEUIDXEUR" "AUSIDXAUD" "USATECHIDXUSD" "USA500IDXUSD" "USA30IDXUSD" "EUSIDXEUR" "GBRIDXGBP")
     # yearsStart="2014"
     
     ## Crypto
     # declare -a symbolsArray=("ETHUSD" "BTCUSD")
     # yearsStart="2018"
 
-    #####
+    ##########
+    ##########
     # Trading Defaults
     # Do not change here
     stopLossInPipsRange="1 1 1"
     limitInPipsRange="1 1 1"
-    iterationRange="1 1 2"
-    yearsEnd=2021
+    iterationRange="1 1 1"
+    yearsEnd=2023
     accountEquity=10000
     maximumDrawndownPercentage=75
     kineticOn=0 # 1 on, 0 off
     kineticStopLossRange="0 1 0"
     kineticLimitRange="0 1 0"
     randomStrategyAmountOfHHLLSseq="0 5 0"
-    #######
+    tradingSize=1
+    fasterProcessingBySkippingSomeTickData=false
+    ##########
+    ##########
 
     ####
     # Customisable Trading Variables
 
     # STOP LOSS Distance in PIPs
-    stopLossInPipsRange="30 1 30"
+    stopLossInPipsRange="20 20 100"
     
     # TAKE PROFIT Distance in PIPs
-    limitInPipsRange="30 1 30"
+    limitInPipsRange="20 20 100"
     
     # Account Equity
-    accountEquity=0
-    maximumDrawndownPercentage=0
-    yearsEnd=2023
-    # maximumDrawndownPercentage=75
+    accountEquity=10000
+    # maximumDrawndownPercentage=0 # Doesn't end until it reachs the end of the data
+    maximumDrawndownPercentage=75
+    fasterProcessingBySkippingSomeTickData=true
     
     ## Trailing Stop Loss
     # kineticOn=0 # 1 on, 0 off
@@ -177,9 +181,9 @@ deploy () {
                             --key-name ${awsDeployKeyName} \
                             --subnet-id ${awsDeploySubnet} \
                             --security-group-ids ${awsDeploySecurityGroupID} \
-                            --user-data file://${SCRIPT_DIR}/data.sh \
                             --iam-instance-profile=${awsDeployIAMEC2Role} \
-                            #  --instance-initiated-shutdown-behavior terminate \
+                            --user-data file://${SCRIPT_DIR}/data.sh \
+                            --instance-initiated-shutdown-behavior terminate \
                             --block-device-mapping "[ { \"DeviceName\": \"/dev/xvda\", \"Ebs\": { \"VolumeSize\": 12 } } ]" \
                             --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='$runID'},{Key=Symbol,Value='$symbols'}]' >> /dev/null
 

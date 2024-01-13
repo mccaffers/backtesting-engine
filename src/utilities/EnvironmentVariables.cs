@@ -46,7 +46,6 @@ public class EnvironmentVariables : IEnvironmentVariables
             this.runIteration = Get("runIteration");
             this.instanceCount = int.Parse(Get("instanceCount"));
             this.tickDataFolder = Path.Combine(Path.GetFullPath("./" + this.symbolFolder));
-
             this.yearsStart = int.Parse(Get("yearsStart"));
             this.yearsEnd = int.Parse(Get("yearsEnd"));
 
@@ -54,6 +53,10 @@ public class EnvironmentVariables : IEnvironmentVariables
 
             if(!string.IsNullOrEmpty(Get("doNotCleanUpDataFolder", true))){
                 this.doNotCleanUpDataFolder = bool.Parse(Get("doNotCleanUpDataFolder"));
+            }
+
+            if(!string.IsNullOrEmpty(Get("fasterProcessingBySkippingSomeTickData", true))){
+                this.fasterProcessingBySkippingSomeTickData = bool.Parse(Get("fasterProcessingBySkippingSomeTickData"));
             }
         }
 
@@ -100,6 +103,7 @@ public class EnvironmentVariables : IEnvironmentVariables
     public virtual string[] symbols { get; init; } = new string[] { string.Empty };
     public virtual int[] years { get; init; } = new int[] {0};
     public string operatingEnvironment { get; init; } = string.Empty;
+    public virtual bool fasterProcessingBySkippingSomeTickData {get; init;} = false;
 
     public Dictionary<string, decimal> getScalingFactorDictionary()
     {

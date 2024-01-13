@@ -25,12 +25,18 @@ public class SystemSetup : ISystemSetup
 
         Task<string>.Run(async () =>
         {
-            try {
-                System.Console.WriteLine("Starting backtesting engine");
+            try
+            {
+                Console.WriteLine("Starting backtesting engine");
+                if (envVariables.fasterProcessingBySkippingSomeTickData)
+                {
+                    Console.WriteLine("Faster Processing By Skipping Some TickData");
+                }
                 return await StartEngine();
             }
-            catch (TradingException tradingException) {
-                System.Console.WriteLine(tradingException);
+            catch (TradingException tradingException)
+            {
+                Console.WriteLine(tradingException);
                 return tradingException.Message;
             }
             catch (Exception ex)
@@ -39,7 +45,8 @@ public class SystemSetup : ISystemSetup
                 return await SendStackException(ex);
             }
 
-        }).ContinueWith(taskOutput => {
+        }).ContinueWith(taskOutput =>
+        {
             ConsoleLogger.Log(taskOutput.Result);
             elastic.EndOfRunReport(taskOutput.Result);
         }).Wait();
@@ -60,7 +67,7 @@ public class SystemSetup : ISystemSetup
 
                 var symbolFolder = Path.Combine(envVariables.tickDataFolder, symbol);
                 var csvFile = Path.Combine(symbolFolder, year + ".csv");
-   
+
                 // Check if file already exists
                 if (!File.Exists(csvFile))
                 {
@@ -77,7 +84,8 @@ public class SystemSetup : ISystemSetup
             }
 
             // Clean up this year of data
-            if(!envVariables.doNotCleanUpDataFolder){
+            if (!envVariables.doNotCleanUpDataFolder)
+            {
                 CleanSymbolFolder(envVariables.tickDataFolder);
             }
             UpdateElastic(year);
@@ -85,18 +93,20 @@ public class SystemSetup : ISystemSetup
         return string.Empty;
     }
 
-    private void UpdateElastic(int year){
+    private void UpdateElastic(int year)
+    {
         //Send an initial report to ElasticSearch
-        es.Index(new YearUpdate() {
-                    hostname = Dns.GetHostName(),
-                    date = DateTime.Now,
-                    symbols = envVariables.symbols,
-                    runID = envVariables.runID,
-                    runIteration = int.Parse(envVariables.runIteration),
-                    strategy = envVariables.strategy,
-                    instanceCount = envVariables.instanceCount,
-                    year = year
-                }, b => b.Index("yearupdate"));
+        es.Index(new YearUpdate()
+        {
+            hostname = Dns.GetHostName(),
+            date = DateTime.Now,
+            symbols = envVariables.symbols,
+            runID = envVariables.runID,
+            runIteration = int.Parse(envVariables.runIteration),
+            strategy = envVariables.strategy,
+            instanceCount = envVariables.instanceCount,
+            year = year
+        }, b => b.Index("yearupdate"));
     }
 
     private static void Decompress(string symbol)

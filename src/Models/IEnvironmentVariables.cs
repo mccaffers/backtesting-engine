@@ -32,7 +32,8 @@ public interface IEnvironmentVariables
     int kineticLimit {get; init;}
     bool doNotCleanUpDataFolder {get;init;}
     int randomStrategyAmountOfHHLL {get; init;}
-    
+    bool fasterProcessingBySkippingSomeTickData {get;init;}
+
     Dictionary<string, decimal> getScalingFactorDictionary();
     decimal GetScalingFactor(string symbol);
     

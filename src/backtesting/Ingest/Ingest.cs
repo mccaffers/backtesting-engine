@@ -143,11 +143,21 @@ public class Ingest : IIngest
         buffer.Complete();
     }
 
+    private static int counter = 0;
+
     // Expecting data in the following format
-    //  UTC,AskPrice,BidPrice,AskVolume,BidVolume
-    //  2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75
+    // UTC,AskPrice,BidPrice,AskVolume,BidVolume
+    // 2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75
     public virtual void PopulateLocalBuffer(string key, string line)
     {
+        if(envVariables.fasterProcessingBySkippingSomeTickData){
+            counter++;
+            if(counter<10){
+                return;
+            }
+            counter=0;
+        }
+
         string[] values = line.Split(',');
 
         // Initial scan to confirm the line has the right values

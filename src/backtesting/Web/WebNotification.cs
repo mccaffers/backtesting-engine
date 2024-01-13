@@ -24,8 +24,10 @@ public class WebNotification : IWebNotification
             groupMessage["accountUpdate"] = new List<string>();
             groupMessage["accountUpdate"].Add("");
         }
+
         groupMessage["accountUpdate"][0] = input.ToString();
 
+        await Task.CompletedTask;
     }
 
     private Dictionary<string, RequestObject> tradeArray=new Dictionary<string, RequestObject>();
