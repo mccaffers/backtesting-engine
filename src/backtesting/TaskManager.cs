@@ -1,6 +1,7 @@
 using System.Threading.Tasks.Dataflow;
 using backtesting_engine.interfaces;
 using backtesting_engine_ingest;
+using trading_exception;
 
 namespace backtesting_engine;
 
@@ -32,7 +33,10 @@ public class TaskManager : ITaskManager
                 if(task.IsFaulted){
                     cts.Cancel();
                     buffer.SendAsync(new PriceObj());
-                    throw new Exception (task.Exception?.Message, task.Exception);
+                    
+                     if(task.Exception?.InnerException is not TradingException) {
+                        throw new Exception (task.Exception?.Message, task.Exception);
+                    }
                 }
             });
 
@@ -40,7 +44,9 @@ public class TaskManager : ITaskManager
            .ContinueWith(task => {
                 if(task.IsFaulted){
                     cts.Cancel();
-                    throw new Exception (task.Exception?.Message, task.Exception);
+                    if(task.Exception?.InnerException is not TradingException) {
+                        throw new Exception (task.Exception?.Message, task.Exception);
+                    }
                 }
             });
 

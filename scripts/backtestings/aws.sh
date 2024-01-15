@@ -24,12 +24,12 @@ main() {
     # declare -a strategies=("RandomWithCloseAtHHLL") 
 
     # Major Forex Currencies
-    declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
-    yearsStart=2004
+    # declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
+    # yearsStart=2023
 
     ## Multiple Indexes
-    # declare -a symbolsArray=("JPNIDXJPY" "ESPIDXEUR" "FRAIDXEUR" "DEUIDXEUR" "AUSIDXAUD" "USATECHIDXUSD" "USA500IDXUSD" "USA30IDXUSD" "EUSIDXEUR" "GBRIDXGBP")
-    # yearsStart="2014"
+    declare -a symbolsArray=("JPNIDXJPY" "ESPIDXEUR" "FRAIDXEUR" "DEUIDXEUR" "AUSIDXAUD" "USATECHIDXUSD" "USA500IDXUSD" "USA30IDXUSD" "EUSIDXEUR" "GBRIDXGBP")
+    yearsStart="2014"
     
     ## Crypto
     # declare -a symbolsArray=("ETHUSD" "BTCUSD")
