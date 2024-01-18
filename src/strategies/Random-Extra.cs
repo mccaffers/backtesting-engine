@@ -8,13 +8,13 @@ using Utilities;
 namespace backtesting_engine_strategies;
 
 // https://mccaffers.com/randomly_trading/
-public class RandomStrategy : BaseStrategy, IStrategy
+public class RandomStrategyExtra : BaseStrategy, IStrategy
 {
 
     private List<OhlcObject> ohlcList = new List<OhlcObject>();
     private OhlcObject lastItem = new OhlcObject();
 
-    public RandomStrategy(  IRequestOpenTrade requestOpenTrade, 
+    public RandomStrategyExtra(  IRequestOpenTrade requestOpenTrade, 
                             ITradingObjects tradeObjs, 
                             IEnvironmentVariables envVariables,
                             ICloseOrder closeOrder,
@@ -24,10 +24,29 @@ public class RandomStrategy : BaseStrategy, IStrategy
     public async Task Invoke(PriceObj priceObj)
     {
         
+         foreach(var item in this.tradeObjs.openTrades.Where(x => x.Key.Contains(priceObj.symbol)).Select(x => x.Value)){
+            // if(priceObj.date.Subtract(item.openDate).TotalHours > 1){
+            //     this.closeOrder.Request(item, priceObj);
+            //     return;
+            // }
+        }
+
+        if(priceObj.date.DayOfWeek == DayOfWeek.Sunday)
+        {
+            return;
+        }
+
+        if(priceObj.date.DayOfWeek == DayOfWeek.Friday && priceObj.date.Hour > 14){
+            return;
+        }
+
+        // if(priceObj.date.Hour < 5 || priceObj.date.Hour > 19){
+        //     return;
+        // }
+
         var randomInt = new Random().Next(2); 
-        
+        // 0 or 1
         TradeDirection direction = TradeDirection.BUY;
-        
         if (randomInt== 0)
         { 
             direction = TradeDirection.SELL;
