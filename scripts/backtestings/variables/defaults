@@ -1,0 +1,21 @@
+##########
+##########
+# Trading Defaults
+# Do not change here
+
+stopLossInPipsRange="1 1 1"
+limitInPipsRange="1 1 1"
+iterationRange="1 1 1"
+yearsStart=0
+yearsEnd=0
+accountEquity=0
+maximumDrawndownPercentage=0 # zero run forever
+kineticOn=0 # 1 on, 0 off
+kineticStopLossRange="0 1 0"
+kineticLimitRange="0 1 0"
+randomStrategyAmountOfHHLLSseq="0 5 0"
+tradingSize=1
+fasterProcessingBySkippingSomeTickData=false
+
+##########
+##########

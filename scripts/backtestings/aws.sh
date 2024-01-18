@@ -16,36 +16,18 @@ main() {
     source ./.env/local.env
     set +o allexport
 
-    ##########
-    ##########
-    # Trading Defaults
-    # Do not change here
-    stopLossInPipsRange="1 1 1"
-    limitInPipsRange="1 1 1"
-    iterationRange="1 1 1"
-    yearsEnd=2023
-    accountEquity=10000
-    maximumDrawndownPercentage=75
-    kineticOn=0 # 1 on, 0 off
-    kineticStopLossRange="0 1 0"
-    kineticLimitRange="0 1 0"
-    randomStrategyAmountOfHHLLSseq="0 5 0"
-    tradingSize=1
-    fasterProcessingBySkippingSomeTickData=false
-    ##########
-    ##########
-
+    my_dir=$( dirname "${BASH_SOURCE[0]}" )
+    echo $my_dir
     
+    source $my_dir/variables/defaults
+
     ## Trailing Stop Loss
-    # kineticOn=0 # 1 on, 0 off
     # kineticStopLossRange="0 1 0"
     # kineticLimitRange="0 1 0"
     
     ## Random HH LL Strategy Customs
     # randomStrategyAmountOfHHLLSseq="5 5 5"
 
-    my_dir=$( dirname "${BASH_SOURCE[0]}" )
-    echo $my_dir
     # source $my_dir/experiments/random/forex/fixed
     source $my_dir/experiments/random/forex/variable
     ######
@@ -156,10 +138,10 @@ deploy () {
                             --user-data file://${SCRIPT_DIR}/data.sh \
                             --instance-initiated-shutdown-behavior terminate \
                             --block-device-mapping "[ { \"DeviceName\": \"/dev/xvda\", \"Ebs\": { \"VolumeSize\": 12 } } ]" \
-                            --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='$runID'},{Key=Symbol,Value='$symbols'}]' >> /dev/null
+                            --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='$runID'},{Key=Symbol,Value='$symbols'}]' --no-cli-pager 
 
     # Cleanup
     rm -rf $SCRIPT_DIR/data.sh
-    sleep 0.8
+    sleep 0.6
 }
 main;

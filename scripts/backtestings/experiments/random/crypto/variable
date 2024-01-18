@@ -2,7 +2,7 @@ declare -a strategies=("RandomStrategy")
 
 ## Crypto
 declare -a symbolsArray=("ETHUSD" "BTCUSD")
-yearsStart="2018"
+yearsStart=2018
 
 # STOP LOSS Distance in PIPs
 stopLossInPipsRange="20 20 100"
