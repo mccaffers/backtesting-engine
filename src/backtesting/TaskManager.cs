@@ -12,11 +12,13 @@ public class TaskManager : ITaskManager
 
     readonly IConsumer con;
     readonly IIngest ing;
+    readonly IEnvironmentVariables envVaribles;
 
-    public TaskManager(IConsumer c, IIngest i)
+    public TaskManager(IConsumer c, IIngest i, IEnvironmentVariables env)
     {
         this.con = c;
         this.ing = i;
+        this.envVaribles = env;
         this.buffer = new BufferBlock<PriceObj>();
     }
 
@@ -34,9 +36,10 @@ public class TaskManager : ITaskManager
                     cts.Cancel();
                     buffer.SendAsync(new PriceObj());
                     
+                    
                      if(task.Exception?.InnerException is not TradingException) {
                         throw new Exception (task.Exception?.Message, task.Exception);
-                    }
+                    } 
                 }
             });
 
@@ -44,9 +47,13 @@ public class TaskManager : ITaskManager
            .ContinueWith(task => {
                 if(task.IsFaulted){
                     cts.Cancel();
-                    if(task.Exception?.InnerException is not TradingException) {
+                    
+                    if(task.Exception?.InnerException is TradingException) {
+                        throw new TradingException(task.Exception?.InnerException.Message, "", envVaribles);
+                    } else {
                         throw new Exception (task.Exception?.Message, task.Exception);
                     }
+
                 }
             });
 

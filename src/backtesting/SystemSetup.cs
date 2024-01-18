@@ -36,7 +36,6 @@ public class SystemSetup : ISystemSetup
             }
             catch (TradingException tradingException)
             {
-                Console.WriteLine(tradingException);
                 return tradingException.Message;
             }
             catch (Exception ex)

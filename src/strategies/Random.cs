@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 using backtesting_engine;
 using backtesting_engine.interfaces;
 using backtesting_engine_models;
@@ -23,12 +24,18 @@ public class RandomStrategy : BaseStrategy, IStrategy
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
     public async Task Invoke(PriceObj priceObj)
     {
-        
+        // Maximum of one open trade
+        // TODO Make configurable
+        if (tradeObjs.openTrades.Count() >= 1)
+        {
+           return;
+        }
+
         var randomInt = new Random().Next(2); 
         
         TradeDirection direction = TradeDirection.BUY;
-        
-        if (randomInt== 0)
+
+        if (randomInt==0)
         { 
             direction = TradeDirection.SELL;
         }
