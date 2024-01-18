@@ -22,10 +22,11 @@ public class Startup
         {
             options.AddPolicy("ClientPermission", policy =>
             {
-                policy.AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .WithOrigins("http://localhost:3000")
-                    .AllowCredentials();
+                policy.WithOrigins("http://localhost:3000")
+                     .AllowAnyHeader()
+                        .AllowAnyMethod()
+                         .SetIsOriginAllowed((host) => true)
+                        .AllowCredentials();
             });
         });
     }
@@ -39,16 +40,19 @@ public class Startup
             app.UseDeveloperExceptionPage();
         }
 
+
+
         app.UseHttpsRedirection();
 
-        app.UseCors("ClientPermission");
-
+        
+    
         app.UseRouting();
-
+        app.UseCors("ClientPermission");
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {
+     
             endpoints.MapControllers();
             endpoints.MapHub<ChatHub>("/hubs/chat");
 

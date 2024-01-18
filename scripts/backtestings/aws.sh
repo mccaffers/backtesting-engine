@@ -16,25 +16,6 @@ main() {
     source ./.env/local.env
     set +o allexport
 
-    ######
-    # Trading Variables
-
-    # declare -a strategies=("VolatilityCalculator") 
-    declare -a strategies=("RandomStrategy") 
-    # declare -a strategies=("RandomWithCloseAtHHLL") 
-
-    # Major Forex Currencies
-    # declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
-    # yearsStart=2023
-
-    ## Multiple Indexes
-    declare -a symbolsArray=("JPNIDXJPY" "ESPIDXEUR" "FRAIDXEUR" "DEUIDXEUR" "AUSIDXAUD" "USATECHIDXUSD" "USA500IDXUSD" "USA30IDXUSD" "EUSIDXEUR" "GBRIDXGBP")
-    yearsStart="2014"
-    
-    ## Crypto
-    # declare -a symbolsArray=("ETHUSD" "BTCUSD")
-    # yearsStart="2018"
-
     ##########
     ##########
     # Trading Defaults
@@ -54,20 +35,6 @@ main() {
     ##########
     ##########
 
-    ####
-    # Customisable Trading Variables
-
-    # STOP LOSS Distance in PIPs
-    stopLossInPipsRange="20 20 100"
-    
-    # TAKE PROFIT Distance in PIPs
-    limitInPipsRange="20 20 100"
-    
-    # Account Equity
-    accountEquity=10000
-    # maximumDrawndownPercentage=0 # Doesn't end until it reachs the end of the data
-    maximumDrawndownPercentage=75
-    fasterProcessingBySkippingSomeTickData=true
     
     ## Trailing Stop Loss
     # kineticOn=0 # 1 on, 0 off
@@ -77,6 +44,10 @@ main() {
     ## Random HH LL Strategy Customs
     # randomStrategyAmountOfHHLLSseq="5 5 5"
 
+    my_dir=$( dirname "${BASH_SOURCE[0]}" )
+    echo $my_dir
+    # source $my_dir/experiments/random/forex/fixed
+    source $my_dir/experiments/random/forex/variable
     ######
 
     # Remove binary files & tests

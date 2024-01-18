@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@microsoft/signalr": "^8.0.0",
-    "@microsoft/signalr-protocol-msgpack": "^6.0.7",
+    "@microsoft/signalr-protocol-msgpack": "^8.0.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",

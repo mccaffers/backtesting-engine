@@ -1,0 +1,16 @@
+declare -a strategies=("RandomStrategy")
+declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
+
+# Forex from 2004
+yearsStart=2004
+
+# STOP LOSS Distance in PIPs
+stopLossInPipsRange="30 1 30"
+
+# TAKE PROFIT Distance in PIPs
+limitInPipsRange="30 20 30"
+
+# Account Equity
+accountEquity=0
+maximumDrawndownPercentage=0
+fasterProcessingBySkippingSomeTickData=true
