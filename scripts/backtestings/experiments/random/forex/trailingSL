@@ -3,6 +3,7 @@ declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "
 
 # Forex from 2004
 yearsStart=2004
+yearsEnd=2023
 
 # STOP LOSS Distance in PIPs
 stopLossInPipsRange="200 20 200"

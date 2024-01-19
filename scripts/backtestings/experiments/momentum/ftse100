@@ -1,0 +1,19 @@
+declare -a strategies=("Momentum")
+
+## Multiple Indexes
+declare -a symbolsArray=("GBRIDXGBP")
+
+# Forex from 2004
+yearsStart=2014
+yearsEnd=2023
+
+# STOP LOSS Distance in PIPs
+stopLossInPipsRange="100 100 1000"
+
+# TAKE PROFIT Distance in PIPs
+limitInPipsRange="100 100 1000"
+
+# Account Equity
+accountEquity=500
+maximumDrawndownPercentage=50
+fasterProcessingBySkippingSomeTickData=true

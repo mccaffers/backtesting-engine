@@ -20,14 +20,11 @@ public class Startup
 
         services.AddCors(options =>
         {
-            options.AddPolicy("ClientPermission", policy =>
-            {
-                policy.WithOrigins("http://localhost:3000")
-                     .AllowAnyHeader()
-                        .AllowAnyMethod()
-                         .SetIsOriginAllowed((host) => true)
-                        .AllowCredentials();
-            });
+            options.AddPolicy("ClientPermission", pb =>
+                pb.AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .SetIsOriginAllowed(_ => true)
+            );
         });
     }
 
@@ -43,7 +40,6 @@ public class Startup
 
 
         app.UseHttpsRedirection();
-
         
     
         app.UseRouting();
@@ -52,7 +48,7 @@ public class Startup
 
         app.UseEndpoints(endpoints =>
         {
-     
+            
             endpoints.MapControllers();
             endpoints.MapHub<ChatHub>("/hubs/chat");
 

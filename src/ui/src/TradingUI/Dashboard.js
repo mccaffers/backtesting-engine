@@ -165,7 +165,7 @@ const Chat = () => {
 
     function connectToSignalR(){
         const connection = new HubConnectionBuilder()
-        .withUrl('http://localhost:5000/hubs/chat', {  transport: HttpTransportType.WebSockets | HttpTransportType.LongPolling })
+        .withUrl('http://localhost:5000/hubs/chat', {skipNegotiation:true, withCredentials:false, transport: HttpTransportType.WebSockets })
         .withHubProtocol(new signalRMsgPack.MessagePackHubProtocol())
         .withAutomaticReconnect()
         .build();

@@ -1,4 +1,8 @@
+#!/bin/bash
+
 declare -a strategies=("RandomStrategy")
+
+## Multiple Currencies
 declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
 
 # Forex from 2004
