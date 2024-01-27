@@ -29,7 +29,7 @@ main() {
     # randomStrategyAmountOfHHLLSseq="5 5 5"
 
     # source $my_dir/experiments/random/forex/fixed
-    source $my_dir/experiments/random/crypto/variable
+    source $my_dir/experiments/random/bonds/variable-larger
     # source $my_dir/experiments/momentum/ftse100
     ######
 
