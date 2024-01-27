@@ -1,9 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
 using backtesting_engine;
 using backtesting_engine.interfaces;
 using backtesting_engine_models;
-using Newtonsoft.Json;
 using Utilities;
 
 namespace backtesting_engine_strategies;
@@ -11,14 +9,17 @@ namespace backtesting_engine_strategies;
 // Read about this strategy on https://mccaffers.com/randomly_trading/
 public class RandomStrategy : BaseStrategy, IStrategy
 {
-
     // Dependency injection pulls a number of classes
     // This allows the reuse in different environments (eg. backtesting and live)
-    public RandomStrategy(  IRequestOpenTrade requestOpenTrade, 
-                            ITradingObjects tradeObjs, 
+    public RandomStrategy(IRequestOpenTrade requestOpenTrade,
+                            ITradingObjects tradeObjs,
                             IEnvironmentVariables envVariables,
                             ICloseOrder closeOrder,
-                            IWebNotification webNotification ) : base(requestOpenTrade, tradeObjs, envVariables, closeOrder,  webNotification) {}
+                            IWebNotification webNotification) :
+            base(requestOpenTrade, tradeObjs, envVariables, closeOrder, webNotification)
+    {
+        // Empty constructor, just used to inject the dependencies
+    }
 
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
     public async Task Invoke(PriceObj priceObj)
@@ -27,18 +28,18 @@ public class RandomStrategy : BaseStrategy, IStrategy
         // Conditional to only invoke the strategy if there are no trades open
         if (tradeObjs.openTrades.Count() >= 1)
         {
-           return;
+            return;
         }
 
         // Generate a random number betwee 0 and 1
-        var randomInt = new Random().Next(2); 
+        var randomInt = new Random().Next(2);
 
         // Default to a BUY direction        
         TradeDirection direction = TradeDirection.BUY;
 
         // Depending on the random integer, switch to SELL
-        if (randomInt==0)
-        { 
+        if (randomInt == 0)
+        {
             direction = TradeDirection.SELL;
         }
 
@@ -55,11 +56,11 @@ public class RandomStrategy : BaseStrategy, IStrategy
 
         // Open a trade request
         requestOpenTrade.Request(openOrderRequest);
-        
+
         // Surpress CS1998
         // Async method lacks 'await' operators and will run synchronously
         await Task.CompletedTask;
-        
+
         return;
     }
 }

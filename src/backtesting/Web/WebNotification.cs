@@ -43,6 +43,10 @@ public class WebNotification : IWebNotification
         tradeArray.Add(input.key, input);
 
         // await PublishMessage("openTrades", JsonConvert.SerializeObject(input));
+
+        // Surpress CS1998
+        // Async method lacks 'await' operators and will run synchronously
+        await Task.CompletedTask;
     }
 
     public async Task TradeUpdate(TradeHistoryObject input)
@@ -54,6 +58,10 @@ public class WebNotification : IWebNotification
         groupMessage["trade"].Add(JsonConvert.SerializeObject(input));
 
         // await PublishMessage("trade", JsonConvert.SerializeObject(input));
+
+        // Surpress CS1998
+        // Async method lacks 'await' operators and will run synchronously
+        await Task.CompletedTask;
     }
     
     private decimal lastClose = decimal.Zero;
