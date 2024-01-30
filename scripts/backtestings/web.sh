@@ -14,8 +14,8 @@ dotnet build ./src/backtesting
 ## when the script closes
 _term() { 
   # Ensure dotnet exits
-    echo "pkill dotnet"
-    pkill dotnet ; echo $?
+    echo "pkill -f './src/backtesting'"
+    pkill -f "./src/backtesting"; echo $?
     echo """EXIT STATUS - (pkill dotnet)
 0      One or more processes matched the criteria.
 1      No processes matched"""
@@ -23,7 +23,7 @@ _term() {
 
 ## Ensure all previous dotnet processes
 ## have closed before starting a new one
-_term
+_term || true
 
 trap _term SIGINT SIGTERM
 

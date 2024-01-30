@@ -73,6 +73,7 @@ public class WebNotification : IWebNotification
         if(DateTime.Now.Subtract(lastSent).TotalMilliseconds < 200 && !force){
             return;
         }
+
         lastSent=DateTime.Now;
 
         if(lastClose == input.close && !force){

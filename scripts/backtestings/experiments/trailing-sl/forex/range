@@ -1,0 +1,25 @@
+#!/bin/bash
+
+declare -a strategies=("RandomStrategy")
+
+## Multiple Currencies
+declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
+
+# Forex from 2004
+yearsStart=2004
+yearsEnd=2023
+
+# STOP LOSS Distance in PIPs
+stopLossInPipsRange="100 1 100"
+
+# TAKE PROFIT Distance in PIPs
+limitInPipsRange="100 1 100"
+
+# Account Equity
+accountEquity=10000
+maximumDrawndownPercentage=75
+fasterProcessingBySkippingSomeTickData=true
+
+# Trailing SL and moving TP
+kineticStopLossRange="100 20 200"
+kineticLimitRange="100 20 200"
