@@ -49,6 +49,8 @@ public class ReportTradeObj {
     public int runIteration {get;set;}
     public decimal stopDistanceInPips {get;set;}
     public decimal limitDistanceInPips {get;set;}
+    public decimal trailingStopLoss {get;set;}
+    public decimal randomHHLLValue {get;set;}
     public int instanceCount { get; init; } = 0;
     public IEnvironmentVariables? environmentVariables {get;set;}
 }

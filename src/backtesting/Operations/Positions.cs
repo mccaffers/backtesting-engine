@@ -44,8 +44,6 @@ public class Positions : TradingBase, IPositions
             // Update the close price, referenced in further conditions
             myTradeObj.UpdateClose(priceObj);
 
-            
-
             var distance = envVaribles.kineticStopLoss / envVaribles.GetScalingFactor(priceObj.symbol);
 
             if(myTradeObj.direction == TradeDirection.BUY){

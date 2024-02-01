@@ -126,6 +126,8 @@ public class Reporting : TradingBase, IReporting
             tradeProfit = profit,
             stopDistanceInPips = stopDistanceInPips,
             limitDistanceInPips = limitDistanceInPips,
+            trailingStopLoss = envVariables.kineticStopLoss,
+            randomHHLLValue = envVariables.randomStrategyAmountOfHHLL
         });
         
         _=BatchTradeUpdate();

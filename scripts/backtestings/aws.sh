@@ -27,11 +27,12 @@ main() {
     
     ## Random HH LL Strategy Customs
     # randomStrategyAmountOfHHLLSseq="5 5 5"
+    ######################################
 
-    # source $my_dir/experiments/random/forex/fixed
-    source $my_dir/experiments/trailing-sl/forex/range
-    # source $my_dir/experiments/momentum/ftse100
-    ######
+    ######################################
+    ### EXPERIMENT DEFINITION
+    source $my_dir/experiments/random-hh-ll/indices/range
+    ######################################
 
     # Remove binary files & tests
     find . -iname "bin" -o -iname "obj" | xargs rm -rf
@@ -90,7 +91,7 @@ limitFunc(){
     for limitValue in `seq $limitInPipsRange`
     do
         export limitDistanceInPips=$limitValue
-        deploy
+        kineticSLFunc
     done
 }
 

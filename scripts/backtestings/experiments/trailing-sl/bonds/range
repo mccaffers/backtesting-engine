@@ -2,11 +2,10 @@
 
 declare -a strategies=("RandomStrategy")
 
-## Multiple Currencies
-declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
+declare -a symbolsArray=("BUNDTREUR" "UKGILTTRGBP" "USTBONDTRUSD")
 
 # Forex from 2004
-yearsStart=2004
+yearsStart=2020
 yearsEnd=2023
 
 # STOP LOSS Distance in PIPs
@@ -21,5 +20,5 @@ maximumDrawndownPercentage=75
 fasterProcessingBySkippingSomeTickData=true
 
 # Trailing SL and moving TP
-kineticStopLossRange="100 20 200"
+kineticStopLossRange="20 20 100"
 kineticLimitRange="1 1 1"

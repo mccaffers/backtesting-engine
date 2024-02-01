@@ -6,11 +6,11 @@ using Utilities;
 
 namespace backtesting_engine_strategies;
 
-public class RandomWithCloseAtHhll : BaseStrategy, IStrategy
+public class RandomRecentHighLow_DRAFT : BaseStrategy, IStrategy
 {
     private List<OhlcObject> ohlcList = new List<OhlcObject>();
 
-    public RandomWithCloseAtHhll(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables, ITradingObjects tradeObjs, ICloseOrder closeOrder, IWebNotification webNotification) : base(requestOpenTrade, tradeObjs, envVariables, closeOrder, webNotification) { }
+    public RandomRecentHighLow_DRAFT(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables, ITradingObjects tradeObjs, ICloseOrder closeOrder, IWebNotification webNotification) : base(requestOpenTrade, tradeObjs, envVariables, closeOrder, webNotification) { }
 
     private OhlcObject lastItem = new OhlcObject();
 
@@ -41,21 +41,25 @@ public class RandomWithCloseAtHhll : BaseStrategy, IStrategy
             }
         }
 
-        // Keep 30 days of history
+        // Keep 5 hours of history (30*10)
         if (ohlcList.Count > 10)
         {
 
+            // Get the highest value from all of the OHLC objects
             var recentHigh = ohlcList.Max(x => x.high);
+            
+            // Get the lowest value from all of the OHLC objects
             var recentLow = ohlcList.Min(x => x.low);
 
             var randomInt = new Random().Next(2); // 0 or 1
 
-            // Default to BUY
+            // Default to BUY, randomly switch
             TradeDirection direction = TradeDirection.SELL;
-            // if (randomInt== 0)
-            // { 
-            //     direction = TradeDirection.SELL;
-            // } 
+            if (randomInt == 0)
+            { 
+                direction = TradeDirection.SELL;
+            } 
+
 
             var highDiff = recentHigh - priceObj.ask;
             var lowerDIff = priceObj.ask - recentLow;
