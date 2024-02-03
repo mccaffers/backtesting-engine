@@ -78,6 +78,7 @@ public class Reporting : TradingBase, IReporting
             stopDistanceInPips = decimal.Parse(envVariables.stopDistanceInPips),
             limitDistanceInPips = decimal.Parse(envVariables.limitDistanceInPips),
             instanceCount = envVariables.instanceCount,
+            randomHHLLValue = envVariables.randomStrategyAmountOfHHLL
         };
 
 

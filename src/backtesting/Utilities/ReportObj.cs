@@ -35,6 +35,7 @@ public class ReportFinalObj {
     public decimal limitDistanceInPips {get;set;}
 
     public int instanceCount { get;set; }
+    public decimal randomHHLLValue {get;set;}
 
     public IEnvironmentVariables? environmentVariables {get;set;}
 }

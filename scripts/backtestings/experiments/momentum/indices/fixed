@@ -1,0 +1,20 @@
+declare -a strategies=("Momentum_4d991e3b")
+
+## Multiple Indexes
+declare -a symbolsArray=("JPNIDXJPY" "ESPIDXEUR" "FRAIDXEUR" "DEUIDXEUR" "AUSIDXAUD" "USATECHIDXUSD" "USA500IDXUSD" "USA30IDXUSD" "EUSIDXEUR" "GBRIDXGBP")
+
+# Forex from 2004
+yearsStart=2018
+yearsEnd=2023
+
+# These don't mean anything in RandomHHLL as the SL/TP is defined by the highest and lowest value from the last time period
+stopLossInPipsRange="200 1 200" # STOP LOSS Distance in PIPs
+limitInPipsRange="200 1 200" # TAKE PROFIT Distance in PIPs
+
+# Account Equity
+accountEquity=10000
+maximumDrawndownPercentage=75
+fasterProcessingBySkippingSomeTickData=true
+
+# Strategy Variables
+randomStrategyAmountOfHHLLSseq="5 5 15"

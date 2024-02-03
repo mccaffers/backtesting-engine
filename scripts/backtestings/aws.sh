@@ -31,7 +31,7 @@ main() {
 
     ######################################
     ### EXPERIMENT DEFINITION
-    source $my_dir/experiments/random-hh-ll/indices/range
+    source $my_dir/experiments/momentum/indices/fixed
     ######################################
 
     # Remove binary files & tests
