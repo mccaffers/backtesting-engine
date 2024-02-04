@@ -36,6 +36,7 @@ class TestEnvironment {
         environmentMock.SetupGet<int[]>(x=>x.years).Returns(new int[]{2006});
         environmentMock.SetupGet<bool>(x=>x.reportingEnabled).Returns(false);
         environmentMock.SetupGet<string>(x=>x.runIteration).Returns("0");
+        environmentMock.SetupGet<bool>(x=>x.fasterProcessingBySkippingSomeTickData).Returns(false);
 
 
         return environmentMock;

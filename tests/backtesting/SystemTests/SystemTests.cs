@@ -19,9 +19,10 @@ public class SystemTests
 {
 
     [Fact]
-    public void TestTradeException(){
+    public void TestTradeException()
+    {
 
-        var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
+        var environmentMock = TestEnvironment.SetEnvironmentVariables();
         var environmentObj = environmentMock.Object;
 
         var provider = new ServiceCollection()
@@ -35,15 +36,17 @@ public class SystemTests
         var reportingMock = new Mock<IReporting>();
         var esMock = new Mock<IElasticClient>().Object;
 
-        var systemMock = new Mock<SystemSetup>(provider, reportingMock.Object, esMock, environmentObj);
+        IPositions position = new Mock<IPositions>().Object;
+        var systemMock = new Mock<SystemSetup>(provider, reportingMock.Object, esMock, environmentObj, position);
 
-        systemMock.Setup(x=>x.StartEngine())
+        systemMock.Setup(x => x.StartEngine())
                         .Throws(new TradingException(message: "error", "", environmentObj));
 
         var output = "";
-        reportingMock.Setup(x=>x.SendStack(It.IsAny<TradingException>())).Returns(Task.FromResult(true));
-        reportingMock.Setup(x=>x.EndOfRunReport(It.IsAny<string>())).Callback((string message) => {
-            output=message;
+        reportingMock.Setup(x => x.SendStack(It.IsAny<TradingException>())).Returns(Task.FromResult(true));
+        reportingMock.Setup(x => x.EndOfRunReport(It.IsAny<string>())).Callback((string message) =>
+        {
+            output = message;
         });
 
         var x = systemMock.Object; // Call System Constructor
@@ -51,12 +54,13 @@ public class SystemTests
         Assert.Equal("error", output);
 
     }
-    
+
     [Fact]
-    public void TestNormalException(){
+    public void TestNormalException()
+    {
 
         // Arrange the environment mocks
-        var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
+        var environmentMock = TestEnvironment.SetEnvironmentVariables();
         var environmentObj = environmentMock.Object;
 
         // Setup the Service Provider just for the services we need
@@ -66,6 +70,7 @@ public class SystemTests
             .AddSingleton<ITradingObjects, TradingObjects>()
             .AddSingleton<ISystemObjects, SystemObjects>()
             .AddSingleton<IElasticClient>(new Mock<IElasticClient>().Object)
+
             .BuildServiceProvider();
 
 
@@ -73,14 +78,16 @@ public class SystemTests
         var reportingMock = new Mock<IReporting>();
         var esMock = new Mock<IElasticClient>().Object;
 
-        var systemMock = new Mock<SystemSetup>(provider, reportingMock.Object, esMock, environmentObj);
-        systemMock.Setup(x=>x.StartEngine())
+        IPositions position = new Mock<IPositions>().Object;
+        var systemMock = new Mock<SystemSetup>(provider, reportingMock.Object, esMock, environmentObj, position);
+        systemMock.Setup(x => x.StartEngine())
                         .Throws(new ArgumentException(message: "error"));
-                        
+
         var output = "";
-        reportingMock.Setup(x=>x.SendStack(It.IsAny<TradingException>())).Returns(Task.FromResult(true));
-        reportingMock.Setup(x=>x.EndOfRunReport(It.IsAny<string>())).Callback((string message) => {
-            output=message;
+        reportingMock.Setup(x => x.SendStack(It.IsAny<TradingException>())).Returns(Task.FromResult(true));
+        reportingMock.Setup(x => x.EndOfRunReport(It.IsAny<string>())).Callback((string message) =>
+        {
+            output = message;
         });
 
         var x = systemMock.Object; // Call System Constructor
