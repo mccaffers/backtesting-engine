@@ -31,7 +31,7 @@ main() {
 
     ######################################
     ### EXPERIMENT DEFINITION
-    source $my_dir/experiments/momentum/indices/fixed
+    source $my_dir/experiments/momentum/forex/momentum_14a2da93_focused
     ######################################
 
     # Remove binary files & tests

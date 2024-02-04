@@ -35,8 +35,17 @@ public class CloseOrder : TradingBase, ICloseOrder
         }
     }
 
-    // Data Update
     public void Request(RequestObject reqObj, PriceObj priceObj)
+    {
+        RequestHandler(reqObj, priceObj, false);
+    }
+
+    public void Request(RequestObject reqObj, PriceObj priceObj, bool completed)
+    {
+        RequestHandler(reqObj, priceObj, completed);
+    }
+    // Data Update
+    private void RequestHandler(RequestObject reqObj, PriceObj priceObj, bool completed)
     {
 
         TradeHistoryObject tradeHistoryObj = new TradeHistoryObject();
@@ -49,7 +58,10 @@ public class CloseOrder : TradingBase, ICloseOrder
 
         PropertyCopier<RequestObject, TradeHistoryObject>.Copy(reqObj, tradeHistoryObj);
 
-        if(!cache.ContainsKey(tradeHistoryObj.key)){
+        if(completed) {
+            // Immediately close the trade if we are at the end
+            CloseTrade(tradeHistoryObj);
+        } else if(!cache.ContainsKey(tradeHistoryObj.key)){
             cache.Add(tradeHistoryObj.key, tradeHistoryObj);
         }
     }

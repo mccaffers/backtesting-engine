@@ -100,8 +100,8 @@ public class Reporting : TradingBase, IReporting
         elasticClient.Index(report, b => b.Index("report"));
 
         // Give the requests enough time to clean up, probably 
-        // not necessary with the above await operators
-        System.Threading.Thread.Sleep(3000);
+        // not super necessary with the above await operators
+        Thread.Sleep(4000);
     }
 
     public virtual async Task SendStack(TradingException message)

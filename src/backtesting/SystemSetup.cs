@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using backtesting_engine.analysis;
 using backtesting_engine.interfaces;
+using backtesting_engine_operations;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using trading_exception;
@@ -15,13 +16,19 @@ public class SystemSetup : ISystemSetup
     readonly IReporting elastic;
     readonly IElasticClient es;
     readonly IServiceProvider provider;
+    readonly IPositions positions;
 
-    public SystemSetup(IServiceProvider provider, IReporting elastic, IElasticClient es, IEnvironmentVariables envVariables)
+    public SystemSetup(IServiceProvider provider, 
+                        IReporting elastic, 
+                        IElasticClient es, 
+                        IEnvironmentVariables envVariables,
+                        IPositions positions)
     {
         this.envVariables = envVariables;
         this.elastic = elastic;
         this.provider = provider;
         this.es = es;
+        this.positions = positions;
 
         Task<string>.Run(async () =>
         {
@@ -47,6 +54,9 @@ public class SystemSetup : ISystemSetup
         }).ContinueWith(taskOutput =>
         {
             ConsoleLogger.Log(taskOutput.Result);
+            ConsoleLogger.Log("End of trading run - closing down any open trades");
+            positions.CloseAll(true);
+            Thread.Sleep(500);
             elastic.EndOfRunReport(taskOutput.Result);
         }).Wait();
     }

@@ -9,14 +9,14 @@ namespace backtesting_engine_operations;
 
 public interface IPositions
 {
-    void CloseAll();
+    void CloseAll(bool completed);
     IEnumerable<RequestObject> GetOrderBook(string symbol);
     Task Review(PriceObj priceObj);
     void TrailingStopLoss(PriceObj priceObj);
-    void UpdateTradeHistory(RequestObject reqObj, PriceObj priceObj);
+    void UpdateTradeHistory(RequestObject reqObj, PriceObj priceObj, bool completed);
     void ReviewEquity();
     void PushRequests(PriceObj priceObj);
-}
+} 
 
 public class Positions : TradingBase, IPositions
 {
@@ -107,11 +107,11 @@ public class Positions : TradingBase, IPositions
         }
     }
 
-    public void CloseAll()
+    public void CloseAll(bool completed = false)
     {
         foreach (var item in this.tradingObjects.openTrades)
         {
-            UpdateTradeHistory(item.Value, item.Value.priceObj);
+            UpdateTradeHistory(item.Value, item.Value.priceObj, completed);
         }
     }
 
@@ -151,9 +151,9 @@ public class Positions : TradingBase, IPositions
         }
     }
 
-    public void UpdateTradeHistory(RequestObject reqObj, PriceObj priceObj)
+    public void UpdateTradeHistory(RequestObject reqObj, PriceObj priceObj, bool completed = false)
     {
-        closeOrder.Request(reqObj, priceObj);
+        closeOrder.Request(reqObj, priceObj, completed);
     }
 
 
