@@ -24,13 +24,14 @@ public class RandomStrategy : BaseStrategy, IStrategy
     [SuppressMessage("Sonar Code Smell", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "Random function has no security use")]
     public async Task Invoke(PriceObj priceObj)
     {
+        
         // Maximum of one trade open at a time
         // Conditional to only invoke the strategy if there are no trades open
         if (tradeObjs.openTrades.Count() >= 1)
         {
             return;
         }
-
+         
         // Generate a random number betwee 0 and 1
         var randomInt = new Random().Next(2);
 
@@ -54,6 +55,7 @@ public class RandomStrategy : BaseStrategy, IStrategy
             limitDistancePips = decimal.Parse(envVariables.limitDistanceInPips),
         };
 
+       
         // Open a trade request
         requestOpenTrade.Request(openOrderRequest);
 

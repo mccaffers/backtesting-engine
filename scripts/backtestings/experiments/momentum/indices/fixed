@@ -1,4 +1,4 @@
-declare -a strategies=("Momentum_4d991e3b")
+declare -a strategies=("Momentum_2ff0b2b2")
 
 ## Multiple Indexes
 declare -a symbolsArray=("JPNIDXJPY" "ESPIDXEUR" "FRAIDXEUR" "DEUIDXEUR" "AUSIDXAUD" "USATECHIDXUSD" "USA500IDXUSD" "USA30IDXUSD" "EUSIDXEUR" "GBRIDXGBP")
@@ -17,4 +17,4 @@ maximumDrawndownPercentage=75
 fasterProcessingBySkippingSomeTickData=true
 
 # Strategy Variables
-randomStrategyAmountOfHHLLSseq="5 5 15"
+variableA_range="5 5 15"

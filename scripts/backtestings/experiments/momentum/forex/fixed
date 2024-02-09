@@ -15,4 +15,4 @@ maximumDrawndownPercentage=75
 fasterProcessingBySkippingSomeTickData=true
 
 # Strategy Variables
-randomStrategyAmountOfHHLLSseq="5 5 15"
+variableA_range="5 5 15"

@@ -6,11 +6,11 @@ using Utilities;
 
 namespace backtesting_engine_strategies;
 
-public class RandomRecentHighLow_COPY : BaseStrategy, IStrategy
+public class Momentum_59ca71ff : BaseStrategy, IStrategy
 {
     private List<OhlcObject> ohlcList = new List<OhlcObject>();
 
-    public RandomRecentHighLow_COPY(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables, ITradingObjects tradeObjs, ICloseOrder closeOrder, IWebNotification webNotification) : base(requestOpenTrade, tradeObjs, envVariables, closeOrder, webNotification) { }
+    public Momentum_59ca71ff(IRequestOpenTrade requestOpenTrade, IEnvironmentVariables envVariables, ITradingObjects tradeObjs, ICloseOrder closeOrder, IWebNotification webNotification) : base(requestOpenTrade, tradeObjs, envVariables, closeOrder, webNotification) { }
 
     private OhlcObject lastItem = new OhlcObject();
 
@@ -20,7 +20,11 @@ public class RandomRecentHighLow_COPY : BaseStrategy, IStrategy
     public async Task Invoke(PriceObj priceObj)
     {
 
-        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromMinutes(30), ohlcList);
+        var period = envVariables.variableB ?? throw new Exception();
+        var maxSpeed = envVariables.variableC ?? throw new Exception();
+        var maxStopValue = envVariables.variableD ?? throw new Exception();
+
+        ohlcList = GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, TimeSpan.FromMinutes(Decimal.ToDouble(period)), ohlcList);
 
         // Maximum of one trade open at a time
         // Conditional to only invoke the strategy if there are no trades open
@@ -29,7 +33,7 @@ public class RandomRecentHighLow_COPY : BaseStrategy, IStrategy
             return;
         }
         
-        if(priceObj.date.Subtract(lastTraded).TotalHours < 6){
+        if(priceObj.date.Subtract(lastTraded).TotalHours < 24){
             return;
         }
 
@@ -42,22 +46,26 @@ public class RandomRecentHighLow_COPY : BaseStrategy, IStrategy
             lastTraded=priceObj.date;
 
             // Get the highest value from all of the OHLC objects
-            var recentHigh = ohlcList.Max(x => x.low);
+            var distance = (ohlcList.Last().close - ohlcList.First().close) * envVariables.GetScalingFactor(priceObj.symbol);
+            var speed = distance / (period * (envVariables.variableA ?? 0));
 
-            // Get the lowest value from all of the OHLC objects
-            var recentLow = ohlcList.Min(x => x.close);
+            // System.Console.WriteLine(speed);
 
-            var randomInt = new Random().Next(2); // 0 or 1
+            // Too slow
+            if(Math.Abs(speed) < maxSpeed){
+                return;
+            }
 
-            // Default to BUY, randomly switch
-            TradeDirection direction = TradeDirection.BUY;
-            if (randomInt == 0)
-            {
+            var direction = TradeDirection.BUY;
+            if(speed > 0){
                 direction = TradeDirection.SELL;
             }
 
-            var stopLevel = direction == TradeDirection.BUY ? recentLow : recentHigh;
-            var limitLevel = direction == TradeDirection.BUY ? recentHigh : recentLow;
+            var stopLevel = direction == TradeDirection.BUY ? ohlcList.Min(x => x.low) :
+                                                                ohlcList.Max(x => x.high);
+
+            var limitLevel = direction == TradeDirection.BUY ? ohlcList.TakeLast(2).Average(x => x.high): 
+                                                                ohlcList.TakeLast(2).Average(x => x.low);
 
             var stopDistance = direction == TradeDirection.SELL ? (stopLevel - priceObj.bid) : (priceObj.ask - stopLevel);
             stopDistance = stopDistance * envVariables.GetScalingFactor(priceObj.symbol);
@@ -65,48 +73,33 @@ public class RandomRecentHighLow_COPY : BaseStrategy, IStrategy
             var limitDistance = direction == TradeDirection.BUY ? (limitLevel - priceObj.bid) : (priceObj.ask - limitLevel);
             limitDistance = limitDistance * envVariables.GetScalingFactor(priceObj.symbol);
 
-            // System.Console.WriteLine("limit: " + limitDistance + " stop: "+ stopDistance);
-            // System.Console.WriteLine(limitDistance-stopDistance);
-            // if(stopDistance < limitDistance){
-            //     var swapSL = stopDistance;
-            //     stopDistance = limitDistance;
-            //     limitDistance = swapSL;
-            //     direction = direction == TradeDirection.BUY ? TradeDirection.SELL : TradeDirection.BUY;
-            // }
-            // Ensure there is enough distance and isn't going to be immediately auto stopped out
-            if (stopDistance < 10 || limitDistance < 10)
+            if (stopDistance < 10 || limitDistance < 2)
             {
                 return;
             }
 
-            // Stop any excessively large stop losses
-            if(stopDistance > 50){
-                // stopDistance = 50;
-            }
-
-            // Stop any crazy amounts
-            if(limitDistance > 50){
-                // limitDistance = 50;
-            }
-
-            // System.Console.WriteLine(stopLevel);
             var key = DictionaryKeyStrings.OpenTrade(priceObj.symbol, priceObj.date);
+            var size = decimal.Parse(envVariables.tradingSize);
+
+            if(stopDistance > maxStopValue) {
+                stopDistance = maxStopValue;
+            }
 
             var openOrderRequest = new RequestObject(priceObj, direction, envVariables, key)
             {
-                size = decimal.Parse(envVariables.tradingSize),
+                size = size,
                 stopDistancePips = stopDistance,
                 limitDistancePips = limitDistance
-
             };
 
             this.requestOpenTrade.Request(openOrderRequest);
 
             ohlcList.RemoveAt(0);
         }
-
+        
         // Surpress CS1998
         // Async method lacks 'await' operators and will run synchronously
         await Task.CompletedTask;
+
     }
 }

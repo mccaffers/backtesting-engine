@@ -1,9 +1,10 @@
-declare -a strategies=("RandomRecentHighLow")
+declare -a strategies=("Momentum_59ca71ff")
 
-declare -a symbolsArray=("BUNDTREUR" "UKGILTTRGBP" "USTBONDTRUSD")
+## Multiple Indexes
+declare -a symbolsArray=("GBRIDXGBP")
 
 # Forex from 2004
-yearsStart=2020
+yearsStart=2021
 yearsEnd=2023
 
 # These don't mean anything in RandomHHLL as the SL/TP is defined by the highest and lowest value from the last time period
@@ -15,7 +16,17 @@ accountEquity=10000
 maximumDrawndownPercentage=75
 fasterProcessingBySkippingSomeTickData=true
 
+# ####################
 # Strategy Variables
-variableA_range="4 2 10"
-#RANDOMHHLL_HOURS_TO_KEEP=5
-#RANDOMHHLL_TP_LOOKBACK_OVER_HOURS=2
+
+# amount of periods to keep
+variableA_range="5 5 15"
+
+# variableB = period
+variableB_range="30 30 90"
+
+# variableC = maxSpeed
+variableC_range="0.5 0.5 1.5"
+
+# variableD = max stop value
+variableD_range="100 900 1000"

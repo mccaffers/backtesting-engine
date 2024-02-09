@@ -31,7 +31,7 @@ main() {
 
     ######################################
     ### EXPERIMENT DEFINITION
-    source $my_dir/experiments/momentum/forex/momentum_14a2da93_focused
+    source $my_dir/experiments/momentum/focused/fixed
     ######################################
 
     # Remove binary files & tests
@@ -107,19 +107,69 @@ kineticTPFunc(){
     for pips in `seq $kineticLimitRange`
     do
         export kineticLimit=$pips
-        
-        randomStrategyHHLLFunc
+        variableA_range_Func
     done
 }
 
-randomStrategyHHLLFunc(){
-    for pips in `seq $randomStrategyAmountOfHHLLSseq`
-    do
-        export randomStrategyAmountOfHHLL=$pips
+variableA_range_Func(){
+    if [ -z "$variableA_range" ]; then
         deploy
-    done
+    else
+        for pips in `seq $variableA_range`
+        do
+            export variableA=$pips
+            variableB_range_Func
+        done
+    fi
 }
 
+variableB_range_Func(){
+    if [ -z "$variableB_range" ]; then
+        deploy
+    else
+        for pips in `seq $variableB_range`
+        do
+            export variableB=$pips
+            variableC_range_Func
+        done
+    fi
+}
+
+variableC_range_Func(){
+    if [ -z "$variableC_range" ]; then
+        deploy
+    else
+        for pips in `seq $variableC_range`
+        do
+            export variableC=$pips
+            variableD_range_Func
+        done
+    fi
+}
+
+variableD_range_Func(){
+    if [ -z "$variableD_range" ]; then
+        deploy
+    else
+        for pips in `seq $variableD_range`
+        do
+            export variableD=$pips
+            variableE_range_Func
+        done
+    fi
+}
+
+variableE_range_Func(){
+    if [ -z "$variableE_range" ]; then
+        deploy
+    else
+        for pips in `seq $variableE_range`
+        do
+            export variableE=$pips
+            deploy
+        done
+    fi
+}
 
 instanceCount=0
 
@@ -128,7 +178,7 @@ deploy () {
     let instanceCount=instanceCount+1
     
     envsubst < $SCRIPT_DIR/template.txt > $SCRIPT_DIR/data.sh
-
+    
     # Deploy
     aws ec2 run-instances   --image-id ${AWS_MACHINE_IMAGE}  \
                             --count 1 \

@@ -35,7 +35,12 @@ public class ReportFinalObj {
     public decimal limitDistanceInPips {get;set;}
 
     public int instanceCount { get;set; }
-    public decimal randomHHLLValue {get;set;}
+
+    public decimal? variableA {get;set;}
+    public decimal? variableB {get;set;}
+    public decimal? variableC {get;set;} 
+    public decimal? variableD {get;set;} 
+    public decimal? variableE {get;set;} 
 
     public IEnvironmentVariables? environmentVariables {get;set;}
 }
@@ -51,7 +56,12 @@ public class ReportTradeObj {
     public decimal stopDistanceInPips {get;set;}
     public decimal limitDistanceInPips {get;set;}
     public decimal trailingStopLoss {get;set;}
-    public decimal randomHHLLValue {get;set;}
     public int instanceCount { get; init; } = 0;
     public IEnvironmentVariables? environmentVariables {get;set;}
+
+    public decimal? variableA {get;set;}
+    public decimal? variableB {get;set;}
+    public decimal? variableC {get;set;} 
+    public decimal? variableD {get;set;} 
+    public decimal? variableE {get;set;} 
 }

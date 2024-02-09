@@ -15,6 +15,6 @@ maximumDrawndownPercentage=75
 fasterProcessingBySkippingSomeTickData=true
 
 # Strategy Variables
-randomStrategyAmountOfHHLLSseq="4 2 10"
+variableA_range="4 2 10"
 #RANDOMHHLL_HOURS_TO_KEEP=5
 #RANDOMHHLL_TP_LOOKBACK_OVER_HOURS=2

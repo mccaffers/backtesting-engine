@@ -78,7 +78,11 @@ public class Reporting : TradingBase, IReporting
             stopDistanceInPips = decimal.Parse(envVariables.stopDistanceInPips),
             limitDistanceInPips = decimal.Parse(envVariables.limitDistanceInPips),
             instanceCount = envVariables.instanceCount,
-            randomHHLLValue = envVariables.randomStrategyAmountOfHHLL
+            variableA = envVariables.variableA,
+            variableB = envVariables.variableB,
+            variableC = envVariables.variableC,
+            variableD = envVariables.variableD,
+            variableE = envVariables.variableE,
         };
 
 
@@ -117,7 +121,7 @@ public class Reporting : TradingBase, IReporting
 
     public void TradeUpdate(DateTime date, string symbol, decimal profit)
     {
-        tradeUpdateArray.Add(new ReportTradeObj()
+        var tradeReport = new ReportTradeObj()
         {
             date = date,
             symbols = envVariables.symbols,
@@ -128,8 +132,14 @@ public class Reporting : TradingBase, IReporting
             stopDistanceInPips = stopDistanceInPips,
             limitDistanceInPips = limitDistanceInPips,
             trailingStopLoss = envVariables.kineticStopLoss,
-            randomHHLLValue = envVariables.randomStrategyAmountOfHHLL
-        });
+            variableA = envVariables.variableA,
+            variableB = envVariables.variableB,
+            variableC = envVariables.variableC,
+            variableD = envVariables.variableD,
+            variableE = envVariables.variableE,
+        };
+
+        tradeUpdateArray.Add(tradeReport);
         
         _=BatchTradeUpdate();
     }

@@ -34,7 +34,6 @@ public class EnvironmentVariables : IEnvironmentVariables
         
         if(operatingEnvironment == "backtesting"){
             this.symbols = Get("symbols").Split(",");
-            this.randomStrategyAmountOfHHLL = int.Parse(Get("randomStrategyAmountOfHHLL"));
             this.kineticLimit = int.Parse(Get("kineticLimit"));
             this.maximumDrawndownPercentage = Get("maximumDrawndownPercentage");
             this.accountEquity = Get("accountEquity");
@@ -48,8 +47,15 @@ public class EnvironmentVariables : IEnvironmentVariables
             this.tickDataFolder = Path.Combine(Path.GetFullPath("./" + this.symbolFolder));
             this.yearsStart = int.Parse(Get("yearsStart"));
             this.yearsEnd = int.Parse(Get("yearsEnd"));
+        
+            this.variableA = GetBacktestingVariables(Get("variableA", true));
+            this.variableB = GetBacktestingVariables(Get("variableB", true));
+            this.variableC = GetBacktestingVariables(Get("variableC", true));
+            this.variableD = GetBacktestingVariables(Get("variableD", true));
+            this.variableE = GetBacktestingVariables(Get("variableE", true));
 
             this.years = Enumerable.Range(this.yearsStart, this.yearsEnd - this.yearsStart + 1).ToArray(); 
+
 
             if(!string.IsNullOrEmpty(Get("doNotCleanUpDataFolder", true))){
                 this.doNotCleanUpDataFolder = bool.Parse(Get("doNotCleanUpDataFolder"));
@@ -59,8 +65,15 @@ public class EnvironmentVariables : IEnvironmentVariables
                 this.fasterProcessingBySkippingSomeTickData = bool.Parse(Get("fasterProcessingBySkippingSomeTickData"));
             }
         }
+    }
 
-
+    private static decimal? GetBacktestingVariables(string input){
+        if(!string.IsNullOrEmpty(input)){
+            try {
+                return decimal.Parse(input);
+            } catch {}
+        }
+        return null;
     }
 
     public static string Get(string envName, bool optional = false)
@@ -94,7 +107,12 @@ public class EnvironmentVariables : IEnvironmentVariables
     public virtual bool doNotCleanUpDataFolder {get;init;}
     public virtual int kineticStopLoss {get;init;}
     public virtual int kineticLimit {get;init;}
-    public virtual int randomStrategyAmountOfHHLL {get; init;}
+
+    public virtual decimal? variableA {get; init;}
+    public virtual decimal? variableB {get; init;}
+    public virtual decimal? variableC {get; init;}
+    public virtual decimal? variableD {get; init;}
+    public virtual decimal? variableE {get; init;}
 
     // Custom environment variables
     public virtual string tickDataFolder { get; init; } = string.Empty;

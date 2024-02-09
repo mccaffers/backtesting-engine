@@ -36,7 +36,7 @@ public class RandomRecentHighLow : BaseStrategy, IStrategy
         
         // Keep 5 hours of history (30*10)
         // Only start trading once you have 5 hours
-        if (ohlcList.Count > envVariables.randomStrategyAmountOfHHLL)
+        if (ohlcList.Count > envVariables.variableA)
         {
 
             lastTraded=priceObj.date;
@@ -91,5 +91,10 @@ public class RandomRecentHighLow : BaseStrategy, IStrategy
 
             ohlcList.RemoveAt(0);
         }
+
+
+        // Surpress CS1998
+        // Async method lacks 'await' operators and will run synchronously
+        await Task.CompletedTask;
     }
 }

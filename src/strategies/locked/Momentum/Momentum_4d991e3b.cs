@@ -36,14 +36,14 @@ public class Momentum_4d991e3b : BaseStrategy, IStrategy
         
         // Keep 5 hours of history (30*10)
         // Only start trading once you have 5 hours
-        if (ohlcList.Count > envVariables.randomStrategyAmountOfHHLL)
+        if (ohlcList.Count > envVariables.variableA)
         {
 
             lastTraded=priceObj.date;
 
             // Get the highest value from all of the OHLC objects
             var distance = (ohlcList.Last().close - ohlcList.First().close) * envVariables.GetScalingFactor(priceObj.symbol);
-            var speed = distance / (30*envVariables.randomStrategyAmountOfHHLL);
+            var speed = distance / (30 * (envVariables.variableA ?? 0));
 
             // System.Console.WriteLine(speed);
 

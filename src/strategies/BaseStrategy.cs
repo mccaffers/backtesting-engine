@@ -17,7 +17,7 @@ public class BaseStrategy
     protected readonly IWebNotification webNotification;
     protected readonly ICloseOrder closeOrder;
 
-    protected BaseStrategy(IRequestOpenTrade requestOpenTrade, ITradingObjects tradeObjs, IEnvironmentVariables envVariables,ICloseOrder closeOrder,  IWebNotification webNotification)
+    protected BaseStrategy(IRequestOpenTrade requestOpenTrade, ITradingObjects tradeObjs, IEnvironmentVariables envVariables, ICloseOrder closeOrder,  IWebNotification webNotification)
     {
         this.requestOpenTrade = requestOpenTrade;
         this.envVariables = envVariables;
