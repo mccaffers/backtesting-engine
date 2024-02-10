@@ -82,6 +82,7 @@ public static class Program
             .AddTransient<ITaskManager, TaskManager>()
             .AddTransient<ISystemSetup, SystemSetup>()
             .AddSingleton<IReporting, Reporting>()
+            .AddSingleton<IStrategyObjects, StrategyObjects>()
             .AddTransient<IRequestOpenTrade, RequestOpenTrade>()
             .AddSingleton<ITradingObjects, TradingObjects>()
             .AddSingleton<ISystemObjects, SystemObjects>()

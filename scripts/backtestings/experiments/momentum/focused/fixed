@@ -1,15 +1,16 @@
-declare -a strategies=("Momentum_59ca71ff")
+declare -a strategies=("Momentum_3d775216")
 
 ## Multiple Indexes
-declare -a symbolsArray=("GBRIDXGBP")
+#!/bin/bash
+declare -a symbolsArray=("EURUSD")
 
 # Forex from 2004
-yearsStart=2021
+yearsStart=2017
 yearsEnd=2023
 
 # These don't mean anything in RandomHHLL as the SL/TP is defined by the highest and lowest value from the last time period
-stopLossInPipsRange="200 1 200" # STOP LOSS Distance in PIPs
-limitInPipsRange="200 1 200" # TAKE PROFIT Distance in PIPs
+stopLossInPipsRange="100 20 120" # STOP LOSS Distance in PIPs
+limitInPipsRange="8 1 8" # TAKE PROFIT Distance in PIPs
 
 # Account Equity
 accountEquity=10000
@@ -19,14 +20,11 @@ fasterProcessingBySkippingSomeTickData=true
 # ####################
 # Strategy Variables
 
-# amount of periods to keep
-variableA_range="5 5 15"
+# amount of periods to keep (6)
+variableA_range="40 10 100" 
 
-# variableB = period
-variableB_range="30 30 90"
+# variableB = period (4)
+variableB_range="10 10 60"
 
-# variableC = maxSpeed
-variableC_range="0.5 0.5 1.5"
-
-# variableD = max stop value
-variableD_range="100 900 1000"
+# variableC = maxSpeed (3)
+variableC_range="40 20 40"
