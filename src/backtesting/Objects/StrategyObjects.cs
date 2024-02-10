@@ -8,8 +8,21 @@ namespace backtesting_engine;
 
 public class StrategyObjects : IStrategyObjects
 {
-    public List<OhlcObject> GetOHLCObject(PriceObj priceObj, decimal price, TimeSpan duration, List<OhlcObject> OHLCArray)
+    private DateTime lastTraded = DateTime.MinValue;
+
+    public async Task<List<OhlcObject>> GetOHLCObject(PriceObj priceObj, decimal price, TimeSpan duration, List<OhlcObject> OHLCArray)
     {
-        return GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, duration, OHLCArray);
+        return await Task.FromResult(GenericOhlc.CalculateOHLC(priceObj, priceObj.ask, duration, OHLCArray));
+    }
+
+    public async Task<DateTime> GetLastTraded(PriceObj priceObj)
+    {
+         return await Task.FromResult(lastTraded);
+    }
+
+    public async Task SetLastTraded(PriceObj priceObj)
+    {
+        lastTraded=priceObj.date;
+        await Task.CompletedTask;
     }
 }

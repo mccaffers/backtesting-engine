@@ -28,6 +28,11 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.elasticUser = Get("elasticUser");
         this.elasticCloudID = Get("elasticCloudID");
 
+        this.variableA = GetBacktestingVariables(Get("variableA", true));
+        this.variableB = GetBacktestingVariables(Get("variableB", true));
+        this.variableC = GetBacktestingVariables(Get("variableC", true));
+        this.variableD = GetBacktestingVariables(Get("variableD", true));
+        this.variableE = GetBacktestingVariables(Get("variableE", true));
         if(operatingEnvironment == "AWS-Lambda"){
 
         }
@@ -48,11 +53,7 @@ public class EnvironmentVariables : IEnvironmentVariables
             this.yearsStart = int.Parse(Get("yearsStart"));
             this.yearsEnd = int.Parse(Get("yearsEnd"));
         
-            this.variableA = GetBacktestingVariables(Get("variableA", true));
-            this.variableB = GetBacktestingVariables(Get("variableB", true));
-            this.variableC = GetBacktestingVariables(Get("variableC", true));
-            this.variableD = GetBacktestingVariables(Get("variableD", true));
-            this.variableE = GetBacktestingVariables(Get("variableE", true));
+      
 
             this.years = Enumerable.Range(this.yearsStart, this.yearsEnd - this.yearsStart + 1).ToArray(); 
 
