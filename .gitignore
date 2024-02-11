@@ -40,4 +40,3 @@ tickdata/
 scripts/data.sh
 src/ui/src/libs/
 scripts/backtestings/data.sh
-src/strategies/private
