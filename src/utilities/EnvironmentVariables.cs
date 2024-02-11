@@ -33,9 +33,6 @@ public class EnvironmentVariables : IEnvironmentVariables
         this.variableC = GetBacktestingVariables(Get("variableC", true));
         this.variableD = GetBacktestingVariables(Get("variableD", true));
         this.variableE = GetBacktestingVariables(Get("variableE", true));
-        if(operatingEnvironment == "AWS-Lambda"){
-
-        }
         
         if(operatingEnvironment == "backtesting"){
             this.symbols = Get("symbols").Split(",");
@@ -53,8 +50,6 @@ public class EnvironmentVariables : IEnvironmentVariables
             this.yearsStart = int.Parse(Get("yearsStart"));
             this.yearsEnd = int.Parse(Get("yearsEnd"));
         
-      
-
             this.years = Enumerable.Range(this.yearsStart, this.yearsEnd - this.yearsStart + 1).ToArray(); 
 
 
