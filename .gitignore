@@ -33,8 +33,6 @@ msbuild.wrn
 # Visual Studio 2015
 .vs/
 
-.env/local.env
-.env/aws.env
 engine.zip
 tickdata/
 scripts/data.sh
