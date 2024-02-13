@@ -4,5 +4,5 @@ namespace backtesting_engine.interfaces;
 
 public interface IRequestOpenTrade
 {
-    void Request(RequestObject reqObj);
+    Task Request(RequestObject reqObj);
 }
