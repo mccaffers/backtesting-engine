@@ -86,6 +86,7 @@ public static class Program
             .AddTransient<IRequestOpenTrade, RequestOpenTrade>()
             .AddSingleton<ITradingObjects, TradingObjects>()
             .AddSingleton<ISystemObjects, SystemObjects>()
+            .AddSingleton<IOpenTrades, BacktestingOpenTrades>()
             .AddSingleton<IEnvironmentVariables>(variables);
     
         Stopwatch sw = new Stopwatch();
