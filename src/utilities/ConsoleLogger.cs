@@ -24,9 +24,9 @@ public static class ConsoleLogger {
         }
     }
 
-     public static void Lambda(string message){
+     public static void Lambda(string symbol, string message){
         if(lambdaLog){
-            System.Console.WriteLine(message);
+            System.Console.WriteLine(symbol + " - " + message);
         }
     }
 
