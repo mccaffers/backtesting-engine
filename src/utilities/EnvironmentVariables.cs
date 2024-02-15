@@ -3,8 +3,8 @@ using backtesting_engine.interfaces;
 
 namespace Utilities;
 
-public class EnvironmentVariables : IEnvironmentVariables
-{
+public class EnvironmentVariables : IEnvironmentVariables {
+    
     // Enables the override of the constructor
     public virtual bool loadFromEnvironmnet { get; } = true;
 
@@ -85,8 +85,8 @@ public class EnvironmentVariables : IEnvironmentVariables
     public virtual string strategy { get; init; } = string.Empty;
     public virtual string runID { get; init; } = string.Empty;
     public virtual string symbolFolder { get; init; } = string.Empty;
-    public virtual string stopDistanceInPips { get; init; } = string.Empty;
-    public virtual string limitDistanceInPips { get; init; } = string.Empty;
+    public virtual string stopDistanceInPips { get; set; } = string.Empty;
+    public virtual string limitDistanceInPips { get; set; } = string.Empty;
     public virtual string elasticPassword { get; init; } = string.Empty;
     public virtual string elasticUser { get; init; } = string.Empty;
     public virtual string elasticCloudID { get; init; } = string.Empty;
@@ -96,19 +96,19 @@ public class EnvironmentVariables : IEnvironmentVariables
     public virtual string s3Path { get; init; } = string.Empty;
     public virtual string hostname { get; init; } = string.Empty;
     public virtual string runIteration { get; init; } = string.Empty;
-    public virtual string scalingFactor { get; init; } = string.Empty;
-    public virtual string tradingSize { get; init; } = string.Empty;
+    public virtual string scalingFactor { get; set; } = string.Empty;
+    public virtual string tradingSize { get; set; } = string.Empty;
     public virtual int yearsStart { get;init ; }
     public virtual int yearsEnd { get; init; }
     public virtual bool doNotCleanUpDataFolder {get;init;}
     public virtual int kineticStopLoss {get;init;}
     public virtual int kineticLimit {get;init;}
 
-    public virtual decimal? variableA {get; init;}
-    public virtual decimal? variableB {get; init;}
-    public virtual decimal? variableC {get; init;}
-    public virtual decimal? variableD {get; init;}
-    public virtual decimal? variableE {get; init;}
+    public virtual decimal? variableA {get; set;}
+    public virtual decimal? variableB {get; set;}
+    public virtual decimal? variableC {get; set;}
+    public virtual decimal? variableD {get; set;}
+    public virtual decimal? variableE {get; set;}
 
     // Custom environment variables
     public virtual string tickDataFolder { get; init; } = string.Empty;

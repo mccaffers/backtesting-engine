@@ -15,7 +15,7 @@ public class RequestOpenTrade : IRequestOpenTrade
         this.openOrder = openOrder;
     }
 
-    public Task Request(RequestObject reqObj)
+    public Task<bool> Request(RequestObject reqObj)
     {
 
         // Open trade validation
@@ -24,7 +24,7 @@ public class RequestOpenTrade : IRequestOpenTrade
 
         this.openOrder.Request(reqObj);
 
-        return Task.CompletedTask;
+        return Task.FromResult(true);
     }
 
 }
