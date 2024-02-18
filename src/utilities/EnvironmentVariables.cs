@@ -82,7 +82,7 @@ public class EnvironmentVariables : IEnvironmentVariables {
         return output;
     }
 
-    public virtual string strategy { get; init; } = string.Empty;
+    public virtual string strategy { get; set; } = string.Empty;
     public virtual string runID { get; init; } = string.Empty;
     public virtual string symbolFolder { get; init; } = string.Empty;
     public virtual string stopDistanceInPips { get; set; } = string.Empty;

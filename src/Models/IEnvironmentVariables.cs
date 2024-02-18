@@ -5,7 +5,7 @@ public interface IEnvironmentVariables
     string operatingEnvironment { get; init; }
     
     // Both
-    string strategy { get; init; }
+    string strategy { get; set; }
     string runID { get; init; }
     string symbolFolder { get; init; }
     string stopDistanceInPips { get; set; }
