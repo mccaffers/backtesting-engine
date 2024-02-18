@@ -31,7 +31,7 @@ main() {
 
     ######################################
     ### EXPERIMENT DEFINITION
-    source $my_dir/experiments/volatility/forex/fixed
+    source $my_dir/experiments/momentum/focused/sma
     ######################################
 
     # Remove binary files & tests

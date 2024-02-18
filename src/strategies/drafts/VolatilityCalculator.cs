@@ -67,6 +67,7 @@ public class VolatilityCalculator : IStrategy
                 distanceBetweenPriceMoves=distanceBetweenPriceMoves.Average(),
                 spreadDistance=spreadDistance.Average() * envVariables.GetScalingFactor(priceObj.symbol)
             };
+            
 
             distanceBetweenPriceMoves=new List<decimal>();
             spreadDistance=new List<decimal>();
@@ -81,7 +82,6 @@ public class VolatilityCalculator : IStrategy
         if(DateTime.Now.Subtract(lastBatchUpdate).TotalSeconds <= 5){
             return;
         }
-
         lastBatchUpdate=DateTime.Now;
         elasticClient.IndexMany(volatilityList, "volatility");
         volatilityList= new List<VolatilityObject>();

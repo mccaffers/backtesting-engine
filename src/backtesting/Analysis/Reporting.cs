@@ -62,9 +62,7 @@ public class Reporting : TradingBase, IReporting
         var yearOnYearReturn = false;
         for(var year=envVariables.yearsStart; year<=envVariables.yearsEnd; year++){
             var yearlyProfit = this.tradingObjects.tradeHistory.Where(x=>x.Value.openDate.Year==year).Where(x=>x.Value.profit > 0).Sum(x => x.Value.profit);
-            System.Console.WriteLine(yearlyProfit);
             var yearlyLoss = this.tradingObjects.tradeHistory.Where(x=>x.Value.openDate.Year==year).Where(x=>x.Value.profit < 0).Sum(x => x.Value.profit);
-            System.Console.WriteLine(yearlyLoss);
             if((yearlyProfit + yearlyLoss) > 0) {
                 yearOnYearReturn = true;
             }
