@@ -26,10 +26,13 @@ public class ReportFinalObj {
 
     // Trading Stats
     public decimal pnl {get;set;}
+    public decimal totalProfit {get;set;}
+    public decimal totalLoss {get;set;}
     public double tradingTimespanInDays {get;set;}
     public int positiveTradeCount {get;set;}
     public int negativeTradeCount {get;set;}
-    public int positivePercentage {get;set;}
+    public decimal positivePercentage {get;set;}
+    public bool yearOnYearReturn {get;set;}
 
     public decimal stopDistanceInPips {get;set;}
     public decimal limitDistanceInPips {get;set;}

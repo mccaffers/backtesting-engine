@@ -53,12 +53,26 @@ public class Reporting : TradingBase, IReporting
 
         switchHasSentFinalReport = true;
 
-        var positivePercentage = 0;
+        var positivePercentage = 0m;
         if (this.tradingObjects.tradeHistory.Any(x => x.Value.profit > 0))
         {
-            positivePercentage = (this.tradingObjects.tradeHistory.Count(x => x.Value.profit > 0) / this.tradingObjects.tradeHistory.Count(x => x.Value.profit < 0)) * 100;
+            positivePercentage = (this.tradingObjects.tradeHistory.Count(x => x.Value.profit > 0) / this.tradingObjects.tradeHistory.Count(x => x.Value.profit < 0));
         }
 
+        var yearOnYearReturn = false;
+        for(var year=envVariables.yearsStart; year<=envVariables.yearsEnd; year++){
+            var yearlyProfit = this.tradingObjects.tradeHistory.Where(x=>x.Value.openDate.Year==year).Where(x=>x.Value.profit > 0).Sum(x => x.Value.profit);
+            System.Console.WriteLine(yearlyProfit);
+            var yearlyLoss = this.tradingObjects.tradeHistory.Where(x=>x.Value.openDate.Year==year).Where(x=>x.Value.profit < 0).Sum(x => x.Value.profit);
+            System.Console.WriteLine(yearlyLoss);
+            if((yearlyProfit + yearlyLoss) > 0) {
+                yearOnYearReturn = true;
+            }
+        }
+
+        var totalProfit = this.tradingObjects.tradeHistory.Where(x=>x.Value.profit > 0).Sum(x => x.Value.profit);
+        var totalLoss = this.tradingObjects.tradeHistory.Where(x=>x.Value.profit < 0).Sum(x => x.Value.profit);
+    
         var report = new ReportFinalObj()
         {
             date = DateTime.Now,
@@ -78,6 +92,9 @@ public class Reporting : TradingBase, IReporting
             stopDistanceInPips = decimal.Parse(envVariables.stopDistanceInPips),
             limitDistanceInPips = decimal.Parse(envVariables.limitDistanceInPips),
             instanceCount = envVariables.instanceCount,
+            yearOnYearReturn = yearOnYearReturn,
+            totalLoss = totalLoss,
+            totalProfit = totalProfit,
             variableA = envVariables.variableA,
             variableB = envVariables.variableB,
             variableC = envVariables.variableC,

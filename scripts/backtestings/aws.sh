@@ -31,7 +31,7 @@ main() {
 
     ######################################
     ### EXPERIMENT DEFINITION
-    source $my_dir/experiments/momentum/focused/fixed
+    source $my_dir/experiments/volatility/forex/fixed
     ######################################
 
     # Remove binary files & tests
@@ -194,6 +194,6 @@ deploy () {
 
     # Cleanup
     rm -rf $SCRIPT_DIR/data.sh
-    sleep 0.6
+    sleep 0.3
 }
 main;

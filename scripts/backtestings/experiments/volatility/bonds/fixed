@@ -1,8 +1,8 @@
 declare -a strategies=("RandomStrategy")
-declare -a symbolsArray=("EURUSD")
+declare -a symbolsArray=("BUNDTREUR" "UKGILTTRGBP" "USTBONDTRUSD")
 
 # Forex from 2004
-yearsStart=2023
+yearsStart=2020
 yearsEnd=2023
 
 # STOP LOSS Distance in PIPs

@@ -2,11 +2,9 @@
 
 declare -a strategies=("RandomStrategy")
 
-## Multiple Currencies
-declare -a symbolsArray=("EURUSD" "USDJPY" "GBPUSD" "NZDUSD" "USDCHF" "USDCAD" "AUDUSD")
-
-# Forex from 2004
-yearsStart=2004
+## Crypto
+declare -a symbolsArray=("ETHUSD" "BTCUSD")
+yearsStart=2018
 yearsEnd=2023
 
 # STOP LOSS Distance in PIPs
