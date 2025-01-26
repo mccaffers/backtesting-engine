@@ -1,19 +1,24 @@
-<div align="center">
-<h3 align="center">C# Backtesting Engine</h3>
-  <p align="center">
-    By Ryan (mccaffers.com)
-  </p>
-</div>
+## C++ Backtesting Engine
 
-<!-- ABOUT THE PROJECT -->
+### Active development
+
+Working build! Requires local tick data. Evaluate locally with `dotnet test` - 49 tests should pass, 1 skipped 
 
 ## About The Project
 
-This backtesting engine is a personal project of mine, built in C# to explore and experiment with various trading strategies at scale.
+I'm developing a high-performance C# backtesting engine designed to analyze financial data and evaluate multiple trading strategies at scale.
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mccaffers_backtesting-engine&metric=alert_status)](https://sonarcloud.io/summary/overall?id=mccaffers_backtesting-engine)
 
+
+I'm extracting results and creating various graphs for trend analyses using SciPy for calculations and Plotly for visualization.
+
+![alt text](images/random-indices-sp500-variable.svg)
+
+*Read more results on https://mccaffers.com/randomly_trading/*
+
 ### Features
+
 * Multiple symbol ingest with time synchronisation
 * xUnit testing 
 * Trade Environment
@@ -21,18 +26,10 @@ This backtesting engine is a personal project of mine, built in C# to explore an
     * Equity Monitoring
 * Reporting (ElasticSearch)
 
-### Built With
-
-* [dotnet](https://dotnet.com)
-
-<!-- GETTING STARTED -->
 ### Getting Started
 
 #### Testing
 `dotnet test`
-
-#### Demo Run (Working)
-{placeholder}
 
 #### Local Terminal
 sh ./scripts/backtesting/run.sh
@@ -42,7 +39,7 @@ sh ./scripts/backtesting/web.sh
 
 ### Dependencies
 
-* dotnet v6
+* dotnet v8
   * Charting & Web use, need to accept dotnet's certificates `dotnet dev-certs https --trust`
 * ElasticSearch for reporting
 * CanvasJS used for charting
@@ -56,15 +53,11 @@ sh ./scripts/backtesting/web.sh
     ```
 
 ### Debugging
-
 If you have changed target frameworks, make sure to update the program path in .vscode `launch.json`
 
 ### Random Trading Strategy
     accountEquity=0
     maximumDrawndownPercentage=0
 
-
 ### License
 [MIT](https://choosealicense.com/licenses/mit/)
-
-<p align="right">(<a href="#top">back to top</a>)</p>
