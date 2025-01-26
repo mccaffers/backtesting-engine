@@ -8,7 +8,7 @@ Working build! Requires local tick data. Evaluate locally with `dotnet test` - 4
 
 I'm developing a high-performance C# backtesting engine designed to analyze financial data and evaluate multiple trading strategies at scale.
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mccaffers_backtesting-engine&metric=alert_status)](https://sonarcloud.io/summary/overall?id=mccaffers_backtesting-engine) [![Build](https://github.com/mccaffers/backtesting-engine/actions/workflows/build.yml/badge.svg)](https://github.com/mccaffers/backtesting-engine/actions/workflows/build.yml) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=mccaffers_backtesting-engine&metric=bugs)](https://sonarcloud.io/summary/new_code?id=mccaffers_backtesting-engine) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mccaffers_backtesting-engine&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mccaffers_backtesting-engine)
+![alt](images/development_active.svg) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mccaffers_backtesting-engine&metric=alert_status)](https://sonarcloud.io/summary/overall?id=mccaffers_backtesting-engine) [![Build](https://github.com/mccaffers/backtesting-engine/actions/workflows/build.yml/badge.svg)](https://github.com/mccaffers/backtesting-engine/actions/workflows/build.yml) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=mccaffers_backtesting-engine&metric=bugs)](https://sonarcloud.io/summary/new_code?id=mccaffers_backtesting-engine) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mccaffers_backtesting-engine&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mccaffers_backtesting-engine)
 
 
 I'm extracting results and creating various graphs for trend analyses using SciPy for calculations and Plotly for visualization.
@@ -17,33 +17,34 @@ I'm extracting results and creating various graphs for trend analyses using SciP
 
 *Read more results on https://mccaffers.com/randomly_trading/*
 
-### Features
+## Features
 
-* Multiple symbol ingest with time synchronisation
-* xUnit testing 
-* Trade Environment
+- [x] Multiple symbol ingest with time synchronisation
+- [x] 50 xUnit testing across Trade Management, Ingest, Reporting & Utilities
+- [x] Trade Environment
     * Trade Excution
     * Equity Monitoring
-* Reporting (ElasticSearch)
+- [x] Reporting (ElasticSearch)
 
-### Getting Started
+## Getting Started
 
-#### Testing
-`dotnet test`
+To begin with, ensure you can run the application with `dotnet test`
 
-#### Local Terminal
+**Local Terminal**
+
 sh ./scripts/backtesting/run.sh
 
-#### Local Web & Terminal
+**Local Web & Terminal** (requires canvasjs.min.js)
+
 sh ./scripts/backtesting/web.sh
 
-### Dependencies
+## Dependencies
 
 * dotnet v8
-  * Charting & Web use, need to accept dotnet's certificates `dotnet dev-certs https --trust`
 * ElasticSearch for reporting
 * CanvasJS used for charting
   * JS libaries `canvasjs.min.js` to be placed within ./src/ui/src/libs/ folder
+  * Charting & Web use, need to accept dotnet's certificates `dotnet dev-certs https --trust`
 * Some financial tick data in CSV format, in the /src/tickdata folder (example provided)
 
     ```bash
@@ -52,12 +53,13 @@ sh ./scripts/backtesting/web.sh
     2018-01-01T01:00:00.594+00:00,1.35104,1.35065,1.5,0.75
     ```
 
-### Debugging
+## Debugging
+
 If you have changed target frameworks, make sure to update the program path in .vscode `launch.json`
 
-### Random Trading Strategy
+## Random Trading Strategy
     accountEquity=0
     maximumDrawndownPercentage=0
 
-### License
+## License
 [MIT](https://choosealicense.com/licenses/mit/)
