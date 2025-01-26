@@ -8,7 +8,7 @@ Working build! Requires local tick data. Evaluate locally with `dotnet test` - 4
 
 I'm developing a high-performance C# backtesting engine designed to analyze financial data and evaluate multiple trading strategies at scale.
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mccaffers_backtesting-engine&metric=alert_status)](https://sonarcloud.io/summary/overall?id=mccaffers_backtesting-engine) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mccaffers_backtesting-engine&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mccaffers_backtesting-engine)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mccaffers_backtesting-engine&metric=alert_status)](https://sonarcloud.io/summary/overall?id=mccaffers_backtesting-engine) [![Build](https://github.com/mccaffers/backtesting-engine/actions/workflows/build.yml/badge.svg)](https://github.com/mccaffers/backtesting-engine/actions/workflows/build.yml) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=mccaffers_backtesting-engine&metric=bugs)](https://sonarcloud.io/summary/new_code?id=mccaffers_backtesting-engine) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mccaffers_backtesting-engine&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mccaffers_backtesting-engine)
 
 
 I'm extracting results and creating various graphs for trend analyses using SciPy for calculations and Plotly for visualization.
