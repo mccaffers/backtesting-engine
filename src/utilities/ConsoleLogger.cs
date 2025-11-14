@@ -7,26 +7,26 @@ public static class ConsoleLogger {
     private static readonly bool lambdaLog;
 
     static ConsoleLogger () {
-        _ = bool.TryParse(EnvironmentVariables.Get("systemLog", true), out systemLog);
-        _ = bool.TryParse(EnvironmentVariables.Get("consoleLog", true), out consoleLog);
-        _ = bool.TryParse(EnvironmentVariables.Get("lambdaLog", true), out lambdaLog);
+        _ = bool.TryParse(LoggingVariables.SYSTEM_LOG.Value(), out systemLog);
+        _ = bool.TryParse(LoggingVariables.CONSOLE_LOG.Value(), out consoleLog);
+        _ = bool.TryParse(LoggingVariables.LAMBDA_LOG.Value(), out lambdaLog);
     }
 
     public static void SystemLog(string message){
         if(systemLog){
-            System.Console.WriteLine(message);
+            Console.WriteLine(message);
         }
     }
 
     public static void Log(string message){
         if(consoleLog){
-            System.Console.WriteLine(message);
+            Console.WriteLine(message);
         }
     }
 
      public static void Lambda(string symbol, string message){
         if(lambdaLog){
-            System.Console.WriteLine(symbol + " - " + message);
+            Console.WriteLine(symbol + " - " + message);
         }
     }
 

@@ -2,17 +2,21 @@ using System;
 using System.Linq;
 using backtesting_engine;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Utilities;
 using Xunit;
 
+
 namespace Tests;
 
+[Collection("Sequential")]
 public class ExtensionTests
 {
 
     [Fact]
     public void DictionaryKeyStringsTests(){
 
+        // Arrange
         var currentDt = DateTime.Now;
 
         var priceObj = new PriceObj() {
@@ -20,31 +24,45 @@ public class ExtensionTests
             date=currentDt
         };
 
+        // Act
         var output = DictionaryKeyStrings.OpenTrade(priceObj.symbol,priceObj.date);
+
+        // Assert
         Assert.Contains(priceObj.symbol + "-" + priceObj.date, output);
     }
 
     [Fact]
     public void ServiceExtensionTestsInvalidStrategy(){
 
-        var envMock = TestEnvironment.SetEnvironmentVariables(); 
+        // Arrange
+        TestEnvironment.SetEnvironmentVariables(); 
 
-        // Strategy that doesn't exist
-        envMock.SetupGet<string>(x=>x.strategy).Returns("doesntExist");
-        Func<IServiceCollection> act = () => new ServiceCollection().RegisterStrategies(envMock.Object);
+        // Act
+        Func<IServiceCollection> act = () => new ServiceCollection().RegisterStrategies();
+
+        // Assert
         Assert.Throws<ArgumentException>(act);
+
+        // Clean
+        TestEnvironment.CleanEnvironment();
     }
    
     [Fact]
     public void ServiceExtensionTestsValidStrategy(){
-        
-        var envMock = TestEnvironment.SetEnvironmentVariables(); 
+       
+        // Arrange
+        TestEnvironment.SetEnvironmentVariables(); 
+        EnvironmentVariables.Inject(TradingVariables.STRATEGY, "RandomStrategy");
+        var collection = new ServiceCollection().RegisterStrategies();
 
-        // Strategy that does exist, case sensitive
-        envMock.SetupGet<string>(x=>x.strategy).Returns("RandomStrategy");
-        var collection = new ServiceCollection().RegisterStrategies(envMock.Object);
+        // Act
         var response = collection.All(x=> x.ImplementationType!=null && x.ImplementationType.Name == "RandomStrategy");
+
+        // Assert
         Assert.True(response);
-        
+
+        // Clean
+        TestEnvironment.CleanEnvironment();
     }
+
 }

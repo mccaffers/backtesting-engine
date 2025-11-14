@@ -9,7 +9,7 @@ public class TradeHistoryObject {
     public decimal level {get;set;}
     public decimal scalingFactor {get;set;}
     public decimal closeLevel {get;set;}
-    public DateTime openDate {get;set;}
+    public DateTime date {get;set;}
     public DateTime closeDateTime {get;set;}
     public double runningTime {get;set;}
     public decimal stopLevel {get;set;}

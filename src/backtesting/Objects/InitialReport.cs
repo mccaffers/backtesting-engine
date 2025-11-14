@@ -1,3 +1,5 @@
+using backtesting_engine_models;
+
 namespace backtesting_engine;
 
 class InitialReport {
@@ -7,7 +9,7 @@ class InitialReport {
     public string runID {get;set;} = string.Empty;
     public int runIteration {get;set;}
     public int instanceCount {get;set;} = 0;
-    public string strategy {get;set;} = string.Empty;
+    public StrategyDefinition? strategy {get;set;}
 }
 
 class YearUpdate : InitialReport  {

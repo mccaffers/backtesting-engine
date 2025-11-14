@@ -1,7 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Serialization;
-using System.Security.Permissions;
-using backtesting_engine.interfaces;
 using Newtonsoft.Json;
 using Utilities;
 
@@ -17,22 +14,22 @@ public class TradingException : Exception {
     public string runIteration {get;set;}
     public string stacktrace {get;set;} = string.Empty;
 
-    public TradingException(string? message, string? stacktrace, IEnvironmentVariables envVariables) : base(message) {
+    public TradingException(string? message, string? stacktrace) : base(message) {
         date = DateTime.Now;
-        hostname = envVariables.hostname;
-        symbols = JsonConvert.SerializeObject(envVariables.symbols);
-        runID = envVariables.runID;
-        runIteration = envVariables.runIteration;
+        hostname = EnvironmentVariables.Hostname();
+        symbols = JsonConvert.SerializeObject(BACKTESTING.SYMBOLS.Value());
+        runID = BACKTESTING.RUN_ID.Value();
+        runIteration = BACKTESTING.RUN_ITERATION.Value();
         stacktrace= stacktrace ?? "empty";
     }
 
-    public TradingException(string? message, Exception? innerException, IEnvironmentVariables envVariables) : base(message, innerException)
+    public TradingException(string? message, Exception? innerException) : base(message, innerException)
     {
         date = DateTime.Now;
-        hostname = envVariables.hostname;
-        symbols = JsonConvert.SerializeObject(envVariables.symbols);
-        runID = envVariables.runID;
-        runIteration = envVariables.runIteration;
+        hostname = EnvironmentVariables.Hostname();
+        symbols = JsonConvert.SerializeObject(BACKTESTING.SYMBOLS.Value());
+        runID = BACKTESTING.RUN_ID.Value();
+        runIteration = BACKTESTING.RUN_ITERATION.Value();
         stacktrace= stacktrace ?? "empty";
     }
 }

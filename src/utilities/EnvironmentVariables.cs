@@ -1,14 +1,13 @@
 using System.Net;
-using backtesting_engine.interfaces;
 
 namespace Utilities;
 
-public class EnvironmentVariables : IEnvironmentVariables {
+abstract class _EnvironmentVariables  {
     
     // Enables the override of the constructor
     public virtual bool loadFromEnvironmnet { get; } = true;
 
-    public EnvironmentVariables()
+    public _EnvironmentVariables()
     {
         if(!loadFromEnvironmnet){
             return;
@@ -49,12 +48,17 @@ public class EnvironmentVariables : IEnvironmentVariables {
             this.tickDataFolder = Path.Combine(Path.GetFullPath("./" + this.symbolFolder));
             this.yearsStart = int.Parse(Get("yearsStart"));
             this.yearsEnd = int.Parse(Get("yearsEnd"));
+            this.dataHostUrl = Get("dataHostUrl", true);
+            this.reportIndividualTrades = bool.Parse(Get("reportIndividualTrades"));
         
             this.years = Enumerable.Range(this.yearsStart, this.yearsEnd - this.yearsStart + 1).ToArray(); 
 
+            if(!string.IsNullOrEmpty(Get("cleanTickFolder", true))){
+                this.cleanTickFolder = bool.Parse(Get("cleanTickFolder"));
+            }
 
-            if(!string.IsNullOrEmpty(Get("doNotCleanUpDataFolder", true))){
-                this.doNotCleanUpDataFolder = bool.Parse(Get("doNotCleanUpDataFolder"));
+            if(!string.IsNullOrEmpty(Get("ignoreS3Pull", true))){
+                this.ignoreS3Pull = bool.Parse(Get("ignoreS3Pull"));
             }
 
             if(!string.IsNullOrEmpty(Get("fasterProcessingBySkippingSomeTickData", true))){
@@ -100,9 +104,12 @@ public class EnvironmentVariables : IEnvironmentVariables {
     public virtual string tradingSize { get; set; } = string.Empty;
     public virtual int yearsStart { get;init ; }
     public virtual int yearsEnd { get; init; }
-    public virtual bool doNotCleanUpDataFolder {get;init;}
+    public virtual bool cleanTickFolder {get;init;} = false;
+    public virtual bool ignoreS3Pull {get;init;} = false;
     public virtual int kineticStopLoss {get;init;}
     public virtual int kineticLimit {get;init;}
+    public virtual string dataHostUrl {get;init;} = string.Empty;
+    public virtual bool reportIndividualTrades {get;init;}
 
     public virtual decimal? variableA {get; set;}
     public virtual decimal? variableB {get; set;}

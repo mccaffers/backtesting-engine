@@ -1,6 +1,6 @@
 namespace backtesting_engine.interfaces;
 
-public interface IEnvironmentVariables
+public interface IEnvironmentVariables_
 {
     string operatingEnvironment { get; init; }
     
@@ -30,8 +30,12 @@ public interface IEnvironmentVariables
     int yearsEnd { get; init; }
     int kineticStopLoss {get; init;}
     int kineticLimit {get; init;}
-    bool doNotCleanUpDataFolder {get;init;}
+
+    bool reportIndividualTrades {get;init;}
+    bool cleanTickFolder {get;init;} 
     bool fasterProcessingBySkippingSomeTickData {get;init;}
+    string dataHostUrl {get;init;}
+    bool ignoreS3Pull {get;init;}
 
     decimal? variableA {get;set;}
     decimal? variableB {get;set;}

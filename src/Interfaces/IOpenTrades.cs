@@ -4,5 +4,5 @@ namespace backtesting_engine.interfaces;
 
 public interface IOpenTrades
 {
-    Task<int> Request(string symbol);
+    Task<int> Request(string symbol, string strategyId);
 }
