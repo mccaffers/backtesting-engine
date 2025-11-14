@@ -22,7 +22,7 @@
 //         EnvironmentVariables.VariableInjectList.TryAdd(BACKTESTING.REPORT_INDIVIDUAL_TRADES, "TRUE");
 //         EnvironmentVariables.VariableInjectList.TryAdd(BACKTESTING.MAXIMUM_DRAWNDOWN_PERCENTAGE, maximumDrawndownPercentage.ToString());
 //         EnvironmentVariables.VariableInjectList.TryAdd(LoggingVariables.REPORT_TO_ELASTICSEARCH, "TRUE");
-//         EnvironmentVariables.VariableInjectList.TryAdd(TradingVariables.SCALING_FACRTOR, "TestEnvironmentSetup,1;");
+//         EnvironmentVariables.VariableInjectList.TryAdd(TradingVariables.SCALING_FACTOR, "TestEnvironmentSetup,1;");
 
 //         return new ServiceCollection()
 //             .AddSingleton<ITradingObjects, TradingObjects>()

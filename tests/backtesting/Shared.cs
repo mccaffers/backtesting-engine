@@ -40,7 +40,7 @@ public static class PathUtil {
 
     // TradingVariables
     public required string STRATEGY { get; set; }  
-    public required string SCALING_FACRTOR  { get; set; }  
+    public required string SCALING_FACTOR  { get; set; }  
     public required string STOP_DISTANCE_IN_PIPS { get; set; }  
     public required string LIMIT_DISTANCE_IN_PIPS  { get; set; }  
     public required string TRAILING_STOP_LOSS_ACTIVE { get; set; }  

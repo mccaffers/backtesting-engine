@@ -16,7 +16,7 @@
     "LAMBDA_LOG": "FALSE",
     "SYSTEM_LOG": "TRUE",
     "CONSOLE_LOG": "TRUE",
-    "SCALING_FACRTOR": "TestEnvironmentSetup,1000;",
+    "SCALING_FACTOR": "TestEnvironmentSetup,1000;",
     "STOP_DISTANCE_IN_PIPS": "100",
     "STRATEGY": "DEBUG",
     "SYMBOL_FOLDER": "Resources",

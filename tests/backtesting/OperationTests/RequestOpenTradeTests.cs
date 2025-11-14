@@ -21,7 +21,7 @@
 //         // Arrange
 //         TestEnvironment.SetEnvironmentVariables(); 
 
-//         EnvironmentVariables.VariableInjectList.TryAdd(TradingVariables.SCALING_FACRTOR, "TestEnvironmentSetup,1;");
+//         EnvironmentVariables.VariableInjectList.TryAdd(TradingVariables.SCALING_FACTOR, "TestEnvironmentSetup,1;");
 
 //         var openOrderMock = new Mock<IOpenOrder>();
 
@@ -61,7 +61,7 @@
 //         // Arrange
 //         TestEnvironment.SetEnvironmentVariables(); 
 
-//         EnvironmentVariables.VariableInjectList.TryAdd(TradingVariables.SCALING_FACRTOR, "TestEnvironmentSetup,1;");
+//         EnvironmentVariables.VariableInjectList.TryAdd(TradingVariables.SCALING_FACTOR, "TestEnvironmentSetup,1;");
 
 //         var openOrderMock = new Mock<IOpenOrder>();
 
@@ -110,7 +110,7 @@
 //         // Arrange
 //         TestEnvironment.SetEnvironmentVariables(); 
 
-//         EnvironmentVariables.VariableInjectList.TryAdd(TradingVariables.SCALING_FACRTOR, "TestEnvironmentSetup,1;");
+//         EnvironmentVariables.VariableInjectList.TryAdd(TradingVariables.SCALING_FACTOR, "TestEnvironmentSetup,1;");
 
 //         var openOrderMock = new Mock<IOpenOrder>();
 

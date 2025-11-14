@@ -29,7 +29,7 @@ class TestEnvironment {
 
         if(source != null){
             EnvironmentVariables.Inject(TradingVariables.STRATEGY, source.STRATEGY);
-            EnvironmentVariables.Inject(TradingVariables.SCALING_FACRTOR, source.SCALING_FACRTOR);
+            EnvironmentVariables.Inject(TradingVariables.SCALING_FACTOR, source.SCALING_FACTOR);
             EnvironmentVariables.Inject(TradingVariables.STOP_DISTANCE_IN_PIPS, source.STOP_DISTANCE_IN_PIPS);
             EnvironmentVariables.Inject(TradingVariables.LIMIT_DISTANCE_IN_PIPS, source.LIMIT_DISTANCE_IN_PIPS);
             EnvironmentVariables.Inject(TradingVariables.TRAILING_STOP_LOSS_ACTIVE, source.TRAILING_STOP_LOSS_ACTIVE);
@@ -70,7 +70,7 @@ class TestEnvironment {
         EnvironmentVariables.VariableInjectList.Clear();
  
         Environment.SetEnvironmentVariable(TradingVariables.STRATEGY.ToString(), null);
-        Environment.SetEnvironmentVariable(TradingVariables.SCALING_FACRTOR.ToString(), null);
+        Environment.SetEnvironmentVariable(TradingVariables.SCALING_FACTOR.ToString(), null);
         Environment.SetEnvironmentVariable(TradingVariables.STOP_DISTANCE_IN_PIPS.ToString(), null);
         Environment.SetEnvironmentVariable(TradingVariables.LIMIT_DISTANCE_IN_PIPS.ToString(), null);
         Environment.SetEnvironmentVariable(TradingVariables.TRAILING_STOP_LOSS_ACTIVE.ToString(), null);

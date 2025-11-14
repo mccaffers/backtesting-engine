@@ -53,7 +53,7 @@ public enum BACKTESTING
 public enum TradingVariables
 {
     STRATEGY,
-    SCALING_FACRTOR,
+    SCALING_FACTOR,
     STOP_DISTANCE_IN_PIPS,
     LIMIT_DISTANCE_IN_PIPS,
     TRAILING_STOP_LOSS_ACTIVE,
@@ -102,7 +102,7 @@ public class EnvironmentVariables
     }
     
     private static IEnumerable<DictionaryEntry>? entries = Environment.GetEnvironmentVariables().Cast<DictionaryEntry>();
-    private static Dictionary<String, String> envCache = [];
+    private static readonly Dictionary<String, String> envCache = [];
 
     static EnvironmentVariables(){
         if (envCache.Count == 0)
@@ -153,7 +153,7 @@ public class EnvironmentVariables
     public static Dictionary<string, decimal> GetScalingFactorDictionary()
     {
         var localdictionary = new Dictionary<string, decimal>();
-        foreach (var symbol in TradingVariables.SCALING_FACRTOR.Value().Split(";"))
+        foreach (var symbol in TradingVariables.SCALING_FACTOR.Value().Split(";"))
         {
             if (string.IsNullOrEmpty(symbol))
             {

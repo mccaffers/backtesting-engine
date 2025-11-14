@@ -31,7 +31,7 @@
 //         EnvironmentVariables.VariableInjectList.TryAdd(BACKTESTING.ACCOUNT_EQUITY, accountEquity.ToString());
 //         EnvironmentVariables.VariableInjectList.TryAdd(BACKTESTING.REPORT_INDIVIDUAL_TRADES, "TRUE");
 //         EnvironmentVariables.VariableInjectList.TryAdd(LoggingVariables.REPORT_TO_ELASTICSEARCH, "TRUE");
-//         EnvironmentVariables.VariableInjectList.TryAdd(TradingVariables.SCALING_FACRTOR, "TestEnvironmentSetup,1;");
+//         EnvironmentVariables.VariableInjectList.TryAdd(TradingVariables.SCALING_FACTOR, "TestEnvironmentSetup,1;");
 
 //         // Setup local dependency provider
 //         return new ServiceCollection()

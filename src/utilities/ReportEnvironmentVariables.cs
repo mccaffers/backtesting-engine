@@ -19,7 +19,7 @@ public class ReportEnvironmentVariables
         "REPORT_TO_ELASTICSEARCH",
         "SYMBOL_FOLDER",
         "SYSTEM_LOG",
-        "SCALING_FACRTOR",
+        "SCALING_FACTOR",
         "ENVIRONMENT",
         "payload"
     };
