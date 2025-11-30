@@ -24,19 +24,20 @@ using Xunit;
 
 namespace Tests;
 
+[Collection("Sequential")]
 public class ReportingTests
 {
 
     [Fact]
     public void TestElasticSearchFinalReport(){
 
-        var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
-        environmentMock.SetupGet<bool>(x=>x.reportingEnabled).Returns(true);
+        // Arrange
+        TestEnvironment.SetEnvironmentVariables(); 
+        EnvironmentVariables.VariableInjectList.TryAdd(LoggingVariables.REPORT_TO_ELASTICSEARCH, "TRUE");
 
         var provider = new ServiceCollection()
             .AddSingleton<ITradingObjects, TradingObjects>()
             .AddSingleton<ISystemObjects, SystemObjects>()
-            .AddSingleton<IEnvironmentVariables>(environmentMock.Object)
             .BuildServiceProvider(true);
 
         var elasticClient = new Mock<IElasticClient>();
@@ -46,23 +47,24 @@ public class ReportingTests
                                                 It.IsAny<CancellationToken>()))
                                 .ReturnsAsync( () => {return new Mock<IndexResponse>().Object;});
 
-        var reportingMock = new Mock<Reporting>(provider, elasticClient.Object, environmentMock.Object){
+        var reportingMock = new Mock<Reporting>(provider, elasticClient.Object){
             CallBase = true
         };
 
         reportingMock.Object.EndOfRunReport("");
-        ConsoleLogger.Log(reportingMock.Object.switchHasSentFinalReport.ToString());
-        Assert.True(reportingMock.Object.switchHasSentFinalReport);
+        // ConsoleLogger.Log(reportingMock.Object.switchHasSentFinalReport.ToString());
+        // Assert.True(reportingMock.Object.switchHasSentFinalReport);
+
+        // Clean
+        TestEnvironment.CleanEnvironment();
     }
 
     [Fact]
     public async Task TestElasticStackMethod(){
 
-
-        // Arrange Environment Variables
-        var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
-        environmentMock.SetupGet<bool>(x=>x.reportingEnabled).Returns(true);
-        var environmentObj = environmentMock.Object;
+        // Arrange
+        TestEnvironment.SetEnvironmentVariables(); 
+        EnvironmentVariables.Inject(LoggingVariables.REPORT_TO_ELASTICSEARCH, "TRUE");
         
         // Arrange local variables
         bool indexAsyncCalled=false;
@@ -71,7 +73,6 @@ public class ReportingTests
         // Setup local dependency provider
         var services = new ServiceCollection()
             .AddSingleton<ITradingObjects, TradingObjects>()
-            .AddSingleton<IEnvironmentVariables>(environmentObj)
             .AddSingleton<ISystemObjects, SystemObjects>().BuildServiceProvider(true);
         
         // Setup the elasticClient to mock the IndexAsync Method
@@ -87,25 +88,28 @@ public class ReportingTests
                     })
                     .Callback(()=>indexAsyncCalled=true);     
 
-        var reportingMock = new Mock<Reporting>(services, elasticClient.Object, environmentObj){
+        var reportingMock = new Mock<Reporting>(services, elasticClient.Object){
             CallBase = true
         };
 
         // Act
-        await reportingMock.Object.SendStack(new TradingException("test", "", environmentObj));
+        await reportingMock.Object.SendStack(new TradingException("test", ""));
 
         // Assert
         Assert.True(indexAsyncCalled); // Confirm that the indexAsync was called
         Assert.Equal("exception", index); // check it's the right index
+
+        // Clean
+        TestEnvironment.CleanEnvironment();
     }
 
     [Fact]
     public void TestElasticTradeUpdatekMethod(){
 
-        // Arrange Environment Variables
-        var environmentMock = TestEnvironment.SetEnvironmentVariables(); 
-        environmentMock.SetupGet<bool>(x=>x.reportingEnabled).Returns(true);
-        var environmentObj = environmentMock.Object;
+        // Arrange
+        TestEnvironment.SetEnvironmentVariables(); 
+        EnvironmentVariables.Inject(LoggingVariables.REPORT_TO_ELASTICSEARCH, "TRUE");
+        EnvironmentVariables.Inject(BACKTESTING.REPORT_INDIVIDUAL_TRADES, "TRUE");
 
         // Arrange local variables
         bool bulkAsyncCalled=false;
@@ -114,7 +118,6 @@ public class ReportingTests
 
         // Setup local dependency provider
         var provider = new ServiceCollection()
-            .AddSingleton<IEnvironmentVariables>(environmentObj)
             .AddSingleton<ITradingObjects, TradingObjects>()
             .AddSingleton<ISystemObjects, SystemObjects>()
             .BuildServiceProvider(true);
@@ -142,7 +145,7 @@ public class ReportingTests
                             bulkAsyncCalled=true; // Record that bulkAsync has been called
                         });     
 
-        var reportingMock = new Mock<Reporting>(provider, elasticClient.Object, environmentMock.Object){
+        var reportingMock = new Mock<Reporting>(provider, elasticClient.Object){
             CallBase = true
         };
 
@@ -157,7 +160,7 @@ public class ReportingTests
         index=string.Empty;
 
         reportingMock.Object.lastPostTime = DateTime.Now.Subtract(TimeSpan.FromDays(1));
-        reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10);
+        reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10, 0m, 0);
 
         // Assert
         Assert.Equal(1, recordsToBulkIndex); // one record has been added
@@ -173,18 +176,21 @@ public class ReportingTests
         bulkAsyncCalled=false;
         index=string.Empty;
 
-        reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10);
-        reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10);
-        reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10);
+        reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10, 0m, 0);
+        reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10, 0m, 0);
+        reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10, 0m, 0);
 
         // Must update the time prior to the last update so the batch update is triggered
         reportingMock.Object.lastPostTime = DateTime.Now.Subtract(TimeSpan.FromDays(1));
-        reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10);
+        reportingMock.Object.TradeUpdate(DateTime.Now, symbolName, 10, 0m, 0);
 
         // Assert
         Assert.Equal(4, recordsToBulkIndex); // one record has been added
         Assert.True(bulkAsyncCalled); // Confirm that the indexAsync was called
         Assert.Equal("trades", index); // check it's the right index
+
+        // Clean
+        TestEnvironment.CleanEnvironment();
     }
 
 

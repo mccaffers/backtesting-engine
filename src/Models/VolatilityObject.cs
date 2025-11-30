@@ -12,4 +12,5 @@ public class VolatilityObject {
     public decimal distanceBetweenPriceMoves { get;set;}
     public decimal dayCloseGap { get;set;}
     public decimal spreadDistance {get;set;}
+    public decimal ticks {get;set;}
 }

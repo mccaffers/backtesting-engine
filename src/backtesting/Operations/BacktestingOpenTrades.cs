@@ -1,7 +1,4 @@
-using backtesting_engine;
 using backtesting_engine.interfaces;
-using backtesting_engine_models;
-using Utilities;
 
 namespace backtesting_engine_operations;
 
@@ -15,7 +12,7 @@ public class BacktestingOpenTrades : IOpenTrades
         this.tradeObjs = tradeObjs;
     }
 
-    public Task<int> Request(string symbol)
+    public Task<int> Request(string symbol, string strategyId)
     {
         return Task.FromResult(tradeObjs.openTrades.Count);
     }

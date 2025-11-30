@@ -8,18 +8,15 @@ namespace backtesting_engine;
 
 public class TradingObjects : ITradingObjects
 {
-    public TradingObjects(IEnvironmentVariables envVariables) {
+    public TradingObjects() {
         accountObj =  new AccountObj(openTrades, 
                                     tradeHistory,
-                                    decimal.Parse(envVariables.accountEquity),
-                                    decimal.Parse(envVariables.maximumDrawndownPercentage),
-                                    envVariables);
+                                    decimal.Parse(BACKTESTING.ACCOUNT_EQUITY.Value()),
+                                    decimal.Parse(BACKTESTING.MAXIMUM_DRAWNDOWN_PERCENTAGE.Value()));
     }
 
-    public ConcurrentDictionary<string, RequestObject> openTrades { get; } = new ConcurrentDictionary<string, RequestObject>();
-    public ConcurrentDictionary<string, TradeHistoryObject> tradeHistory { get; } = new ConcurrentDictionary<string, TradeHistoryObject>();
-    public string test { get; set; } = "";
-    public DateTime tradeTime { get; set; }
+    public Dictionary<string, RequestObject> openTrades { get; } = new Dictionary<string, RequestObject>();
+    public Dictionary<string, TradeHistoryObject> tradeHistory { get; } = new Dictionary<string, TradeHistoryObject>();
+    public PriceObj? lastPrice { get; set; } = null;
     public AccountObj accountObj {get; init;}
-    // public interfaces.IAccountObj accountObj { get; init; }
 }

@@ -38,3 +38,12 @@ tickdata/
 scripts/data.sh
 src/ui/src/libs/
 scripts/backtestings/data.sh
+
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+appsettings.*.json
+!appsettings.Development.json

@@ -5,9 +5,8 @@ namespace backtesting_engine.interfaces;
 
 public interface ITradingObjects
 {
-    ConcurrentDictionary<string, RequestObject> openTrades { get; }
-    ConcurrentDictionary<string, TradeHistoryObject> tradeHistory { get; }
-    string test { get; set; }
-    DateTime tradeTime { get; set; }
+    Dictionary<string, RequestObject> openTrades { get; }
+    Dictionary<string, TradeHistoryObject> tradeHistory { get; }
+    PriceObj? lastPrice { get; set; }
     AccountObj accountObj {get; init;}
 }
