@@ -6,7 +6,7 @@ namespace Utilities;
 
 public sealed class FxMacroDataClient
 {
-    private static readonly Uri DefaultBaseUri = new("https://fxmacrodata.com/api/v1/");
+    private static readonly Uri DefaultBaseUri = new("https://api.fxmacrodata.com/v1/");
 
     private readonly HttpClient _httpClient;
     private readonly string _apiKey;
